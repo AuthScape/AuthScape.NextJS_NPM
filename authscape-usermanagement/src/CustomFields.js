@@ -2,6 +2,7 @@ import React, {useEffect, useState, useRef} from 'react';
 import { Box, textAlign } from '@mui/system';
 import TextField from '@mui/material/TextField';
 import { Button } from '@mui/material';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -198,7 +199,7 @@ export function CustomFields({platformType}) {
                             }}>
                                 {tabOptions != null && tabOptions.map((tab) => {
                                     return (
-                                    <MenuItem value={tab.id}>{tab.name}</MenuItem>
+                                    <MenuItem key={tab.id} value={tab.id}>{tab.name}</MenuItem>
                                     )
                                 })}
                         </Select>

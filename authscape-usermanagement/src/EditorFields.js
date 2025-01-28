@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { Box, TextField, Typography } from "@mui/material";
 import { useForm, Controller } from 'react-hook-form';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Grid2';
+// import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 // import { RichTextEditor } from "./RichTextEditor";
 
 export const findTheValue = (fieldObject, field) => {
@@ -53,12 +54,12 @@ export const renderCustomField = (identifier, fieldObject, control, errors, regi
 
   return (
       <>
-      {(identifier != -1 ? fieldObject != null : true) && customFields.map((field) => {
+      {(identifier != -1 ? fieldObject != null : true) && customFields.map((field, index) => {
 
           let result = findCustomFieldValue(fieldObject, field.name);
 
           return (
-            <Grid size={field.size != null ? field.size : 12}>
+            <Grid key={index} size={field.size != null ? field.size : 12}>
               {/* {JSON.stringify(field)} */}
               <Controller
                 name={field.customFieldId}
@@ -144,7 +145,7 @@ export const renderSystemField = (identifier, fieldObject, control, errors, regi
 
   return (
       <>
-      {(identifier != -1 ? fieldObject != null : true) && customFields.map((field) => {
+      {(identifier != -1 ? fieldObject != null : true) && customFields.map((field, index) => {
 
           let result = findTheValue(fieldObject, field);
 
@@ -155,9 +156,9 @@ export const renderSystemField = (identifier, fieldObject, control, errors, regi
           }
 
           return (
-          <Box>
+          <Box key={index}>
 
-            {field == "IsActive" &&
+            {(field == "IsActive" || field == "isDeactivated") &&
                 <Box>
                   <Controller name={field} 
                       control={control}
@@ -172,7 +173,7 @@ export const renderSystemField = (identifier, fieldObject, control, errors, regi
                 </Box>
             }
 
-            {field != "IsActive" &&
+            {(field != "IsActive" && field != "isDeactivated") &&
             <Box>
                 <Controller name={field} 
                     control={control}
