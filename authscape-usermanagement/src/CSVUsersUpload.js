@@ -5,12 +5,14 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Button, Typography } from '@mui/material';
-import { FileUploader, apiService } from 'authscape';
+import { Avatar, Button, Drawer, Grid, Stack, TextField, Typography } from '@mui/material';
+import { EditableDatagrid, FileUploader, AutoSaveTextField, apiService } from 'authscape';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
 import CloudDownloadRoundedIcon from '@mui/icons-material/CloudDownloadRounded';
+import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 
 export function CSVUsersUpload({customFields, showDialog, onClose}) {
 
@@ -52,15 +54,6 @@ export function CSVUsersUpload({customFields, showDialog, onClose}) {
 
     const handleStep = (step) => () => {
         setActiveStep(step);
-    };
-
-    const handleComplete = () => {
-
-        alert("done")
-        // const newCompleted = completed;
-        // newCompleted[activeStep] = true;
-        // setCompleted(newCompleted);
-        // handleNext();
     };
 
     const handleReset = () => {
@@ -110,9 +103,6 @@ export function CSVUsersUpload({customFields, showDialog, onClose}) {
                         </React.Fragment>
                         ) : (
                         <React.Fragment>
-                            {/* <Typography sx={{ mt: 2, mb: 1, py: 1 }}>
-                            Step {activeStep + 1}
-                            </Typography> */}
 
                             <Box sx={{paddingTop:4, paddingBottom:4}}>
                                 {activeStep == 0 &&
@@ -121,20 +111,13 @@ export function CSVUsersUpload({customFields, showDialog, onClose}) {
 
                                     <Button startIcon={<CloudDownloadRoundedIcon />} variant="contained" sx={{marginTop:2}} onClick={async () => {
 
-                                        await apiService().DownloadFile("/UserManagement/GetDownloadTemplate?customFields=" + JSON.stringify(customFields), "DownloadFile.csv", () => {
+                                        await apiService().DownloadFile("/UserManagement/GetDownloadTemplate", "DownloadFile.csv", () => {
 
                                         });
 
-                                        // alert("download template")
                                     }}>Download Template</Button>
                                 </Box>
                                 }
-
-                                {/* {activeStep == 1 &&
-                                <Box>
-                                    Select your company
-                                </Box>
-                                } */}
 
                                 {activeStep == 1 &&
                                 <Box>
@@ -151,69 +134,10 @@ export function CSVUsersUpload({customFields, showDialog, onClose}) {
 
                             </Box>
 
-                            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                                <Button
-                                    color="inherit"
-                                    disabled={activeStep === 0}
-                                    onClick={handleBack}
-                                    sx={{ mr: 1 }}>
-                                    Back
-                                </Button>
-                            <Box sx={{ flex: '1 1 auto' }} />
-
-                            {/* {activeStep} {steps.length -1} */}
-
-                            {(activeStep !== steps.length - 1) &&
-                                <Button onClick={handleNext} sx={{ mr: 1 }}>
-                                    Next
-                                </Button>
-                            }
-
-                            {/* {(activeStep === steps.length - 1) &&
-                                <Box>
-                                    <Button onClick={handleComplete}>
-                                        {completedSteps() === totalSteps() - 1
-                                        ? 'Finish'
-                                        : 'Complete Step'}
-                                    </Button>
-                                </Box>
-                            } */}
-                            </Box>
+                            
                         </React.Fragment>
                         )}
                     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                     
                 </Box>
@@ -224,12 +148,24 @@ export function CSVUsersUpload({customFields, showDialog, onClose}) {
 
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => {
-                    if (onClose != null)
-                    {
-                        onClose();
-                    }
-                }}>Cancel</Button>
+                <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                    <Button
+                        color="inherit"
+                        startIcon={<ChevronLeftRoundedIcon/>}
+                        disabled={activeStep === 0}
+                        onClick={handleBack}
+                        sx={{ mr: 1 }}>
+                        Back
+                    </Button>
+                <Box sx={{ flex: '1 1 auto' }} />
+
+                {(activeStep !== steps.length - 1) &&
+                    <Button onClick={handleNext} endIcon={<ChevronRightRoundedIcon/>} sx={{ mr: 1 }}>
+                        Next
+                    </Button>
+                }
+
+                </Box>
             </DialogActions>
         </Dialog>
     )

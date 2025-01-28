@@ -508,7 +508,7 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
                   <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" aria-label="basic tabs example" centered>
                     {tabOptions.map((tab, index) => {
                       return (
-                        <Tab label={tab.name} value={tab.id} />
+                        <Tab key={tab.id} label={tab.name} value={tab.id} />
                       )
                     })}
                   </Tabs>

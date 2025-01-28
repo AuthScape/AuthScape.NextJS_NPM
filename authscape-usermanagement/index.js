@@ -4,25 +4,16 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CompanyEditor = CompanyEditor;
+exports["default"] = void 0;
 var _react = _interopRequireWildcard(require("react"));
 var _system = require("@mui/system");
-var _TextField = _interopRequireDefault(require("@mui/material/TextField"));
 var _material = require("@mui/material");
-var _Typography = _interopRequireDefault(require("@mui/material/Typography"));
-var _FormControl = _interopRequireDefault(require("@mui/material/FormControl"));
-var _InputLabel = _interopRequireDefault(require("@mui/material/InputLabel"));
-var _Select = _interopRequireDefault(require("@mui/material/Select"));
-var _Checkbox = _interopRequireDefault(require("@mui/material/Checkbox"));
-var _OutlinedInput = _interopRequireDefault(require("@mui/material/OutlinedInput"));
-var _MenuItem = _interopRequireDefault(require("@mui/material/MenuItem"));
-var _ListItemText = _interopRequireDefault(require("@mui/material/ListItemText"));
 var _reactHookForm = require("react-hook-form");
 var _authscape = require("authscape");
+var _Grid = _interopRequireDefault(require("@mui/material/Grid2"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
@@ -32,11 +23,12 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function _iterableToArrayLimit(arr, i) { var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"]; if (null != _i) { var _s, _e, _x, _r, _arr = [], _n = !0, _d = !1; try { if (_x = (_i = _i.call(arr)).next, 0 === i) { if (Object(_i) !== _i) return; _n = !1; } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0); } catch (err) { _d = !0, _e = err; } finally { try { if (!_n && null != _i["return"] && (_r = _i["return"](), Object(_r) !== _r)) return; } finally { if (_d) throw _e; } } return _arr; } }
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-// import {renderCustomField, renderSystemField} from './EditorFields';
-
-function CompanyEditor(_ref) {
+// remove when publishing
+// import {renderCustomField, renderSystemField } from './EditorFields';
+var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   var _ref$companyId = _ref.companyId,
     companyId = _ref$companyId === void 0 ? null : _ref$companyId,
+    platformType = _ref.platformType,
     _ref$onSaved = _ref.onSaved,
     onSaved = _ref$onSaved === void 0 ? null : _ref$onSaved;
   var _useForm = (0, _reactHookForm.useForm)(),
@@ -47,14 +39,46 @@ function CompanyEditor(_ref) {
     watch = _useForm.watch,
     setValue = _useForm.setValue;
   var refTimeoutToken = (0, _react.useRef)(null);
+  var refShouldClose = (0, _react.useRef)(null);
+  var refSubmitButton = (0, _react.useRef)(null);
   var _useState = (0, _react.useState)([]),
     _useState2 = _slicedToArray(_useState, 2),
-    customFields = _useState2[0],
-    setCustomFields = _useState2[1];
-  var _useState3 = (0, _react.useState)(null),
+    selectedRoles = _useState2[0],
+    setSelectedRole = _useState2[1];
+  var _useState3 = (0, _react.useState)([]),
     _useState4 = _slicedToArray(_useState3, 2),
-    company = _useState4[0],
-    setCompany = _useState4[1];
+    selectedPermission = _useState4[0],
+    setSelectedPermission = _useState4[1];
+
+  // const [companies, setCompanies] = useState([]);
+  // const [company, setCompany] = useState(null);
+  var _useState5 = (0, _react.useState)(''),
+    _useState6 = _slicedToArray(_useState5, 2),
+    inputCompanyValue = _useState6[0],
+    setInputCompanyValue = _useState6[1];
+
+  // const [locations, setLocations] = useState([]);
+  var _useState7 = (0, _react.useState)(null),
+    _useState8 = _slicedToArray(_useState7, 2),
+    location = _useState8[0],
+    setLocation = _useState8[1];
+  // const [inputLocationValue, setInputLocationValue] = useState('');
+
+  // const [roles, setRole] = useState([]);
+  // const [permissions, setPermissions] = useState([]);
+
+  var _useState9 = (0, _react.useState)([]),
+    _useState10 = _slicedToArray(_useState9, 2),
+    customFields = _useState10[0],
+    setCustomFields = _useState10[1];
+  var _useState11 = (0, _react.useState)(null),
+    _useState12 = _slicedToArray(_useState11, 2),
+    company = _useState12[0],
+    setCompany = _useState12[1];
+  var _useState13 = (0, _react.useState)([]),
+    _useState14 = _slicedToArray(_useState13, 2),
+    tabOptions = _useState14[0],
+    setTabOptions = _useState14[1];
   var ITEM_HEIGHT = 48;
   var ITEM_PADDING_TOP = 8;
   var MenuProps = {
@@ -65,114 +89,276 @@ function CompanyEditor(_ref) {
       }
     }
   };
-  var _useState5 = (0, _react.useState)(0),
-    _useState6 = _slicedToArray(_useState5, 2),
-    tabValue = _useState6[0],
-    setTabValue = _useState6[1];
+  var _useState15 = (0, _react.useState)(""),
+    _useState16 = _slicedToArray(_useState15, 2),
+    newPassword = _useState16[0],
+    setNewPassword = _useState16[1];
+  var _useState17 = (0, _react.useState)(""),
+    _useState18 = _slicedToArray(_useState17, 2),
+    confirmPassword = _useState18[0],
+    setConfirmPassword = _useState18[1];
+  var _useState19 = (0, _react.useState)(0),
+    _useState20 = _slicedToArray(_useState19, 2),
+    tabValue = _useState20[0],
+    setTabValue = _useState20[1];
   var handleTabChange = function handleTabChange(event, newValue) {
     setTabValue(newValue);
   };
+
+  // useEffect(() => {
+
+  //     const fetchData = async () => {
+
+  //         let responseRoles = await apiService().get("/UserManagement/GetRoles");
+  //         if (responseRoles != null && responseRoles.status == 200)
+  //         {
+  //           setRole(responseRoles.data);
+  //         }
+
+  //         let responsePermissions = await apiService().get("/UserManagement/GetPermissions");
+  //         if (responsePermissions != null && responsePermissions.status == 200)
+  //         {
+  //           setPermissions(responsePermissions.data);
+  //         }
+
+  //     }
+  //     fetchData();
+
+  // }, []);
+
   (0, _react.useEffect)(function () {
-    var fetchData = /*#__PURE__*/function () {
-      var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var response;
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) switch (_context.prev = _context.next) {
-            case 0:
-              _context.next = 2;
-              return (0, _authscape.apiService)().get("/UserManagement/GetCompany?companyId=" + companyId);
-            case 2:
-              response = _context.sent;
-              if (response != null && response.status == 200) {
+    if (companyId != null) {
+      var fetchData = /*#__PURE__*/function () {
+        var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+          var response;
+          return _regeneratorRuntime().wrap(function _callee$(_context) {
+            while (1) switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return (0, _authscape.apiService)().get("/UserManagement/GetCompany?companyId=" + companyId);
+              case 2:
+                response = _context.sent;
+                if (!(response != null && response.status == 200)) {
+                  _context.next = 8;
+                  break;
+                }
                 setCompany(response.data);
+
+                // if (response.data.company != null)
+                // {
+                //   setCompany(response.data.company);
+                // }
+
+                // if (response.data.location != null)
+                // {
+                //   setLocation(response.data.location);
+                // }
+
                 if (response.data.customFields != null) {
                   setCustomFields(response.data.customFields);
                 }
-              }
-            case 4:
-            case "end":
-              return _context.stop();
-          }
-        }, _callee);
-      }));
-      return function fetchData() {
-        return _ref2.apply(this, arguments);
-      };
-    }();
-    fetchData();
-  }, []);
-  var fields = ["Title"
-  // "LastName",
-  // "IsActive",
-  // "Email"
-  ];
 
+                // // assign all selected roles
+                // if (response.data.roles != null)
+                // {
+                //   let roleNames = [];
+                //   for (let index = 0; index < response.data.roles.length; index++) {
+                //     const role = response.data.roles[index];
+
+                //     roleNames.push(role);
+                //   }
+                //   setSelectedRole(roleNames);
+                // }
+
+                // // assign all selected permissions
+                // if (response.data.permissions != null)
+                // {
+                //   let permissionNames = [];
+                //   for (let index = 0; index < response.data.permissions.length; index++) {
+                //     const permission = response.data.permissions[index];
+
+                //     permissionNames.push(permission);
+                //   }
+                //   setSelectedPermission(permissionNames);
+                // }
+                _context.next = 8;
+                return refreshTabOptions();
+              case 8:
+              case "end":
+                return _context.stop();
+            }
+          }, _callee);
+        }));
+        return function fetchData() {
+          return _ref2.apply(this, arguments);
+        };
+      }();
+      if (companyId != -1) {
+        fetchData();
+      }
+    }
+  }, [companyId]);
+  var fields = ["title", "isDeactivated"];
   function a11yProps(index) {
     return {
       id: "simple-tab-".concat(index),
       'aria-controls': "simple-tabpanel-".concat(index)
     };
   }
-  return /*#__PURE__*/_react["default"].createElement(_system.Box, {
-    sx: {
-      paddingTop: 0,
-      minWidth: 600
-    }
-  }, /*#__PURE__*/_react["default"].createElement("form", {
+  var refreshTabOptions = /*#__PURE__*/function () {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+      var customTabResponse, dataElement;
+      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 2;
+            return (0, _authscape.apiService)().get("/UserManagement/GetCustomTabs?platformType=" + platformType);
+          case 2:
+            customTabResponse = _context2.sent;
+            if (customTabResponse != null && customTabResponse.status == 200) {
+              dataElement = customTabResponse.data;
+              setTabOptions(dataElement);
+              if (dataElement.length > 0) {
+                setTabValue(dataElement[0].id);
+              }
+            }
+          case 4:
+          case "end":
+            return _context2.stop();
+        }
+      }, _callee2);
+    }));
+    return function refreshTabOptions() {
+      return _ref3.apply(this, arguments);
+    };
+  }();
+
+  // useEffect(() => {
+
+  //   const fetchData = async () => {
+
+  //       const response2 = await apiService().get("/UserManagement/GetCompanies?name=" + inputCompanyValue);
+  //       if (response2 != null && response2.status == 200)
+  //       {
+  //         setCompanies(response2.data);
+  //       }
+
+  //       await refreshTabOptions();
+  //   }
+
+  //   // sets a delay so the user can type
+  //   clearTimeout(refTimeoutToken.current)
+  //   refTimeoutToken.current = setTimeout(() => {
+
+  //     clearTimeout(refTimeoutToken.current)
+
+  //     fetchData();
+
+  //   }, 1000);
+
+  // }, [inputCompanyValue])
+
+  // useEffect(() => {
+
+  //   const fetchData = async () => {
+
+  //     if (company != null)
+  //     {
+  //       if (inputLocationValue == null || inputLocationValue == "")
+  //       {
+  //         let response = await apiService().get("/UserManagement/GetLocations?companyId=" + company.id);
+  //         if (response != null && response.status == 200)
+  //         {
+  //           setLocations(response.data);
+  //         }
+  //       }
+  //       else
+  //       {
+  //         let response = await apiService().get("/UserManagement/GetLocations?companyId=" + company.id + "&name=" + inputLocationValue);
+  //         if (response != null && response.status == 200)
+  //         {
+  //           setLocations(response.data);
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   if (user != null || userId == -1)
+  //   {
+  //     fetchData();
+  //   }
+
+  // }, [user, userId, inputLocationValue, company])
+
+  var saveChanges = function saveChanges(shouldClose) {
+    refShouldClose.current = shouldClose;
+    refSubmitButton.current.click();
+  };
+  (0, _react.useImperativeHandle)(ref, function () {
+    return {
+      saveChanges: saveChanges
+    };
+  });
+  return /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement("form", {
     onSubmit: handleSubmit( /*#__PURE__*/function () {
-      var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(data) {
-        var companyCustomFields, response;
-        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
+      var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(data) {
+        var userCustomFields, response;
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) switch (_context3.prev = _context3.next) {
             case 0:
-              companyCustomFields = [];
+              userCustomFields = [];
               customFields && customFields.forEach(function (customField) {
-                companyCustomFields.push({
-                  customFieldId: customField.customFieldId,
-                  name: customField.name,
-                  isRequired: customField.isRequired,
-                  customFieldType: customField.customFieldType,
-                  value: data[customField.customFieldId].toString()
-                });
+                var newValue = data[customField.customFieldId];
+                if (newValue != null) {
+                  userCustomFields.push({
+                    customFieldId: customField.customFieldId,
+                    name: customField.name,
+                    isRequired: customField.isRequired,
+                    customFieldType: customField.customFieldType,
+                    value: newValue.toString()
+                  });
+                }
               });
-              _context2.next = 4;
+              _context3.next = 4;
               return (0, _authscape.apiService)().post("/UserManagement/UpdateCompany", {
                 id: companyId,
-                title: data.Title,
-                customFields: companyCustomFields
+                title: data.title,
+                isDeactivated: data.isDeactivated,
+                customFields: userCustomFields
               });
             case 4:
-              response = _context2.sent;
+              response = _context3.sent;
               if (response != null && response.status == 200) {
                 if (onSaved != null) {
-                  onSaved();
+                  onSaved(refShouldClose.current);
                 }
               }
-
-              // let response = await apiService().put("/UserManagement/UpdateUser", {
-              //     id: userId,
-              //     firstName: data.FirstName,
-              //     lastName: data.LastName,
-              //     companyId: company != null ? company.id : null,
-              //     locationId: location != null ? location.id : null,
-              //     email: data.Email,
-              //     isActive: data.IsActive,
-              //     roles: selectedRoles != "" ? selectedRoles : null,
-              //     permissions: selectedPermission != "" ? selectedPermission : null,
-              //     userCustomFields: userCustomFields
-              // });
             case 6:
             case "end":
-              return _context2.stop();
+              return _context3.stop();
           }
-        }, _callee2);
+        }, _callee3);
       }));
       return function (_x2) {
-        return _ref3.apply(this, arguments);
+        return _ref4.apply(this, arguments);
       };
     }()),
     noValidate: true,
     autoComplete: "off"
+  }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    container: true,
+    spacing: 2,
+    sx: {
+      paddingTop: 2
+    }
+  }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    size: 3,
+    sx: {
+      backgroundColor: "#f5f8fa",
+      borderRadius: 2,
+      border: "1px solid lightgray",
+      padding: 2
+    }
   }, /*#__PURE__*/_react["default"].createElement(_system.Box, {
     sx: {
       textAlign: "center",
@@ -180,64 +366,56 @@ function CompanyEditor(_ref) {
       justifyContent: "center",
       padding: 2
     }
-  }, company != null && company.logo != null && /*#__PURE__*/_react["default"].createElement(_system.Box, {
+  }, /*#__PURE__*/_react["default"].createElement(_material.Avatar, {
+    alt: "Remy Sharp",
+    src: "/static/images/avatar/1.jpg",
     sx: {
-      backgroundImage: "url(".concat(company.logo, ")"),
-      backgroundSize: "contain",
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "center center",
-      marginTop: 1,
-      width: "100%",
-      height: 80,
-      cursor: "pointer"
-    }
-  }), company != null && company.logo == null && /*#__PURE__*/_react["default"].createElement(_system.Box, {
-    sx: {
-      marginTop: 1,
       width: 100,
-      height: 100,
-      border: "1px dashed black",
-      cursor: "pointer"
+      height: 100
     }
-  }, /*#__PURE__*/_react["default"].createElement(_system.Box, {
+  })), /*#__PURE__*/_react["default"].createElement("hr", null), /*#__PURE__*/_react["default"].createElement(_system.Box, {
     sx: {
-      marginTop: 4.5
+      fontWeight: "bold",
+      paddingBottom: 1
     }
-  }, "No Image"))), /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement(_material.Tabs, {
+  }, "About this company"), renderSystemField(companyId, company, control, errors, register, fields)), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    size: 9
+  }, /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement(_material.Tabs, {
     value: tabValue,
     onChange: handleTabChange,
     variant: "fullWidth",
     "aria-label": "basic tabs example",
     centered: true
-  }, /*#__PURE__*/_react["default"].createElement(_material.Tab, _extends({
-    label: "Information"
-  }, a11yProps(0))), /*#__PURE__*/_react["default"].createElement(_material.Tab, _extends({
-    label: "Description"
-  }, a11yProps(1))))), tabValue === 0 && /*#__PURE__*/_react["default"].createElement(_material.Grid, {
-    spacing: 2,
+  }, tabOptions.map(function (tab, index) {
+    return /*#__PURE__*/_react["default"].createElement(_material.Tab, {
+      key: tab.id,
+      label: tab.name,
+      value: tab.id
+    });
+  }))), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    container: true,
+    spacing: 1,
     sx: {
       paddingLeft: 2,
       paddingRight: 2,
       paddingTop: 2
     }
-  }, renderSystemField(companyId, company, control, errors, register, fields), customFields != null && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, renderCustomField(companyId, company, control, errors, register, customFields))), tabValue === 1 && /*#__PURE__*/_react["default"].createElement(_material.Grid, {
-    spacing: 2,
-    sx: {
-      paddingLeft: 2,
-      paddingRight: 2,
-      paddingTop: 2
-    }
-  }, "Description here..."), (tabValue == 0 || tabValue == 1 || tabValue == 2) && /*#__PURE__*/_react["default"].createElement(_system.Box, {
-    sx: {
-      paddingTop: 1,
-      paddingBottom: 4,
-      paddingLeft: 2
-    }
-  }, /*#__PURE__*/_react["default"].createElement(_material.Button, {
+  }, tabOptions.map(function (tab, index) {
+    return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, tabValue === tab.id && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, customFields != null && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, renderCustomField(companyId, company, control, errors, register, setValue, customFields.filter(function (s) {
+      return s.tabId == tab.id;
+    })))));
+  }), /*#__PURE__*/_react["default"].createElement(_material.Button, {
+    ref: refSubmitButton,
     variant: "contained",
-    type: "submit"
-  }, companyId == -1 ? "Create Company" : "Update Company")))));
-}
+    type: "submit",
+    sx: {
+      display: "none"
+    }
+  }, "Save Changes")))))));
+});
+CompanyEditor.displayName = "CompanyEditor";
+var _default = CompanyEditor;
+exports["default"] = _default;
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
@@ -258,6 +436,8 @@ var _Stepper = _interopRequireDefault(require("@mui/material/Stepper"));
 var _Step = _interopRequireDefault(require("@mui/material/Step"));
 var _StepButton = _interopRequireDefault(require("@mui/material/StepButton"));
 var _CloudDownloadRounded = _interopRequireDefault(require("@mui/icons-material/CloudDownloadRounded"));
+var _ChevronLeftRounded = _interopRequireDefault(require("@mui/icons-material/ChevronLeftRounded"));
+var _ChevronRightRounded = _interopRequireDefault(require("@mui/icons-material/ChevronRightRounded"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
@@ -314,14 +494,6 @@ function CSVUsersUpload(_ref) {
       setActiveStep(step);
     };
   };
-  var handleComplete = function handleComplete() {
-    alert("done");
-    // const newCompleted = completed;
-    // newCompleted[activeStep] = true;
-    // setCompleted(newCompleted);
-    // handleNext();
-  };
-
   var handleReset = function handleReset() {
     setActiveStep(0);
     setCompleted({});
@@ -387,7 +559,7 @@ function CSVUsersUpload(_ref) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
             _context.next = 2;
-            return (0, _authscape.apiService)().DownloadFile("/UserManagement/GetDownloadTemplate?customFields=" + JSON.stringify(customFields), "DownloadFile.csv", function () {});
+            return (0, _authscape.apiService)().DownloadFile("/UserManagement/GetDownloadTemplate", "DownloadFile.csv", function () {});
           case 2:
           case "end":
             return _context.stop();
@@ -401,7 +573,11 @@ function CSVUsersUpload(_ref) {
         _onClose();
       }
     }
-  }))), /*#__PURE__*/_react["default"].createElement(_system.Box, {
+  })))))), /*#__PURE__*/_react["default"].createElement(_system.Box, {
+    sx: {
+      height: 200
+    }
+  })), /*#__PURE__*/_react["default"].createElement(_DialogActions["default"], null, /*#__PURE__*/_react["default"].createElement(_system.Box, {
     sx: {
       display: 'flex',
       flexDirection: 'row',
@@ -409,6 +585,7 @@ function CSVUsersUpload(_ref) {
     }
   }, /*#__PURE__*/_react["default"].createElement(_material.Button, {
     color: "inherit",
+    startIcon: /*#__PURE__*/_react["default"].createElement(_ChevronLeftRounded["default"], null),
     disabled: activeStep === 0,
     onClick: handleBack,
     sx: {
@@ -420,20 +597,11 @@ function CSVUsersUpload(_ref) {
     }
   }), activeStep !== steps.length - 1 && /*#__PURE__*/_react["default"].createElement(_material.Button, {
     onClick: handleNext,
+    endIcon: /*#__PURE__*/_react["default"].createElement(_ChevronRightRounded["default"], null),
     sx: {
       mr: 1
     }
-  }, "Next"))))), /*#__PURE__*/_react["default"].createElement(_system.Box, {
-    sx: {
-      height: 200
-    }
-  })), /*#__PURE__*/_react["default"].createElement(_DialogActions["default"], null, /*#__PURE__*/_react["default"].createElement(_material.Button, {
-    onClick: function onClick() {
-      if (_onClose != null) {
-        _onClose();
-      }
-    }
-  }, "Cancel")));
+  }, "Next"))));
 }
 "use strict";
 
@@ -446,6 +614,7 @@ var _react = _interopRequireWildcard(require("react"));
 var _system = require("@mui/system");
 var _TextField = _interopRequireDefault(require("@mui/material/TextField"));
 var _material = require("@mui/material");
+var _Stack = _interopRequireDefault(require("@mui/material/Stack"));
 var _Typography = _interopRequireDefault(require("@mui/material/Typography"));
 var _Table = _interopRequireDefault(require("@mui/material/Table"));
 var _TableBody = _interopRequireDefault(require("@mui/material/TableBody"));
@@ -736,6 +905,7 @@ function CustomFields(_ref) {
       }
     }, tabOptions != null && tabOptions.map(function (tab) {
       return /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
+        key: tab.id,
         value: tab.id
       }, tab.name);
     }))), /*#__PURE__*/_react["default"].createElement(_system.Box, {
@@ -907,18 +1077,22 @@ function CustomFields(_ref) {
 }
 "use strict";
 
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.renderSystemField = exports.renderCustomField = exports.findTheValue = void 0;
-var _react = _interopRequireDefault(require("react"));
+var _react = _interopRequireWildcard(require("react"));
 var _material = require("@mui/material");
 var _reactHookForm = require("react-hook-form");
 var _FormControlLabel = _interopRequireDefault(require("@mui/material/FormControlLabel"));
 var _Switch = _interopRequireDefault(require("@mui/material/Switch"));
 var _Grid = _interopRequireDefault(require("@mui/material/Grid2"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+// import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 // import { RichTextEditor } from "./RichTextEditor";
 
 var findTheValue = function findTheValue(fieldObject, field) {
@@ -949,9 +1123,10 @@ var findCustomFieldValue = function findCustomFieldValue(fieldObject, field) {
   return result;
 };
 var renderCustomField = function renderCustomField(identifier, fieldObject, control, errors, register, setValue, customFields) {
-  return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, (identifier != -1 ? fieldObject != null : true) && customFields.map(function (field) {
+  return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, (identifier != -1 ? fieldObject != null : true) && customFields.map(function (field, index) {
     var result = findCustomFieldValue(fieldObject, field.name);
     return /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+      key: index,
       size: field.size != null ? field.size : 12
     }, /*#__PURE__*/_react["default"].createElement(_reactHookForm.Controller, {
       name: field.customFieldId,
@@ -1009,13 +1184,15 @@ var renderCustomField = function renderCustomField(identifier, fieldObject, cont
 };
 exports.renderCustomField = renderCustomField;
 var renderSystemField = function renderSystemField(identifier, fieldObject, control, errors, register, customFields) {
-  return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, (identifier != -1 ? fieldObject != null : true) && customFields.map(function (field) {
+  return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, (identifier != -1 ? fieldObject != null : true) && customFields.map(function (field, index) {
     var result = findTheValue(fieldObject, field);
     var isRequied = true;
     if (field == "PhoneNumber") {
       isRequied = false;
     }
-    return /*#__PURE__*/_react["default"].createElement(_material.Box, null, field == "IsActive" && /*#__PURE__*/_react["default"].createElement(_material.Box, null, /*#__PURE__*/_react["default"].createElement(_reactHookForm.Controller, {
+    return /*#__PURE__*/_react["default"].createElement(_material.Box, {
+      key: index
+    }, (field == "IsActive" || field == "isDeactivated") && /*#__PURE__*/_react["default"].createElement(_material.Box, null, /*#__PURE__*/_react["default"].createElement(_reactHookForm.Controller, {
       name: field,
       control: control,
       rules: {
@@ -1034,7 +1211,7 @@ var renderSystemField = function renderSystemField(identifier, fieldObject, cont
       }
     }), errors[field] && /*#__PURE__*/_react["default"].createElement(_material.Typography, {
       color: "red"
-    }, field, " is required.")), field != "IsActive" && /*#__PURE__*/_react["default"].createElement(_material.Box, null, /*#__PURE__*/_react["default"].createElement(_reactHookForm.Controller, {
+    }, field, " is required.")), field != "IsActive" && field != "isDeactivated" && /*#__PURE__*/_react["default"].createElement(_material.Box, null, /*#__PURE__*/_react["default"].createElement(_reactHookForm.Controller, {
       name: field,
       control: control,
       rules: {
@@ -1716,6 +1893,7 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     centered: true
   }, tabOptions.map(function (tab, index) {
     return /*#__PURE__*/_react["default"].createElement(_material.Tab, {
+      key: tab.id,
       label: tab.name,
       value: tab.id
     });
@@ -1749,7 +1927,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = UserManagement;
+exports.UserManagement = void 0;
 var _react = _interopRequireWildcard(require("react"));
 var _system = require("@mui/system");
 var _material = require("@mui/material");
@@ -1778,16 +1956,19 @@ function _iterableToArrayLimit(arr, i) { var _i = null == arr ? null : "undefine
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 // comment this out when done
 // import UserEditor from './UserEditor'; // remove when done
-// import { CompanyEditor } from './CompanyEditor' // remove when done
+// import CompanyEditor from './CompanyEditor' // remove when done
 // import { CSVUsersUpload } from './CSVUsersUpload'; // remove when done
 // import { CustomFields } from './CustomFields'; // remove when done
-function UserManagement(_ref) {
+
+var UserManagement = function UserManagement(_ref) {
   var _ref$height = _ref.height,
     height = _ref$height === void 0 ? "50vh" : _ref$height,
     _ref$platformType = _ref.platformType,
     platformType = _ref$platformType === void 0 ? 1 : _ref$platformType,
     _ref$onUploadComplete = _ref.onUploadCompleted,
-    onUploadCompleted = _ref$onUploadComplete === void 0 ? null : _ref$onUploadComplete;
+    onUploadCompleted = _ref$onUploadComplete === void 0 ? null : _ref$onUploadComplete,
+    _ref$onAccountCreated = _ref.onAccountCreated,
+    onAccountCreated = _ref$onAccountCreated === void 0 ? null : _ref$onAccountCreated;
   var _useState = (0, _react.useState)(null),
     _useState2 = _slicedToArray(_useState, 2),
     showUserDetails = _useState2[0],
@@ -1808,6 +1989,9 @@ function UserManagement(_ref) {
     _useState10 = _slicedToArray(_useState9, 2),
     allCompanies = _useState10[0],
     setAllCompanies = _useState10[1];
+
+  // const [hasLoaded, setHasLoaded] = useState(false);
+
   var _useState11 = (0, _react.useState)(false),
     _useState12 = _slicedToArray(_useState11, 2),
     showChangePasswordDialog = _useState12[0],
@@ -1840,6 +2024,7 @@ function UserManagement(_ref) {
     _useState26 = _slicedToArray(_useState25, 2),
     searchByRoleId = _useState26[0],
     setSearchByRoleId = _useState26[1];
+  var filterLoaded = (0, _react.useRef)(false);
   var userEditorRef = (0, _react.useRef)();
   var newFirstName = (0, _react.useRef)();
   var newLastName = (0, _react.useRef)();
@@ -1930,12 +2115,27 @@ function UserManagement(_ref) {
       return param.row.numberOfUsers != null ? param.row.numberOfUsers : "";
     }
   }];
+
+  // useEffect(() => {
+
+  //     if (hasLoaded == false)
+  //     {
+  //         setHasLoaded(true);
+  //     }
+
+  // }, []);
+
   (0, _react.useEffect)(function () {
     setDataGridRefreshKey(dataGridRefreshKey + 1);
   }, [searchByName]);
+  (0, _react.useEffect)(function () {
+    if (!filterLoaded.current) {
+      filterLoaded.current = true;
+      getAllCompanies();
+      getAllRoles();
+    }
+  }, [filterLoaded.current]);
   var getDataGrid = function getDataGrid() {
-    getAllCompanies();
-    getAllRoles();
     var response = "";
     if (platformType == 1) {
       response = "/UserManagement/GetUsers";
@@ -1961,7 +2161,7 @@ function UserManagement(_ref) {
           case 0:
             results = [];
             _context.next = 3;
-            return (0, _authscape.apiService)().get("/UserManagement/GetCompanies");
+            return (0, _authscape.apiService)().get("/UserManagement/GetAllCompanies");
           case 3:
             response = _context.sent;
             response.data.forEach(function (element) {
@@ -2009,7 +2209,7 @@ function UserManagement(_ref) {
       return _ref3.apply(this, arguments);
     };
   }();
-  return /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement(_material.AppBar, {
+  return /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement(_material.AppBar, {
     color: "invert",
     position: "static",
     sx: {
@@ -2103,7 +2303,7 @@ function UserManagement(_ref) {
   }, "Save & close")), /*#__PURE__*/_react["default"].createElement(_material.Divider, {
     orientation: "vertical",
     flexItem: true
-  })), showUserDetails && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement(_system.Box, {
+  })), showUserDetails && platformType == 1 && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement(_system.Box, {
     sx: {
       paddingRight: 2,
       paddingLeft: 2
@@ -2135,7 +2335,7 @@ function UserManagement(_ref) {
       fontSize: 20,
       fontWeight: "bold"
     }
-  }, platformType == 1 && "Contacts", platformType == 2 && "Companies", platformType == 3 && "Locations")), /*#__PURE__*/_react["default"].createElement(_material.Divider, {
+  }, platformType == 1 && "Accounts", platformType == 2 && "Companies", platformType == 3 && "Locations")), /*#__PURE__*/_react["default"].createElement(_material.Divider, {
     orientation: "vertical",
     flexItem: true
   })), !showUserDetails && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement(_system.Box, {
@@ -2157,7 +2357,7 @@ function UserManagement(_ref) {
         }
       }, _callee6);
     }))
-  }, "Add Contact")), /*#__PURE__*/_react["default"].createElement(_material.Divider, {
+  }, "Add Account")), /*#__PURE__*/_react["default"].createElement(_material.Divider, {
     orientation: "vertical",
     flexItem: true
   })), !showUserDetails && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement(_system.Box, {
@@ -2249,7 +2449,6 @@ function UserManagement(_ref) {
   })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
     size: 4
   }, /*#__PURE__*/_react["default"].createElement(_Autocomplete["default"], {
-    disablePortal: true,
     options: allCompanies,
     renderInput: function renderInput(params) {
       return /*#__PURE__*/_react["default"].createElement(_material.TextField, _extends({}, params, {
@@ -2317,6 +2516,8 @@ function UserManagement(_ref) {
     }
   }), platformType == 2 && /*#__PURE__*/_react["default"].createElement(CompanyEditor, {
     companyId: showUserDetails,
+    platformType: platformType,
+    ref: userEditorRef,
     onSaved: function onSaved(shouldClose) {
       setDataGridRefreshKey(dataGridRefreshKey + 1);
       if (shouldClose) {
@@ -2434,45 +2635,32 @@ function UserManagement(_ref) {
     fullWidth: true
   })))), /*#__PURE__*/_react["default"].createElement(_material.DialogActions, null, /*#__PURE__*/_react["default"].createElement(_material.Button, {
     onClick: function onClick() {
-      setShowChangePasswordDialog(false);
+      setShowContactDialog(false);
     }
   }, "Cancel"), /*#__PURE__*/_react["default"].createElement(_material.Button, {
     onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
       return _regeneratorRuntime().wrap(function _callee9$(_context9) {
         while (1) switch (_context9.prev = _context9.next) {
           case 0:
-            alert(newFirstName.current.value);
-            alert(newLastName.current.value);
-            alert(newEmail.current.value);
-
-            // if (newPassword != null && confirmPassword != null && confirmPassword != "" && newPassword != "")
-            // {
-            //     let response = await apiService().put("/UserManagement/ChangeUserPassword", {
-            //         userId: parseInt(showUserDetails),
-            //         password: newPassword
-            //     });
-
-            //     if (response.data != null && response.data.error != null)
-            //     {
-            //         alert(response.data.error);
-            //     }
-            //     else
-            //     {
-            //         setShowChangePasswordDialog(false);
-            //     }
-            // }
-          case 3:
+            onAccountCreated({
+              firstName: newFirstName.current.value,
+              lastName: newLastName.current.value,
+              email: newEmail.current.value
+            });
+            setShowContactDialog(false);
+          case 2:
           case "end":
             return _context9.stop();
         }
       }, _callee9);
     }))
-  }, "create contact"))), showCustomSettings && /*#__PURE__*/_react["default"].createElement(CustomFields, {
+  }, "Create Account"))), showCustomSettings && /*#__PURE__*/_react["default"].createElement(CustomFields, {
     platformType: platformType
   }), /*#__PURE__*/_react["default"].createElement(CSVUsersUpload, {
     showDialog: uploadUsersShowDialog,
     onClose: function onClose() {
       setUploadUsersShowDialog(false);
     }
-  })));
-}
+  }))));
+};
+exports.UserManagement = UserManagement;
