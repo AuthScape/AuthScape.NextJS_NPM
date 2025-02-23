@@ -275,3 +275,5 @@ export const CreatePageModal = ({ isOpen, handleClose, pageTypes }) => {
     </Dialog>
   );
 };
+
+// export default CreatePageModal;

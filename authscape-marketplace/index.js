@@ -129,7 +129,7 @@ var Marketplace = function Marketplace(_ref) {
           case 0:
             setIsLoading(true);
             _context.next = 3;
-            return (0, _authscape.apiService)().post("/Marketplace/Search", {
+            return (0, _authscape.apiService)().post("/IndexModel/Search", {
               platformId: platformId,
               oemCompanyId: oemCompanyId,
               pageNumber: page,
@@ -247,7 +247,8 @@ var Marketplace = function Marketplace(_ref) {
         control: /*#__PURE__*/_react["default"].createElement(_material.Checkbox, {
           size: "small",
           sx: {
-            padding: 0.8,
+            paddingLeft: 0.8,
+            paddingTop: 0,
             color: "lightgray"
           },
           checked: filters.some(function (f) {
@@ -273,7 +274,8 @@ var Marketplace = function Marketplace(_ref) {
         }),
         label: /*#__PURE__*/_react["default"].createElement(_material.Typography, {
           sx: {
-            fontSize: 14
+            fontSize: 14,
+            marginTop: -1
           }
         }, filterOption.name)
       }) : /*#__PURE__*/_react["default"].createElement(Accordion, {
@@ -301,7 +303,7 @@ var Marketplace = function Marketplace(_ref) {
         component: "span"
       }, filterOption.name)), /*#__PURE__*/_react["default"].createElement(_material.AccordionDetails, {
         sx: {
-          marginTop: -2
+          marginTop: -1
         }
       }, filterOption.subcategories.map(function (subcat) {
         return /*#__PURE__*/_react["default"].createElement(_material.Box, null, /*#__PURE__*/_react["default"].createElement(_FormControlLabel["default"], {
@@ -309,7 +311,8 @@ var Marketplace = function Marketplace(_ref) {
           control: /*#__PURE__*/_react["default"].createElement(_material.Checkbox, {
             size: "small",
             sx: {
-              padding: 0.8,
+              paddingLeft: 0.8,
+              paddingTop: 0,
               color: "lightgray"
             },
             checked: filters.some(function (f) {
@@ -344,7 +347,8 @@ var Marketplace = function Marketplace(_ref) {
 
           label: /*#__PURE__*/_react["default"].createElement(_material.Typography, {
             sx: {
-              fontSize: 14
+              fontSize: 14,
+              marginTop: -1
             }
           }, subcat.name),
           onClick: function onClick(event) {

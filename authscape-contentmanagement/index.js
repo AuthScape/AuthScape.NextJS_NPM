@@ -845,6 +845,8 @@ var CreatePageModal = function CreatePageModal(_ref) {
     onClick: handleClose
   }, "Cancel")))));
 };
+
+// export default CreatePageModal;
 exports.CreatePageModal = CreatePageModal;
 "use strict";
 
@@ -879,34 +881,61 @@ var PageEditor = function PageEditor(_ref) {
     page = _useState2[0],
     setPage = _useState2[1];
   var initialData = {
+    root: {
+      props: {}
+    },
     content: [],
-    root: {}
+    zones: {}
   };
   var _useState3 = (0, _react.useState)(initialData),
     _useState4 = _slicedToArray(_useState3, 2),
     contentData = _useState4[0],
     setContentData = _useState4[1];
+  var _useState5 = (0, _react.useState)(true),
+    _useState6 = _slicedToArray(_useState5, 2),
+    loading = _useState6[0],
+    setLoading = _useState6[1];
   var fetchPageDetail = /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-      var response;
+      var response, parsedContent;
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
-            _context.next = 2;
+            setLoading(true);
+            _context.prev = 1;
+            _context.next = 4;
             return (0, _authscape.apiService)().get("/ContentManagement/GetPage?pageId=".concat(isOpen));
-          case 2:
+          case 4:
             response = _context.sent;
             if (response && response.status === 200) {
               setPage(response.data);
               if (response.data.content) {
-                setContentData(response.data.content);
+                try {
+                  parsedContent = JSON.parse(response.data.content);
+                  setContentData(parsedContent.data || initialData);
+                } catch (error) {
+                  setContentData(initialData);
+                }
+              } else {
+                setContentData(initialData);
               }
             }
-          case 4:
+            _context.next = 12;
+            break;
+          case 8:
+            _context.prev = 8;
+            _context.t0 = _context["catch"](1);
+            console.error("API fetch error:", _context.t0);
+            setContentData(initialData);
+          case 12:
+            _context.prev = 12;
+            setLoading(false);
+            return _context.finish(12);
+          case 15:
           case "end":
             return _context.stop();
         }
-      }, _callee);
+      }, _callee, null, [[1, 8, 12, 15]]);
     }));
     return function fetchPageDetail() {
       return _ref2.apply(this, arguments);
@@ -915,6 +944,9 @@ var PageEditor = function PageEditor(_ref) {
   (0, _react.useEffect)(function () {
     if (isOpen) {
       fetchPageDetail();
+    } else {
+      setContentData(initialData);
+      setLoading(false);
     }
   }, [isOpen]);
   var save = /*#__PURE__*/function () {
@@ -923,24 +955,31 @@ var PageEditor = function PageEditor(_ref) {
       return _regeneratorRuntime().wrap(function _callee2$(_context2) {
         while (1) switch (_context2.prev = _context2.next) {
           case 0:
+            _context2.prev = 0;
             contentParam = {
               pageId: page.id,
               content: JSON.stringify({
                 data: data
               })
             };
-            _context2.next = 3;
+            _context2.next = 4;
             return (0, _authscape.apiService)().post("/ContentManagement/UpdatePageContent", contentParam);
-          case 3:
+          case 4:
             response = _context2.sent;
             if (response && response.status === 200) {
               handleClose();
             }
-          case 5:
+            _context2.next = 11;
+            break;
+          case 8:
+            _context2.prev = 8;
+            _context2.t0 = _context2["catch"](0);
+            console.error("Error saving content:", _context2.t0);
+          case 11:
           case "end":
             return _context2.stop();
         }
-      }, _callee2);
+      }, _callee2, null, [[0, 8]]);
     }));
     return function save(_x2) {
       return _ref3.apply(this, arguments);
@@ -951,7 +990,14 @@ var PageEditor = function PageEditor(_ref) {
       position: "relative",
       zIndex: 1025
     }
-  }, /*#__PURE__*/_react["default"].createElement(_puck.Puck, {
+  }, console.log(contentData), loading ? /*#__PURE__*/_react["default"].createElement(_material.Box, {
+    sx: {
+      display: "flex",
+      justifyContent: "center",
+      flexDirection: "column",
+      alignItems: "center"
+    }
+  }, /*#__PURE__*/_react["default"].createElement("p", null, "Loading content..."), /*#__PURE__*/_react["default"].createElement(_material.CircularProgress, null)) : /*#__PURE__*/_react["default"].createElement(_puck.Puck, {
     config: config,
     data: contentData,
     onPublish: save,
@@ -970,4 +1016,6 @@ var PageEditor = function PageEditor(_ref) {
     }
   }));
 };
+
+// export default PageEditor;
 exports.PageEditor = PageEditor;

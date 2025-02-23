@@ -53,7 +53,7 @@ const Marketplace = ({setIsLoading, currentUser, oemCompanyId = null, platformId
 
         setIsLoading(true);
         
-        const response = await apiService().post("/Marketplace/Search", {
+        const response = await apiService().post("/IndexModel/Search", {
             platformId: platformId,
             oemCompanyId: oemCompanyId,
             pageNumber: page,
@@ -166,7 +166,7 @@ const Marketplace = ({setIsLoading, currentUser, oemCompanyId = null, platformId
                                                                     control={
                                                                         <Checkbox
                                                                             size="small"
-                                                                            sx={{padding:0.8, color:"lightgray"}}
+                                                                            sx={{paddingLeft: 0.8, paddingTop: 0, color:"lightgray"}}
                                                                             checked={filters.some(f => 
                                                                                 f.category === category.category && 
                                                                                 f.subcategory === "" &&
@@ -191,7 +191,7 @@ const Marketplace = ({setIsLoading, currentUser, oemCompanyId = null, platformId
                                                                             }} 
                                                                         />
                                                                     }
-                                                                    label={<Typography sx={{fontSize:14}}>{filterOption.name}</Typography>} 
+                                                                    label={<Typography sx={{fontSize:14, marginTop:-1}}>{filterOption.name}</Typography>} 
                                                                 />
                                                             ) : (
                                                                 <Accordion
@@ -212,7 +212,7 @@ const Marketplace = ({setIsLoading, currentUser, oemCompanyId = null, platformId
                                                                         sx={{paddingTop:0, marginTop:-1}}>
                                                                             <Typography component="span">{filterOption.name}</Typography>
                                                                         </AccordionSummary>
-                                                                        <AccordionDetails sx={{marginTop:-2}}>
+                                                                        <AccordionDetails sx={{marginTop:-1}}>
                                                                         {filterOption.subcategories.map((subcat) => (
                                                                             <Box>
                                                                                 <FormControlLabel
@@ -220,7 +220,7 @@ const Marketplace = ({setIsLoading, currentUser, oemCompanyId = null, platformId
                                                                                 control={
                                                                                     <Checkbox
                                                                                         size="small"
-                                                                                        sx={{ padding: 0.8, color: "lightgray" }}
+                                                                                        sx={{ paddingLeft: 0.8, paddingTop: 0, color: "lightgray" }}
                                                                                         checked={filters.some(f => 
                                                                                             f.category === category.category && // need to introduce subcategory
                                                                                             f.subcategory === filterOption.name &&
@@ -248,7 +248,7 @@ const Marketplace = ({setIsLoading, currentUser, oemCompanyId = null, platformId
                                                                                         }}
                                                                                     />
                                                                                 }
-                                                                                label={<Typography sx={{ fontSize: 14 }}>{subcat.name}</Typography>}
+                                                                                label={<Typography sx={{ fontSize: 14, marginTop:-1 }}>{subcat.name}</Typography>}
                                                                                 onClick={(event) => event.stopPropagation()} // Prevent label click propagation
                                                                                 />
                                                                             </Box>
