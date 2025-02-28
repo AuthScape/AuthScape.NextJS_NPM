@@ -619,16 +619,18 @@ var CreatePageModal = function CreatePageModal(_ref) {
       reset();
     }
   }, [isEditing, isOpen, reset, setValue]);
-  var watchedFields = watch(["title", "description", "slug"]);
+  var watchedFields = watch(["title", "description"]);
   var pageTypeId = watch("pageTypeId");
   var recursion = watch("recursion");
+  var slug = watch("slug");
   var selectedPageType = pageTypes.find(function (type) {
     return type.id === pageTypeId;
   });
   var isRecursive = (selectedPageType === null || selectedPageType === void 0 ? void 0 : selectedPageType.isRecursive) || false;
+  var isHomepage = (selectedPageType === null || selectedPageType === void 0 ? void 0 : selectedPageType.isHomepage) || false;
   var isFormValid = watchedFields.every(function (field) {
     return (field === null || field === void 0 ? void 0 : field.trim()) !== "";
-  }) && pageTypeId && (!isRecursive || isRecursive && recursion);
+  }) && pageTypeId && (!isRecursive || recursion) && (isHomepage || slug);
   var onSave = /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(pageParam) {
       var title, pageTypeId, description, recursion, slug, param, apiEndpoint, response;
@@ -643,7 +645,7 @@ var CreatePageModal = function CreatePageModal(_ref) {
               pageTypeId: pageTypeId,
               description: description,
               recursion: recursion,
-              slug: slug
+              slug: !isHomepage ? slug : ""
             };
             apiEndpoint = isEditing ? "/ContentManagement/UpdatePage" : "/ContentManagement/CreateNewPage";
             _context.next = 6;
@@ -774,7 +776,7 @@ var CreatePageModal = function CreatePageModal(_ref) {
         helperText: ((_errors$recursion = errors.recursion) === null || _errors$recursion === void 0 ? void 0 : _errors$recursion.message) || ""
       })));
     }
-  }), /*#__PURE__*/_react["default"].createElement(_reactHookForm.Controller, {
+  }), !isHomepage && /*#__PURE__*/_react["default"].createElement(_reactHookForm.Controller, {
     name: "slug",
     control: control,
     rules: {
@@ -845,7 +847,6 @@ var CreatePageModal = function CreatePageModal(_ref) {
     onClick: handleClose
   }, "Cancel")))));
 };
-
 // export default CreatePageModal;
 exports.CreatePageModal = CreatePageModal;
 "use strict";
@@ -990,7 +991,7 @@ var PageEditor = function PageEditor(_ref) {
       position: "relative",
       zIndex: 1025
     }
-  }, console.log(contentData), loading ? /*#__PURE__*/_react["default"].createElement(_material.Box, {
+  }, loading ? /*#__PURE__*/_react["default"].createElement(_material.Box, {
     sx: {
       display: "flex",
       justifyContent: "center",
@@ -1017,5 +1018,5 @@ var PageEditor = function PageEditor(_ref) {
   }));
 };
 
-// export default PageEditor;
+//export default PageEditor;
 exports.PageEditor = PageEditor;
