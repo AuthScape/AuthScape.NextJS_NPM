@@ -23,12 +23,13 @@ import { apiService } from "authscape";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
- export const CreatePageModal = ({ isOpen, handleClose, pageTypes }) => {
+export const CreatePageModal = ({ isOpen, handleClose, pageTypes, pageRoots }) => {
   const isEditing = typeof isOpen !== "boolean";
 
   const initialData = {
     title: "",
     pageTypeId: null,
+    pageRootId: null,
     description: "",
     recursion: null,
     slug: "",
@@ -50,6 +51,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     if (isEditing) {
       setValue("title", isOpen.title);
       setValue("pageTypeId", isOpen.pageTypeId);
+      setValue(
+        "pageRootId",
+        isOpen.pageRootId == null ? -1 : isOpen.pageRootId
+      );
       setValue("description", isOpen.description);
       setValue("recursion", isOpen.recursion);
       setValue("slug", isOpen.slug);
@@ -58,12 +63,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     }
   }, [isEditing, isOpen, reset, setValue]);
 
-  const watchedFields = watch(["title", "description",]);
+  const watchedFields = watch(["title", "description"]);
   const pageTypeId = watch("pageTypeId");
+  const pageRootId = watch("pageTypeId");
   const recursion = watch("recursion");
-  const slug = watch("slug")
+  const slug = watch("slug");
 
   const selectedPageType = pageTypes.find((type) => type.id === pageTypeId);
+  const selectedPageRoot = pageRoots.find((root) => root.id === pageRootId);
   const isRecursive = selectedPageType?.isRecursive || false;
   const isHomepage = selectedPageType?.isHomepage || false;
 
@@ -75,11 +82,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
   const onSave = async (pageParam) => {
     event.preventDefault();
-    const { title, pageTypeId, description, recursion, slug } = pageParam;
+    const { title, pageTypeId, pageRootId, description, recursion, slug } =
+      pageParam;
     const param = {
       pageId: isEditing ? isOpen.id : null,
       title: title,
       pageTypeId: pageTypeId,
+      pageRootId: pageRootId == -1 ? null : pageRootId,
       description: description,
       recursion: recursion,
       slug: !isHomepage ? slug : "",
@@ -149,7 +158,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
             <Controller
               name="pageTypeId"
               control={control}
-              rules={{ required: "Template is required" }}
+              rules={{ required: "PageType is required" }}
               render={({ field }) => (
                 <>
                   <Typography variant="subtitle2">Page Type</Typography>
@@ -177,35 +186,36 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                 </>
               )}
             />
-            {isRecursive && (
+            {!isHomepage && (
               <Controller
-                name="recursion"
+                name="pageRootId"
                 control={control}
-                rules={{
-                  required: "Recursion is required",
-                  min: { value: 1, message: "Recursion must be at least one" },
-                }}
                 render={({ field }) => (
                   <>
-                    <Typography variant="subtitle2">Recursion Day</Typography>
-                    <TextField
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">Days</InputAdornment>
-                        ),
-                      }}
-                      size="small"
-                      type="number"
+                    <Typography variant="subtitle2">Page Root</Typography>
+                    <Select
                       {...field}
-                      fullWidth
-                      error={!!errors.recursion}
-                      helperText={errors.recursion?.message || ""}
-                    />
+                      size="small"
+                      value={field.value || ""}
+                      onChange={(event) => {
+                        field.onChange(event.target.value);
+                      }}
+                    >
+                      <MenuItem key={-1} value={-1}>
+                        {"No Root"}
+                      </MenuItem>
+                      {pageRoots.map((root) => (
+                        <MenuItem key={root.id} value={root.id}>
+                          {"/" + root.rootUrl}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </>
                 )}
               />
             )}
-            {!isHomepage &&
+
+            {!isHomepage && (
               <Controller
                 name="slug"
                 control={control}
@@ -248,7 +258,35 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                   </>
                 )}
               />
-            }
+            )}
+            {isRecursive && (
+              <Controller
+                name="recursion"
+                control={control}
+                rules={{
+                  required: "Recursion is required",
+                  min: { value: 1, message: "Recursion must be at least one" },
+                }}
+                render={({ field }) => (
+                  <>
+                    <Typography variant="subtitle2">Recursion Day</Typography>
+                    <TextField
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">Days</InputAdornment>
+                        ),
+                      }}
+                      size="small"
+                      type="number"
+                      {...field}
+                      fullWidth
+                      error={!!errors.recursion}
+                      helperText={errors.recursion?.message || ""}
+                    />
+                  </>
+                )}
+              />
+            )}
             <Controller
               name="description"
               control={control}
