@@ -224,7 +224,6 @@ export function PrivateLabelEditor({loadedUser, notification, showAllDomains = f
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                 <Tab label="App Icon / Colors" />
                 <Tab label="Fonts" />
-                {/* <Tab label="Content" /> */}
                 <Tab label="Style Sheet Editor" />
                 <Tab label="HTML Import Editor" />
                 </Tabs>
@@ -371,20 +370,6 @@ export function PrivateLabelEditor({loadedUser, notification, showAllDomains = f
                     }
                 </Box>
                 }
-
-                {/* {value == 2 &&
-                <Box value={value} index={2}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                            <h4 style={{marginBottom:"0px"}}>Content</h4>
-                            <small>You can adjust the content within your site</small>
-                        </Grid>
-                    </Grid>
-                    <Box sx={{paddingTop:2}}>
-                        <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-                    </Box>
-                </Box>
-                } */}
 
                 {value == 2 &&
                 <Box value={value} index={3}>
