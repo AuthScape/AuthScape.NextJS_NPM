@@ -433,9 +433,6 @@ function AuthScapeApp(_ref) {
   }), pageProps != null && pageProps.oemCompanyId != null ? /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement("link", {
     href: process.env.apiUri + "/api/PrivateLabel/GetDataFromRecord?oemCompanyId=" + pageProps.oemCompanyId,
     rel: "stylesheet"
-  }), /*#__PURE__*/_react["default"].createElement("link", {
-    rel: "icon",
-    href: "/favicon.ico"
   })) : /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement("link", {
     rel: "icon",
     href: "/favicon.ico"

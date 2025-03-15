@@ -443,7 +443,7 @@ export function AuthScapeApp ({Component, layout, loadingLayout, pageProps, muiT
                             href={process.env.apiUri + "/api/PrivateLabel/GetDataFromRecord?oemCompanyId=" + pageProps.oemCompanyId}
                             rel="stylesheet"
                         />
-                        <link rel="icon" href="/favicon.ico" />
+                        {/* <link rel="icon" href={process.env.apiUri + "/api/PrivateLabel/GetFavIcon?oemCompanyId=" + pageProps.oemCompanyId} /> */}
                     </>
                 :
                 <>
