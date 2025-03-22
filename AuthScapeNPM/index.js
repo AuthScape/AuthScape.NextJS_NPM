@@ -430,13 +430,7 @@ function AuthScapeApp(_ref) {
   return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement(_head["default"], null, /*#__PURE__*/_react["default"].createElement("meta", {
     name: "viewport",
     content: "width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"
-  }), pageProps != null && pageProps.oemCompanyId != null ? /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement("link", {
-    href: process.env.apiUri + "/api/PrivateLabel/GetDataFromRecord?oemCompanyId=" + pageProps.oemCompanyId,
-    rel: "stylesheet"
-  })) : /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement("link", {
-    rel: "icon",
-    href: "/favicon.ico"
-  }))), /*#__PURE__*/_react["default"].createElement(_styles.ThemeProvider, {
+  })), /*#__PURE__*/_react["default"].createElement(_styles.ThemeProvider, {
     theme: muiTheme
   }, frontEndLoadedState != null && frontEndLoadedState && pathname != "/signin-oidc" && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, layout != null && layout({
     children: /*#__PURE__*/_react["default"].createElement(Component, _extends({}, pageProps, {
