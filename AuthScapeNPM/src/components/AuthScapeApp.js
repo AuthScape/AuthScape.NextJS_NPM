@@ -437,19 +437,18 @@ export function AuthScapeApp ({Component, layout, loadingLayout, pageProps, muiT
             <Head>
                 <meta name="viewport" content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"></meta>
 
-                {(pageProps != null && pageProps.oemCompanyId != null) ?
+                {/* {(pageProps != null && pageProps.oemCompanyId != null) ?
                     <>
                         <link
                             href={process.env.apiUri + "/api/PrivateLabel/GetDataFromRecord?oemCompanyId=" + pageProps.oemCompanyId}
                             rel="stylesheet"
                         />
-                        {/* <link rel="icon" href={process.env.apiUri + "/api/PrivateLabel/GetFavIcon?oemCompanyId=" + pageProps.oemCompanyId} /> */}
                     </>
                 :
                 <>
                     <link rel="icon" href="/favicon.ico" />
                 </>
-                }
+                } */}
 
             </Head>
 
