@@ -219,12 +219,25 @@ export function AuthScapeApp ({Component, layout, loadingLayout, pageProps, muiT
 
         if (frontEndLoadedState)
         {
-            if (process.env.googleAnalytics4 != "")
+            if (pageProps.googleAnalytics4Code != null)
+            {
+                initGA(pageProps.googleAnalytics4Code);
+            }
+            else if (process.env.googleAnalytics4 != "")
             {
                 initGA(process.env.googleAnalytics4);
             }
 
-            if (process.env.microsoftClarityTrackingCode != "")
+            if (pageProps.microsoftClarityCode != null)
+            {
+                clarity.init(pageProps.microsoftClarityCode);
+
+                if (signedInUser.current != null && clarity.hasStarted())
+                {
+                    clarity.identify('USER_ID', { userProperty: signedInUser.current.id.toString() });
+                }
+            }
+            else if (process.env.microsoftClarityTrackingCode != "")
             {
                 clarity.init(process.env.microsoftClarityTrackingCode);
 
