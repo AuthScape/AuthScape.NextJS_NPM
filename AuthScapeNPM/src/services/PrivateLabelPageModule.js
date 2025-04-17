@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-export async function PrivateLabelPageModule(apiUri, host) {
+export async function PrivateLabelPageModule(apiUri, host, resolvedUrl) {
 
     var data = {};
     if (host.includes("localhost"))
@@ -15,27 +15,38 @@ export async function PrivateLabelPageModule(apiUri, host) {
     const response = await fetch(apiUri + "/api/PrivateLabel/GetCompanyIdFromDomain?domain=" + host);
     if (response.status == 200)
     {
-        var data = await response.json();
-        if (data != null)
+        var dataResponse = await response.json();
+        if (dataResponse != null)
         {
-            if (data.companyId != null)
+            if (dataResponse.companyId != null)
             {
-                data.oemCompanyId = data.companyId;
+                data.oemCompanyId = dataResponse.companyId;
             }
 
-            if (data.demoCompanyId != null)
+            if (dataResponse.demoCompanyId != null)
             {
-                data.demoId = data.demoCompanyId;
+                data.demoId = dataResponse.demoCompanyId;
             }
 
-            if (data.favIcon != null)
+            if (dataResponse.favIcon != null)
             {
-                data.favIcon = data.favIcon;
+                data.favIcon = dataResponse.favIcon;
             }
 
-            if (data.companyName != null)
+            if (dataResponse.companyName != null)
             {
-                data.companyName = data.companyName;
+                data.companyName = dataResponse.companyName;
+            }
+
+            // check for redirect
+            if (dataResponse.redirectTrafficToCanonical)
+            {
+                data.redirect = {
+                    redirect: {
+                        destination: dataResponse.canonicalBaseUrl,
+                        permanent: false,
+                    },
+                }
             }
         }
     }
