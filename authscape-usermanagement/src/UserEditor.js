@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef, useImperativeHandle, forwardRef } from 'react';
-import { Box } from '@mui/system';
+import { Box, textAlign } from '@mui/system';
 import TextField from '@mui/material/TextField';
-import { Autocomplete, Avatar, Button } from '@mui/material';
+import { Autocomplete, Avatar, Button, Drawer } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -11,23 +11,30 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
 import { useForm, Controller } from 'react-hook-form';
-import { Tab, Tabs } from '@mui/material';
+import { EditorState, ContentState } from 'draft-js';
+import { Tab, Tabs, Stack } from '@mui/material';
 import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
 import { apiService } from 'authscape';
 import Grid from '@mui/material/Grid2';
 
 // remove when publishing
 // import {renderCustomField, renderSystemField } from './EditorFields';
+// import CompanyEditor from './CompanyEditor';
+// import { UserManagement } from './UserManagement';
 
 
 const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, ref) => {
 
   const {control, register, handleSubmit, formState: { errors }, watch, setValue } = useForm();
 
+  const [editors, setEditors] = useState({});
   const refTimeoutToken = useRef(null);
 
   const refShouldClose = useRef(null);
   const refSubmitButton = useRef(null);
+
+  const [editAddCompanyId, setEditAddCompanyId] = useState(null);
+  const [editAddLocationId, setEditAddLocationId] = useState(null);
 
   const [selectedRoles, setSelectedRole] = useState([]);
   const [selectedPermission, setSelectedPermission] = useState([]);
@@ -72,6 +79,7 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
       setTabValue(newValue);
   };
 
+
   useEffect(() => {
 
       const fetchData = async () => {
@@ -89,69 +97,69 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
           }
 
       }
+
       fetchData();
 
   }, []);
 
-  useEffect(() => {
 
-    if (userId != null)
+
+  const fetchUserData = async () => {
+    let response = await apiService().get("/UserManagement/GetUser?userId=" + userId);
+    if (response != null && response.status == 200)
     {
-      const fetchData = async () => {
-        let response = await apiService().get("/UserManagement/GetUser?userId=" + userId);
-        if (response != null && response.status == 200)
-        {
-          setUser(response.data);
+      setUser(response.data);
 
-          if (response.data.company != null)
-          {
-            setCompany(response.data.company);
-          }
-
-          if (response.data.location != null)
-          {
-            setLocation(response.data.location);
-          }
-
-          if (response.data.customFields != null)
-          {
-            setCustomFields(response.data.customFields);
-          }
-
-          // assign all selected roles
-          if (response.data.roles != null)
-          {
-            let roleNames = [];
-            for (let index = 0; index < response.data.roles.length; index++) {
-              const role = response.data.roles[index];
-              
-              roleNames.push(role);
-            }
-            setSelectedRole(roleNames);
-          }
-
-          // assign all selected permissions
-          if (response.data.permissions != null)
-          {
-            let permissionNames = [];
-            for (let index = 0; index < response.data.permissions.length; index++) {
-              const permission = response.data.permissions[index];
-              
-              permissionNames.push(permission);
-            }
-            setSelectedPermission(permissionNames);
-          }
-          
-        }
-      }
-
-      if (userId != -1)
+      if (response.data.company != null)
       {
-        fetchData();
+        setCompany(response.data.company);
       }
-      
+
+      if (response.data.location != null)
+      {
+        setLocation(response.data.location);
+      }
+
+      if (response.data.customFields != null)
+      {
+          setCustomFields(response.data.customFields);
+      }
+
+      setEditors({...editors});
     }
 
+      // assign all selected roles
+      if (response.data.roles != null)
+      {
+        let roleNames = [];
+        for (let index = 0; index < response.data.roles.length; index++) {
+          const role = response.data.roles[index];
+          
+          roleNames.push(role);
+        }
+        setSelectedRole(roleNames);
+      }
+
+      // assign all selected permissions
+      if (response.data.permissions != null)
+      {
+        let permissionNames = [];
+        for (let index = 0; index < response.data.permissions.length; index++) {
+          const permission = response.data.permissions[index];
+          
+          permissionNames.push(permission);
+        }
+        setSelectedPermission(permissionNames);
+      }
+  }
+
+  useEffect(() => {
+
+    if (userId != -1)
+    {
+      fetchUserData();
+    }
+      
   }, [userId])
 
   const fields = [
@@ -265,7 +273,11 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
 
             customFields && customFields.forEach(customField => {
 
-              let newValue = data[customField.customFieldId];
+              let newValue = 
+              // customField.customFieldType == 2 ? 
+              // draftToHTML(editors[customField.customFieldId].getCurrentContent()) 
+              // : 
+              data[customField.customFieldId];
               if (newValue != null)
               {
                 userCustomFields.push({
@@ -286,6 +298,7 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
                 companyId: company != null ? company.id : null,
                 locationId: location != null ? location.id : null,
                 email: data.Email,
+                phoneNumber: data.PhoneNumber,
                 isActive: data.IsActive,
                 roles: selectedRoles != "" ? selectedRoles : null,
                 permissions: selectedPermission != "" ? selectedPermission : null,
@@ -303,7 +316,7 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
           })} noValidate autoComplete="off">
             
             <Grid container spacing={2} sx={{paddingTop:2}}>
-              <Grid size={3} sx={{backgroundColor:"#f5f8fa", borderRadius:2, border: "1px solid lightgray", padding:2}}>
+              <Grid size={4} sx={{backgroundColor:"#f5f8fa", borderRadius:2, border: "1px solid lightgray", padding:2}}>
                 <Box sx={{textAlign:"center", display:"flex", justifyContent:"center", padding:2 }}>
                     <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"  sx={{ width: 100, height: 100 }} />
                 </Box>
@@ -320,108 +333,113 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
                 </Box>
 
                 <Box>
-                  <Autocomplete
-                    id="companySelect"
-                    sx={{paddingTop:2}}
-                    getOptionLabel={
-                      (option) => option.title
+                <Autocomplete
+                  id="companySelect"
+                  sx={{ paddingTop: 2 }}
+                  getOptionLabel={(option) => option.title || option}
+                  options={[...companies, { title: "Add Company", isAddOption: true }]} // Add option appended here
+                  autoComplete
+                  includeInputInList
+                  filterSelectedOptions
+                  value={company}
+                  noOptionsText="No companies"
+                  onChange={(event, newValue) => {
+                    if (newValue?.isAddOption) {
+                      
+                      setEditAddCompanyId(-1);
+
+                      // Handle "Add Company" logic
+                      // const newCompany = prompt("Enter the new company name:"); // Prompt the user for input
+                      // if (newCompany) {
+                      //   const updatedCompany = { title: newCompany };
+                      //   setCompanies([...companies, updatedCompany]); // Add the new company to the list
+                      //   setCompany(updatedCompany); // Select the new company
+                      // }
+                    } else {
+                      setCompany(newValue); // Select an existing company
                     }
-                    filterOptions={(x) => x}
-                    options={companies != null ? companies : []}
-                    autoComplete
-                    includeInputInList
-                    filterSelectedOptions
-                    value={company}
-                    noOptionsText="No companies"
-                    onChange={(event, newValue) => {
-                      //setCompanies(newValue ? [newValue, ...companies] : companies);
-                      setCompany(newValue);
-                      setLocation(null);
-                    }}
-                    onInputChange={(event, newInputValue) => {
-                      setInputCompanyValue(newInputValue);
-                      setLocation(null);
-                    }}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Company" fullWidth />
-                    )}
-                    renderOption={(props, option) => {
-                      // const matches =
-                      //   option.structured_formatting.main_text_matched_substrings || [];
+                    setLocation(null);
+                  }}
+                  onInputChange={(event, newInputValue) => {
+                    setInputCompanyValue(newInputValue);
+                    setLocation(null);
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Company" fullWidth />
+                  )}
+                  renderOption={(props, option) => (
+                    <li {...props} key={"company-" + option.title}>
+                      <Grid container alignItems="center">
+                        <Grid item sx={{ display: 'flex', width: 44 }}>
+                          <BusinessRoundedIcon sx={{ color: 'text.secondary' }} />
+                        </Grid>
+                        <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                          <Typography variant="body2" color={option.isAddOption ? "primary" : "text.secondary"}>
+                            {option.title}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </li>
+                  )}
+                />
+                <Box sx={{textAlign:"right", paddingTop: 1}}>
+                  <Button variant={"text"} onClick={() => {
+                    setEditAddCompanyId(company != null ? company.id : -1);
+                  }}>Edit Company</Button>
+                  <Button variant={"text"} onClick={() =>{
+                    setEditAddCompanyId(-1);
+                  }}>Add Company</Button>
+                </Box>
 
-                      // const parts = parse(
-                      //   option.structured_formatting.main_text,
-                      //   matches.map((match) => [match.offset, match.offset + match.length]),
-                      // );
+                <Autocomplete
+                  id="LocationSelect"
+                  sx={{ paddingTop: 3 }}
+                  getOptionLabel={(option) => option.title || option}
+                  options={[...locations, { title: "Add Location", isAddOption: true }]} // Add option appended here
+                  autoComplete
+                  includeInputInList
+                  filterSelectedOptions
+                  value={location}
+                  noOptionsText="No locations"
+                  onChange={(event, newValue) => {
+                    if (newValue?.isAddOption) {
 
+                      setEditAddLocationId(-1);
 
-                      return (
-                        <li {...props} key={"company-" + props.id} >
-                          <Grid container alignItems="center">
-                            <Grid item sx={{ display: 'flex', width: 44 }}>
-                              <BusinessRoundedIcon sx={{ color: 'text.secondary' }} />
-                            </Grid>
-                            <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                              {/* {parts.map((part, index) => (
-                                <Box
-                                  key={index}
-                                  component="span"
-                                  sx={{ fontWeight: part.highlight ? 'bold' : 'regular' }}
-                                >
-                                  {part.text}
-                                </Box>
-                              ))} */}
-                              <Typography variant="body2" color="text.secondary">
-                                {option.title}
-                              </Typography>
-                            </Grid>
-                          </Grid>
-                        </li>
-                      );
-                    }}
-                  />
-
-                  <Autocomplete
-                    id="LocationSelect"
-                    sx={{paddingTop:3}}
-                    getOptionLabel={
-                      (option) => option.title
+                    } else {
+                      setLocation(newValue); // Select an existing location
                     }
-                    filterOptions={(x) => x}
-                    options={locations != null ? locations : []}
-                    autoComplete
-                    includeInputInList
-                    filterSelectedOptions
-                    value={location}
-                    noOptionsText="No locations"
-                    onChange={(event, newValue) => {
-                      setLocations(newValue ? [newValue, ...locations] : locations);
-                      setLocation(newValue);
-                    }}
-                    onInputChange={(event, newInputValue) => {
-                      //setInputCompanyValue(newInputValue);
-                    }}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Location" fullWidth />
-                    )}
-                    renderOption={(props, option) => {
-
-                      return (
-                        <li {...props}>
-                          <Grid container alignItems="center">
-                            <Grid item sx={{ display: 'flex', width: 44 }}>
-                              <BusinessRoundedIcon sx={{ color: 'text.secondary' }} />
-                            </Grid>
-                            <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                              <Typography variant="body2" color="text.secondary">
-                                {option.title}
-                              </Typography>
-                            </Grid>
-                          </Grid>
-                        </li>
-                      );
-                    }}
-                  />
+                  }}
+                  onInputChange={(event, newInputValue) => {
+                    // Optional: Update input handling logic
+                    setInputCompanyValue(newInputValue);
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Location" fullWidth />
+                  )}
+                  renderOption={(props, option) => (
+                    <li {...props} key={"location-" + option.title}>
+                      <Grid container alignItems="center">
+                        <Grid item sx={{ display: 'flex', width: 44 }}>
+                          <BusinessRoundedIcon sx={{ color: 'text.secondary' }} />
+                        </Grid>
+                        <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                          <Typography variant="body2" color={option.isAddOption ? "primary" : "text.secondary"}>
+                            {option.title}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </li>
+                  )}
+                />
+                </Box>
+                <Box sx={{textAlign:"right", paddingTop: 1}}>
+                  <Button variant={"text"} onClick={() => {
+                    setEditAddLocationId(company != null ? company.id : -1);
+                  }}>Edit Location</Button>
+                  <Button variant={"text"} onClick={() =>{
+                    setEditAddLocationId(-1);
+                  }}>Add Location</Button>
                 </Box>
 
                 <Box sx={{fontWeight:"bold", paddingTop:2}}>
@@ -498,30 +516,26 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
                     {errors.permissions && <Typography color={"red"}>{"permissions"} is required.</Typography>}
 
                 </Box>
-            
 
               </Grid>
-              <Grid size={9}>
-
-                <Box>
-                  <Box>
-                  <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" aria-label="basic tabs example" centered>
-                    {tabOptions.map((tab, index) => {
-                      return (
-                        <Tab key={tab.id} label={tab.name} value={tab.id} />
-                      )
-                    })}
-                  </Tabs>
-                  </Box>
-                  
-                  <Grid container spacing={1} sx={{paddingLeft:2, paddingRight:2, paddingTop:2}}>
-
+              <Grid item size={8} sx={{backgroundColor:"#f5f8fa", borderRadius:2, border: "1px solid lightgray", padding:2}}>
+                  <Stack spacing={2}>
+                    <Box>
+                      <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" aria-label="basic tabs example" centered>
+                        {tabOptions.map((tab, index) => {
+                          return (
+                            <Tab key={tab.id} label={tab.name} value={tab.id} />
+                          )
+                        })}
+                      </Tabs>
+                    </Box>
+                    <Box>
                     {tabOptions.map((tab, index) => {
                       return (
                         <>
                         {tabValue === tab.id && 
                           <>
-                            {customFields != null &&
+                            {customFields &&
                               <>
                                 {renderCustomField(userId, user, control, errors, register, setValue, customFields.filter(s => s.tabId == tab.id))}
                               </>
@@ -531,13 +545,73 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
                         </>
                       )
                     })}
-
-                      <Button ref={refSubmitButton} variant="contained" type="submit" sx={{display:"none"}}>Save Changes</Button>
-                  </Grid>
-                </Box>
+                    </Box>
+                  </Stack>
+                 
+                 
+                    
+                    
+                  <Button ref={refSubmitButton} variant="contained" type="submit" sx={{display:"none"}}>Save Changes</Button>
+                  
               </Grid>
             </Grid>
           </form>
+
+
+          {/* Company Information */}
+          <React.Fragment key={"right"}>
+            <Drawer
+              anchor={"right"}
+              open={editAddCompanyId != null}
+              maxWidth={"lg"}
+              onClose={() => {
+                setEditAddCompanyId(null);
+              }}
+              sx={{
+                "& .MuiDrawer-paper": {
+                  width: "80vw", // Set width to 80% of the viewport width
+                  maxWidth: "1000px", // Optional: Limit the maximum width
+                },
+              }}          
+              >
+                <Box sx={{padding:2}}>
+                  <UserManagement platformType={2} defaultIdentifier={editAddCompanyId} onSaved={async () => {
+                    setEditAddCompanyId(null);
+                    await fetchUserData();
+                  }} />
+                </Box>
+            </Drawer>
+          </React.Fragment>
+
+
+          {/* Location Information */}
+          <React.Fragment key={"right"}>
+            <Drawer
+              anchor={"right"}
+              open={editAddLocationId != null}
+              maxWidth={"lg"}
+              onClose={() => {
+                setEditAddLocationId(null);
+              }}
+              sx={{
+                "& .MuiDrawer-paper": {
+                  width: "80vw", // Set width to 80% of the viewport width
+                  maxWidth: "1000px", // Optional: Limit the maximum width
+                },
+              }}          
+              >
+                <Box sx={{padding:2}}>
+
+                  <UserManagement platformType={3} companyId={company != null ? company.id : -1} defaultIdentifier={editAddLocationId} onSaved={async () => {
+                    setEditAddLocationId(null);
+                    await fetchUserData();
+                  }} />
+
+                </Box>
+            </Drawer>
+          </React.Fragment>
+
+
       </Box>
   )
 });
