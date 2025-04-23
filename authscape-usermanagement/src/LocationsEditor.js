@@ -1,15 +1,27 @@
 import React, {useEffect, useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import { Box } from '@mui/system';
+import TextField from '@mui/material/TextField';
 import { Autocomplete, Avatar, Button, Drawer } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import Checkbox from '@mui/material/Checkbox';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemText from '@mui/material/ListItemText';
 import { useForm, Controller } from 'react-hook-form';
+import { EditorState, ContentState } from 'draft-js';
 import { Tab, Tabs, Stack } from '@mui/material';
+import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
 import { apiService } from 'authscape';
 import Grid from '@mui/material/Grid2';
 
 // remove when publishing
 // import {renderCustomField, renderSystemField } from './EditorFields';
 
-const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = null}, ref) => {
+
+const LocationEditor = forwardRef(({locationId = null, companyId = null, platformType, onSaved = null}, ref) => {
 
   const {control, register, handleSubmit, formState: { errors }, watch, setValue } = useForm();
 
@@ -20,8 +32,6 @@ const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = nul
 
   const [selectedRoles, setSelectedRole] = useState([]);
   const [selectedPermission, setSelectedPermission] = useState([]);
-
-  const [company, setCompany] = useState(null);
 
   const [locations, setLocations] = useState([]);
   const [location, setLocation] = useState(null);
@@ -49,10 +59,10 @@ const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = nul
 
       await refreshTabOptions();
 
-      let response = await apiService().get("/UserManagement/GetCompany?companyId=" + companyId);
+      let response = await apiService().get("/UserManagement/GetLocation?locationId=" + locationId);
       if (response != null && response.status == 200)
       {
-        setCompany(response.data);
+        setLocation(response.data);
 
         if (response.data.customFields != null)
         {
@@ -86,13 +96,13 @@ const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = nul
         }
     }
 
-    if (companyId != -1)
+    if (locationId != -1)
     {
       fetchData();
     }
       
 
-  }, [companyId])
+  }, [locationId])
 
   const fields = [
     "Title"
@@ -117,11 +127,11 @@ const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = nul
 
     const fetchData = async () => {
 
-      if (company != null)
+      if (location != null)
       {
         if (inputLocationValue == null || inputLocationValue == "")
         {
-          let response = await apiService().get("/UserManagement/GetLocations?companyId=" + company.id);
+          let response = await apiService().get("/UserManagement/GetLocations?locationId=" + locationId);
           if (response != null && response.status == 200)
           {
             setLocations(response.data);
@@ -129,7 +139,7 @@ const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = nul
         }
         else
         {
-          let response = await apiService().get("/UserManagement/GetLocations?companyId=" + company.id + "&name=" + inputLocationValue);
+          let response = await apiService().get("/UserManagement/GetLocations?locationId=" + locationId + "&name=" + inputLocationValue);
           if (response != null && response.status == 200)
           {
             setLocations(response.data);
@@ -138,12 +148,12 @@ const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = nul
       }
     }
 
-    if (company != null || companyId == -1)
+    if (location != null || locationId == -1)
     {
       fetchData();
     }
 
-  }, [company, companyId, inputLocationValue, company])
+  }, [location, locationId, inputLocationValue])
 
 
   const saveChanges = (shouldClose) => {
@@ -185,8 +195,9 @@ const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = nul
                 
             });
 
-            let response = await apiService().post("/UserManagement/UpdateCompany", {
-                id: companyId,
+            let response = await apiService().post("/UserManagement/UpdateLocation", {
+                id: locationId,
+                companyId: companyId,
                 title: data.Title,
                 isDeactivated: false,
                 customFields: userCustomFields
@@ -210,19 +221,10 @@ const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = nul
 
                 <hr />
                 <Box sx={{fontWeight:"bold", paddingBottom: 1}}>
-                  About this company
+                  About this Location
                 </Box>
 
-                {renderSystemField(companyId, company, control, errors, register, fields)}
-
-                {/* <Box sx={{fontWeight:"bold", paddingTop:1, paddingBottom: 1}}>
-                  Locations
-                </Box>
-                
-                <Box>
-                  Need a way to add and view locations
-                </Box> */}
-
+                {renderSystemField(locationId, location, control, errors, register, fields)}
 
               </Grid>
               <Grid item size={8} sx={{backgroundColor:"#f5f8fa", borderRadius:2, border: "1px solid lightgray", padding:2}}>
@@ -244,7 +246,7 @@ const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = nul
                           <>
                             {customFields &&
                               <>
-                                {renderCustomField(companyId, company, control, errors, register, setValue, customFields.filter(s => s.tabId == tab.id))}
+                                {renderCustomField(locationId, location, control, errors, register, setValue, customFields.filter(s => s.tabId == tab.id))}
                               </>
                             }
                           </>
@@ -268,6 +270,6 @@ const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = nul
   )
 });
 
-CompanyEditor.displayName = "CompanyEditor";
+LocationEditor.displayName = "LocationEditor";
 
-export default CompanyEditor;
+export default LocationEditor;
