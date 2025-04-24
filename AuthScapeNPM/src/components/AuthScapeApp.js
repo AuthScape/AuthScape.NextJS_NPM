@@ -5,14 +5,11 @@ import Head from "next/head";
 import { useSearchParams, usePathname } from 'next/navigation';
 import axios from 'axios';
 import querystring from "query-string";
-// import Cookies from 'js-cookie';
 import Router from 'next/router';
 import GA4React from 'ga-4-react';
 import { create } from 'zustand'
 import { clarity } from 'react-microsoft-clarity';
-
-// comment this out
-// import { authService, apiService, setupOEMProps, OEMStyleSheet } from 'authscape';
+import { authService } from 'authscape';
 
 export function AuthScapeApp ({Component, layout, loadingLayout, pageProps, muiTheme = {}, store={}, enforceLoggedIn = false, enableAuth = true}) {
 
