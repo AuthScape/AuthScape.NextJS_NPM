@@ -9200,6 +9200,12 @@ function _PrivateLabelPageModule() {
             if (dataResponse.companyName != null) {
               data.companyName = dataResponse.companyName;
             }
+            if (dataResponse.googleAnalytics4Code != null) {
+              data.googleAnalytics4Code = dataResponse.googleAnalytics4Code;
+            }
+            if (dataResponse.microsoftClarityCode != null) {
+              data.microsoftClarityCode = dataResponse.microsoftClarityCode;
+            }
 
             // check for redirect
             if (dataResponse.redirectTrafficToCanonical) {

@@ -1,12 +1,11 @@
 {
   "name": "authscape",
-  "version": "1.0.695",
+  "version": "1.0.696",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start --turbopack"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx babel src --out-file index.js"
   },
   "author": "zuechb",
   "license": "ISC",
