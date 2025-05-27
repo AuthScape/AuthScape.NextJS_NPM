@@ -23,14 +23,14 @@ import Grid from '@mui/material/Grid2';
 // import { UserManagement } from './UserManagement';
 
 
-const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, ref) => {
+const UserEditor = forwardRef(({userId = null, platformType, onSaved = null, onCustomTabs = null}, ref) => {
 
   const {control, register, handleSubmit, formState: { errors }, watch, setValue } = useForm();
 
   const [editors, setEditors] = useState({});
   const refTimeoutToken = useRef(null);
 
-  const refShouldClose = useRef(null);
+  const refShouldClose = useRef(false);
   const refSubmitButton = useRef(null);
 
   const [editAddCompanyId, setEditAddCompanyId] = useState(null);
@@ -53,6 +53,7 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
   const [customFields, setCustomFields] = useState([]);
 
   const [user, setUser] = useState(null);
+  const [customTabs, setCustomTabs] = useState(null);
 
   const [tabOptions, setTabOptions] = useState([]);
 
@@ -161,6 +162,24 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
     }
       
   }, [userId])
+
+
+  useEffect(() => {
+  
+      if (userId != null && onCustomTabs != null)
+      {
+        const fetchData = async () => {
+          let tabs = await onCustomTabs(platformType, userId)
+          if (tabs != null)
+          {
+            setCustomTabs(tabs);
+          }
+        }
+        fetchData();
+      }
+  
+  }, [userId]);
+
 
   const fields = [
     "FirstName",
@@ -271,14 +290,14 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
             
             let userCustomFields = [];
 
-            customFields && customFields.forEach(customField => {
+            customFields && customFields.forEach(async (customField) => {
 
               let newValue = 
               // customField.customFieldType == 2 ? 
               // draftToHTML(editors[customField.customFieldId].getCurrentContent()) 
               // : 
               data[customField.customFieldId];
-              if (newValue != null)
+              if (newValue != null && typeof newValue === 'string')
               {
                 userCustomFields.push({
                     customFieldId: customField.customFieldId,
@@ -287,6 +306,31 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
                     customFieldType: customField.customFieldType,
                     value: newValue.toString()
                 });
+              }
+              else if (newValue instanceof Blob)
+              {
+                  const newBlob = new Blob([newValue], { type: newValue.type });
+                
+                  const data = new FormData();
+                  data.append("file", newBlob);
+                  data.append("identifier", userId);
+
+                  data.append("platformType", 1); // company
+                  data.append("customFieldId", customField.customFieldId); 
+
+                  const response = await apiService().post("/UserManagement/UploadCustomFieldImage", data);
+                  if (response != null && response.status == 200)
+                  {
+
+                    userCustomFields.push({
+                        customFieldId: customField.customFieldId,
+                        name: customField.name,
+                        isRequired: customField.isRequired,
+                        customFieldType: customField.customFieldType,
+                        value: response.data
+                    });
+
+                  }
               }
                 
             });
@@ -309,7 +353,7 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
             {
                 if (onSaved != null)
                 {
-                    onSaved(refShouldClose.current);
+                    onSaved(refShouldClose.current, 1, userId, response.data);
                 }
             }
 
@@ -407,6 +451,7 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
                       setEditAddLocationId(-1);
 
                     } else {
+                      
                       setLocation(newValue); // Select an existing location
                     }
                   }}
@@ -435,7 +480,7 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
                 </Box>
                 <Box sx={{textAlign:"right", paddingTop: 1}}>
                   <Button variant={"text"} onClick={() => {
-                    setEditAddLocationId(company != null ? company.id : -1);
+                    setEditAddLocationId(location != null ? location.id : -1);
                   }}>Edit Location</Button>
                   <Button variant={"text"} onClick={() =>{
                     setEditAddLocationId(-1);
@@ -522,11 +567,19 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
                   <Stack spacing={2}>
                     <Box>
                       <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" aria-label="basic tabs example" centered>
+                        
                         {tabOptions.map((tab, index) => {
                           return (
                             <Tab key={tab.id} label={tab.name} value={tab.id} />
                           )
                         })}
+
+                        {customTabs != null && customTabs.map((tab, index) => {
+                          return (
+                            <Tab key={"custom-" + tab.id} label={tab.title} value={tab.id} />
+                          )
+                        })}
+
                       </Tabs>
                     </Box>
                     <Box>
@@ -545,6 +598,19 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
                         </>
                       )
                     })}
+
+                    {customTabs != null && customTabs.map((tab, index) => {
+                        return (
+                          <>
+                            {tabValue === tab.id && 
+                              <Box>
+                                {tab.content}
+                              </Box>
+                            }
+                          </>
+                        )
+                    })}
+                    
                     </Box>
                   </Stack>
                  
@@ -575,9 +641,12 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
               }}          
               >
                 <Box sx={{padding:2}}>
-                  <UserManagement platformType={2} defaultIdentifier={editAddCompanyId} onSaved={async () => {
+                  <UserManagement platformType={2} defaultIdentifier={editAddCompanyId} onSaved={async (shouldClose, platformType, id, fields) => {
                     setEditAddCompanyId(null);
                     await fetchUserData();
+
+                    onSaved(shouldClose, platformType, id, fields);
+
                   }} />
                 </Box>
             </Drawer>
@@ -602,9 +671,11 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null}, re
               >
                 <Box sx={{padding:2}}>
 
-                  <UserManagement platformType={3} companyId={company != null ? company.id : -1} defaultIdentifier={editAddLocationId} onSaved={async () => {
+                  <UserManagement platformType={3} companyId={company != null ? company.id : -1} defaultIdentifier={editAddLocationId} onSaved={async (shouldClose, platformType, id, fields) => {
                     setEditAddLocationId(null);
                     await fetchUserData();
+
+                    onSaved(shouldClose, platformType, id, fields);
                   }} />
 
                 </Box>

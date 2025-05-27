@@ -10,10 +10,18 @@ var _system = require("@mui/system");
 var _material = require("@mui/material");
 var _reactHookForm = require("react-hook-form");
 var _authscape = require("authscape");
+var _TextField = _interopRequireDefault(require("@mui/material/TextField"));
+var _BusinessRounded = _interopRequireDefault(require("@mui/icons-material/BusinessRounded"));
+var _Typography = _interopRequireDefault(require("@mui/material/Typography"));
 var _Grid = _interopRequireDefault(require("@mui/material/Grid2"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
@@ -30,12 +38,16 @@ function _iterableToArrayLimit(arr, i) { var _i = null == arr ? null : "undefine
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 // remove when publishing
 // import {renderCustomField, renderSystemField } from './EditorFields';
+// import { UserManagement } from './UserManagement';
+// import { DropZone } from '../dropzone';
 var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   var _ref$companyId = _ref.companyId,
     companyId = _ref$companyId === void 0 ? null : _ref$companyId,
     platformType = _ref.platformType,
     _ref$onSaved = _ref.onSaved,
-    onSaved = _ref$onSaved === void 0 ? null : _ref$onSaved;
+    onSaved = _ref$onSaved === void 0 ? null : _ref$onSaved,
+    _ref$onCustomTabs = _ref.onCustomTabs,
+    onCustomTabs = _ref$onCustomTabs === void 0 ? null : _ref$onCustomTabs;
   var _useForm = (0, _reactHookForm.useForm)(),
     control = _useForm.control,
     register = _useForm.register,
@@ -47,7 +59,7 @@ var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     _useState2 = _slicedToArray(_useState, 2),
     editors = _useState2[0],
     setEditors = _useState2[1];
-  var refShouldClose = (0, _react.useRef)(null);
+  var refShouldClose = (0, _react.useRef)(false);
   var refSubmitButton = (0, _react.useRef)(null);
   var _useState3 = (0, _react.useState)([]),
     _useState4 = _slicedToArray(_useState3, 2),
@@ -57,99 +69,97 @@ var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     _useState6 = _slicedToArray(_useState5, 2),
     selectedPermission = _useState6[0],
     setSelectedPermission = _useState6[1];
-  var _useState7 = (0, _react.useState)(null),
+  var _useState7 = (0, _react.useState)(''),
     _useState8 = _slicedToArray(_useState7, 2),
-    company = _useState8[0],
-    setCompany = _useState8[1];
-  var _useState9 = (0, _react.useState)([]),
+    inputCompanyValue = _useState8[0],
+    setInputCompanyValue = _useState8[1];
+  var _useState9 = (0, _react.useState)(null),
     _useState10 = _slicedToArray(_useState9, 2),
-    locations = _useState10[0],
-    setLocations = _useState10[1];
+    editAddLocationId = _useState10[0],
+    setEditAddLocationId = _useState10[1];
   var _useState11 = (0, _react.useState)(null),
     _useState12 = _slicedToArray(_useState11, 2),
-    location = _useState12[0],
-    setLocation = _useState12[1];
-  var _useState13 = (0, _react.useState)(''),
+    company = _useState12[0],
+    setCompany = _useState12[1];
+  var _useState13 = (0, _react.useState)([]),
     _useState14 = _slicedToArray(_useState13, 2),
-    inputLocationValue = _useState14[0],
-    setInputLocationValue = _useState14[1];
-  var _useState15 = (0, _react.useState)([]),
+    locations = _useState14[0],
+    setLocations = _useState14[1];
+  var _useState15 = (0, _react.useState)({}),
     _useState16 = _slicedToArray(_useState15, 2),
-    customFields = _useState16[0],
-    setCustomFields = _useState16[1];
-  var _useState17 = (0, _react.useState)(null),
+    location = _useState16[0],
+    setLocation = _useState16[1];
+  var _useState17 = (0, _react.useState)(''),
     _useState18 = _slicedToArray(_useState17, 2),
-    user = _useState18[0],
-    setUser = _useState18[1];
+    inputLocationValue = _useState18[0],
+    setInputLocationValue = _useState18[1];
   var _useState19 = (0, _react.useState)([]),
     _useState20 = _slicedToArray(_useState19, 2),
-    tabOptions = _useState20[0],
-    setTabOptions = _useState20[1];
+    customFields = _useState20[0],
+    setCustomFields = _useState20[1];
+  var _useState21 = (0, _react.useState)(null),
+    _useState22 = _slicedToArray(_useState21, 2),
+    user = _useState22[0],
+    setUser = _useState22[1];
+  var _useState23 = (0, _react.useState)(null),
+    _useState24 = _slicedToArray(_useState23, 2),
+    customTabs = _useState24[0],
+    setCustomTabs = _useState24[1];
+  var _useState25 = (0, _react.useState)(null),
+    _useState26 = _slicedToArray(_useState25, 2),
+    companyLogo = _useState26[0],
+    setCompanyLogo = _useState26[1];
+  var _useState27 = (0, _react.useState)([]),
+    _useState28 = _slicedToArray(_useState27, 2),
+    tabOptions = _useState28[0],
+    setTabOptions = _useState28[1];
   var ITEM_HEIGHT = 48;
   var ITEM_PADDING_TOP = 8;
-  var _useState21 = (0, _react.useState)(0),
-    _useState22 = _slicedToArray(_useState21, 2),
-    tabValue = _useState22[0],
-    setTabValue = _useState22[1];
+  var _useState29 = (0, _react.useState)(0),
+    _useState30 = _slicedToArray(_useState29, 2),
+    tabValue = _useState30[0],
+    setTabValue = _useState30[1];
   var handleTabChange = function handleTabChange(event, newValue) {
     setTabValue(newValue);
   };
+  var fetchCompanyData = /*#__PURE__*/function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+      var response;
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return refreshTabOptions();
+          case 2:
+            _context.next = 4;
+            return (0, _authscape.apiService)().get("/UserManagement/GetCompany?companyId=" + companyId);
+          case 4:
+            response = _context.sent;
+            if (response != null && response.status == 200) {
+              setCompanyLogo(response.data.logo);
+              setLocation(response.data.locations);
+              setCompany(response.data);
+              if (response.data.customFields != null) {
+                setCustomFields(response.data.customFields);
+              }
+              setEditors(_objectSpread({}, editors));
+            }
+          case 6:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee);
+    }));
+    return function fetchCompanyData() {
+      return _ref2.apply(this, arguments);
+    };
+  }();
   (0, _react.useEffect)(function () {
-    var fetchData = /*#__PURE__*/function () {
-      var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var response, roleNames, index, role, permissionNames, _index, permission;
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) switch (_context.prev = _context.next) {
-            case 0:
-              _context.next = 2;
-              return refreshTabOptions();
-            case 2:
-              _context.next = 4;
-              return (0, _authscape.apiService)().get("/UserManagement/GetCompany?companyId=" + companyId);
-            case 4:
-              response = _context.sent;
-              if (response != null && response.status == 200) {
-                setCompany(response.data);
-                if (response.data.customFields != null) {
-                  setCustomFields(response.data.customFields);
-                }
-                setEditors(_objectSpread({}, editors));
-              }
-
-              // assign all selected roles
-              if (response.data.roles != null) {
-                roleNames = [];
-                for (index = 0; index < response.data.roles.length; index++) {
-                  role = response.data.roles[index];
-                  roleNames.push(role);
-                }
-                setSelectedRole(roleNames);
-              }
-
-              // assign all selected permissions
-              if (response.data.permissions != null) {
-                permissionNames = [];
-                for (_index = 0; _index < response.data.permissions.length; _index++) {
-                  permission = response.data.permissions[_index];
-                  permissionNames.push(permission);
-                }
-                setSelectedPermission(permissionNames);
-              }
-            case 8:
-            case "end":
-              return _context.stop();
-          }
-        }, _callee);
-      }));
-      return function fetchData() {
-        return _ref2.apply(this, arguments);
-      };
-    }();
     if (companyId != -1) {
-      fetchData();
+      fetchCompanyData();
     }
   }, [companyId]);
-  var fields = ["Title"];
+  var fields = ["Title", "IsDeactivated"];
   var refreshTabOptions = /*#__PURE__*/function () {
     var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
       var customTabResponse, dataElement;
@@ -232,52 +242,125 @@ var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       saveChanges: saveChanges
     };
   });
+  (0, _react.useEffect)(function () {
+    if (companyId != null && onCustomTabs != null) {
+      var fetchData = /*#__PURE__*/function () {
+        var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+          var tabs;
+          return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+            while (1) switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.next = 2;
+                return onCustomTabs(platformType, companyId);
+              case 2:
+                tabs = _context4.sent;
+                if (tabs != null) {
+                  setCustomTabs(tabs);
+                }
+              case 4:
+              case "end":
+                return _context4.stop();
+            }
+          }, _callee4);
+        }));
+        return function fetchData() {
+          return _ref5.apply(this, arguments);
+        };
+      }();
+      fetchData();
+    }
+  }, [companyId]);
   return /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement("form", {
     onSubmit: handleSubmit( /*#__PURE__*/function () {
-      var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(data) {
+      var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(data) {
         var userCustomFields, response;
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-          while (1) switch (_context4.prev = _context4.next) {
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) switch (_context6.prev = _context6.next) {
             case 0:
               userCustomFields = [];
-              customFields && customFields.forEach(function (customField) {
-                var newValue =
-                // customField.customFieldType == 2 ? 
-                // draftToHTML(editors[customField.customFieldId].getCurrentContent()) 
-                // : 
-                data[customField.customFieldId];
-                if (newValue != null) {
-                  userCustomFields.push({
-                    customFieldId: customField.customFieldId,
-                    name: customField.name,
-                    isRequired: customField.isRequired,
-                    customFieldType: customField.customFieldType,
-                    value: newValue.toString()
-                  });
-                }
-              });
-              _context4.next = 4;
+              customFields && customFields.forEach( /*#__PURE__*/function () {
+                var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(customField) {
+                  var newValue, newBlob, _data, _response2;
+                  return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+                    while (1) switch (_context5.prev = _context5.next) {
+                      case 0:
+                        newValue =
+                        // customField.customFieldType == 2 ? 
+                        // draftToHTML(editors[customField.customFieldId].getCurrentContent()) 
+                        // : 
+                        data[customField.customFieldId];
+                        if (!(newValue != null && typeof newValue === 'string')) {
+                          _context5.next = 5;
+                          break;
+                        }
+                        userCustomFields.push({
+                          customFieldId: customField.customFieldId,
+                          name: customField.name,
+                          isRequired: customField.isRequired,
+                          customFieldType: customField.customFieldType,
+                          value: newValue.toString()
+                        });
+                        _context5.next = 16;
+                        break;
+                      case 5:
+                        if (!(newValue instanceof Blob)) {
+                          _context5.next = 16;
+                          break;
+                        }
+                        newBlob = new Blob([newValue], {
+                          type: newValue.type
+                        });
+                        _data = new FormData();
+                        _data.append("file", newBlob);
+                        _data.append("identifier", companyId);
+                        _data.append("platformType", 2); // company
+                        _data.append("customFieldId", customField.customFieldId);
+                        _context5.next = 14;
+                        return (0, _authscape.apiService)().post("/UserManagement/UploadCustomFieldImage", _data);
+                      case 14:
+                        _response2 = _context5.sent;
+                        if (_response2 != null && _response2.status == 200) {
+                          userCustomFields.push({
+                            customFieldId: customField.customFieldId,
+                            name: customField.name,
+                            isRequired: customField.isRequired,
+                            customFieldType: customField.customFieldType,
+                            value: _response2.data
+                          });
+                        }
+                      case 16:
+                      case "end":
+                        return _context5.stop();
+                    }
+                  }, _callee5);
+                }));
+                return function (_x3) {
+                  return _ref7.apply(this, arguments);
+                };
+              }());
+              _context6.next = 4;
               return (0, _authscape.apiService)().post("/UserManagement/UpdateCompany", {
                 id: companyId,
                 title: data.Title,
-                isDeactivated: false,
-                customFields: userCustomFields
+                isDeactivated: !data.IsActive,
+                customFields: userCustomFields,
+                locations: location
               });
             case 4:
-              response = _context4.sent;
+              response = _context6.sent;
               if (response != null && response.status == 200) {
                 if (onSaved != null) {
-                  onSaved(refShouldClose.current);
+                  onSaved(refShouldClose.current, 2, companyId, response.data);
                 }
               }
             case 6:
             case "end":
-              return _context4.stop();
+              return _context6.stop();
           }
-        }, _callee4);
+        }, _callee6);
       }));
       return function (_x2) {
-        return _ref5.apply(this, arguments);
+        return _ref6.apply(this, arguments);
       };
     }()),
     noValidate: true,
@@ -303,19 +386,134 @@ var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       justifyContent: "center",
       padding: 2
     }
-  }, /*#__PURE__*/_react["default"].createElement(_material.Avatar, {
-    alt: "Remy Sharp",
-    src: "/static/images/avatar/1.jpg",
-    sx: {
-      width: 100,
-      height: 100
-    }
+  }, /*#__PURE__*/_react["default"].createElement(_authscape.DropZone, {
+    image: companyLogo != null ? companyLogo : "",
+    text: "Drag 'n' drop your logo here, or click to select your logo",
+    onDrop: /*#__PURE__*/function () {
+      var _ref8 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(blob) {
+        var data, response;
+        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+          while (1) switch (_context7.prev = _context7.next) {
+            case 0:
+              data = new FormData();
+              data.append("file", blob);
+              data.append("companyId", companyId);
+              _context7.next = 5;
+              return (0, _authscape.apiService)().post("/UserManagement/UploadLogo", data);
+            case 5:
+              response = _context7.sent;
+              if (response != null && response.status == 200) {
+                fetchCompanyData();
+              }
+            case 7:
+            case "end":
+              return _context7.stop();
+          }
+        }, _callee7);
+      }));
+      return function (_x4) {
+        return _ref8.apply(this, arguments);
+      };
+    }()
   })), /*#__PURE__*/_react["default"].createElement("hr", null), /*#__PURE__*/_react["default"].createElement(_system.Box, {
     sx: {
       fontWeight: "bold",
       paddingBottom: 1
     }
-  }, "About this company"), renderSystemField(companyId, company, control, errors, register, fields)), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+  }, "About this company"), renderSystemField(companyId, company, control, errors, register, fields), /*#__PURE__*/_react["default"].createElement(_system.Box, {
+    sx: {
+      fontWeight: "bold",
+      paddingTop: 1,
+      paddingBottom: 1
+    }
+  }, "Locations"), /*#__PURE__*/_react["default"].createElement(_material.Autocomplete, {
+    id: "LocationSelect",
+    multiple: true,
+    getOptionLabel: function getOptionLabel(option) {
+      return option.title || option;
+    },
+    options: [].concat(_toConsumableArray(locations), [{
+      title: "Add Location",
+      isAddOption: true
+    }]) // Add option appended here
+    ,
+    autoComplete: true,
+    includeInputInList: true,
+    filterSelectedOptions: true,
+    renderTags: function renderTags(value, getTagProps) {
+      return value.map(function (option, index) {
+        return /*#__PURE__*/_react["default"].createElement(_material.Chip, _extends({}, getTagProps({
+          index: index
+        }), {
+          sx: {
+            height: 60
+          },
+          label: /*#__PURE__*/_react["default"].createElement("div", {
+            style: {
+              display: 'flex',
+              flexDirection: 'column',
+              textAlign: 'center'
+            }
+          }, /*#__PURE__*/_react["default"].createElement(_Typography["default"], {
+            variant: "body1",
+            style: {
+              fontWeight: 'bold'
+            }
+          }, option.title), /*#__PURE__*/_react["default"].createElement(_Typography["default"], {
+            variant: "body2",
+            color: "textSecondary"
+          }, option.address))
+        }));
+      });
+    },
+    value: location,
+    noOptionsText: "No locations",
+    onChange: function onChange(event, newValue) {
+      if (newValue !== null && newValue !== void 0 && newValue.isAddOption) {
+        setEditAddLocationId(-1);
+      } else {
+        setLocation(newValue); // Select an existing location
+      }
+    },
+
+    onInputChange: function onInputChange(event, newInputValue) {
+      // Optional: Update input handling logic
+      setInputCompanyValue(newInputValue);
+    },
+    renderInput: function renderInput(params) {
+      return /*#__PURE__*/_react["default"].createElement(_TextField["default"], _extends({}, params, {
+        label: "Location",
+        fullWidth: true
+      }));
+    },
+    renderOption: function renderOption(props, option) {
+      return /*#__PURE__*/_react["default"].createElement("li", _extends({}, props, {
+        key: "location-" + option.title
+      }), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+        container: true,
+        alignItems: "center"
+      }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+        item: true,
+        sx: {
+          display: 'flex',
+          width: 44
+        }
+      }, /*#__PURE__*/_react["default"].createElement(_BusinessRounded["default"], {
+        sx: {
+          color: 'text.secondary'
+        }
+      })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+        item: true,
+        sx: {
+          width: 'calc(100% - 44px)',
+          wordWrap: 'break-word'
+        }
+      }, /*#__PURE__*/_react["default"].createElement(_Typography["default"], {
+        variant: "body2",
+        color: option.isAddOption ? "primary" : "text.secondary"
+      }, option.title))));
+    }
+  })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
     item: true,
     size: 8,
     sx: {
@@ -338,10 +536,18 @@ var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       label: tab.name,
       value: tab.id
     });
+  }), customTabs != null && customTabs.map(function (tab, index) {
+    return /*#__PURE__*/_react["default"].createElement(_material.Tab, {
+      key: "custom-" + tab.id,
+      label: tab.title,
+      value: tab.id
+    });
   }))), /*#__PURE__*/_react["default"].createElement(_system.Box, null, tabOptions.map(function (tab, index) {
     return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, tabValue === tab.id && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, customFields && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, renderCustomField(companyId, company, control, errors, register, setValue, customFields.filter(function (s) {
       return s.tabId == tab.id;
     })))));
+  }), customTabs != null && customTabs.map(function (tab, index) {
+    return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, tabValue === tab.id && /*#__PURE__*/_react["default"].createElement(_system.Box, null, tab.content));
   }))), /*#__PURE__*/_react["default"].createElement(_material.Button, {
     ref: refSubmitButton,
     variant: "contained",
@@ -349,7 +555,51 @@ var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     sx: {
       display: "none"
     }
-  }, "Save Changes")))));
+  }, "Save Changes")))), /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, {
+    key: "right"
+  }, /*#__PURE__*/_react["default"].createElement(_material.Drawer, {
+    anchor: "right",
+    open: editAddLocationId != null,
+    maxWidth: "lg",
+    onClose: function onClose() {
+      setEditAddLocationId(null);
+    },
+    sx: {
+      "& .MuiDrawer-paper": {
+        width: "80vw",
+        // Set width to 80% of the viewport width
+        maxWidth: "1000px" // Optional: Limit the maximum width
+      }
+    }
+  }, /*#__PURE__*/_react["default"].createElement(_system.Box, {
+    sx: {
+      padding: 2
+    }
+  }, /*#__PURE__*/_react["default"].createElement(UserManagement, {
+    platformType: 3,
+    companyId: company != null ? company.id : -1,
+    defaultIdentifier: editAddLocationId,
+    onSaved: /*#__PURE__*/function () {
+      var _ref9 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8(shouldClose, platformType, id, fields) {
+        return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+          while (1) switch (_context8.prev = _context8.next) {
+            case 0:
+              setEditAddLocationId(null);
+              _context8.next = 3;
+              return fetchUserData();
+            case 3:
+              onSaved(shouldClose, platformType, id, fields);
+            case 4:
+            case "end":
+              return _context8.stop();
+          }
+        }, _callee8);
+      }));
+      return function (_x5, _x6, _x7, _x8) {
+        return _ref9.apply(this, arguments);
+      };
+    }()
+  })))));
 });
 CompanyEditor.displayName = "CompanyEditor";
 var _default = CompanyEditor;
@@ -575,9 +825,14 @@ var _Select = _interopRequireDefault(require("@mui/material/Select"));
 var _MenuItem = _interopRequireDefault(require("@mui/material/MenuItem"));
 var _FormControlLabel = _interopRequireDefault(require("@mui/material/FormControlLabel"));
 var _Switch = _interopRequireDefault(require("@mui/material/Switch"));
+var _Grid = _interopRequireDefault(require("@mui/material/Grid2"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
@@ -633,14 +888,8 @@ function CustomFields(_ref) {
       return _ref2.apply(this, arguments);
     };
   }();
-
-  //   const fetchData = async () => {
-  //     await RefreshFields();
-  //     }
-
   (0, _react.useEffect)(function () {
     RefreshFields();
-    // fetchData();
   }, []);
   var AddNewCustomField = function AddNewCustomField() {
     var refName = (0, _react.useRef)(null);
@@ -656,14 +905,22 @@ function CustomFields(_ref) {
       _useState16 = _slicedToArray(_useState15, 2),
       isRequired = _useState16[0],
       setIsRequired = _useState16[1];
-    var _useState17 = (0, _react.useState)([]),
+    var _useState17 = (0, _react.useState)(false),
       _useState18 = _slicedToArray(_useState17, 2),
-      tabOptions = _useState18[0],
-      setTabOptions = _useState18[1];
-    var _useState19 = (0, _react.useState)(null),
+      isColumnVisibleInDatagrid = _useState18[0],
+      setIsColumnVisibleInDatagrid = _useState18[1];
+    var _useState19 = (0, _react.useState)([]),
       _useState20 = _slicedToArray(_useState19, 2),
-      tabSelection = _useState20[0],
-      setTabSelection = _useState20[1];
+      tabOptions = _useState20[0],
+      setTabOptions = _useState20[1];
+    var _useState21 = (0, _react.useState)([]),
+      _useState22 = _slicedToArray(_useState21, 2),
+      selectProperties = _useState22[0],
+      setSelectProperties = _useState22[1];
+    var _useState23 = (0, _react.useState)(null),
+      _useState24 = _slicedToArray(_useState23, 2),
+      tabSelection = _useState24[0],
+      setTabSelection = _useState24[1];
     var refTabName = (0, _react.useRef)(null);
     var refreshTabOptions = /*#__PURE__*/function () {
       var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
@@ -707,6 +964,10 @@ function CustomFields(_ref) {
                 setIsRequired(customFieldResponse.data.isRequired);
                 setGridSize(customFieldResponse.data.gridSize);
                 setTabSelection(customFieldResponse.data.tabId ? customFieldResponse.data.tabId : null);
+                setIsColumnVisibleInDatagrid(customFieldResponse.data.isColumnOnDatagrid);
+                if (customFieldResponse.data.properties != null && customFieldResponse.data.properties != "") {
+                  setSelectProperties(JSON.parse(customFieldResponse.data.properties));
+                }
               }
             case 6:
             case "end":
@@ -784,11 +1045,18 @@ function CustomFields(_ref) {
       onClose: function onClose() {
         setNewCustomFieldOpen(null);
       },
+      fullWidth: true,
+      maxWidth: "md",
       "aria-labelledby": "alert-dialog-title",
       "aria-describedby": "alert-dialog-description"
     }, /*#__PURE__*/_react["default"].createElement(_DialogTitle["default"], {
       id: "alert-dialog-title"
-    }, newCustomFieldOpen == -1 && newCustomFieldOpen != null && "New Custom Field", newCustomFieldOpen != -1 && newCustomFieldOpen != null && "Edit Custom Field"), /*#__PURE__*/_react["default"].createElement(_DialogContent["default"], null, /*#__PURE__*/_react["default"].createElement(_TextField["default"], {
+    }, newCustomFieldOpen == -1 && newCustomFieldOpen != null && "New Custom Field", newCustomFieldOpen != -1 && newCustomFieldOpen != null && "Edit Custom Field"), /*#__PURE__*/_react["default"].createElement(_DialogContent["default"], null, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+      container: true,
+      spacing: 2
+    }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+      size: fieldType == 6 || fieldType == 7 ? 6 : 12
+    }, /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement(_TextField["default"], {
       inputRef: refName,
       label: "Name",
       variant: "outlined",
@@ -817,13 +1085,19 @@ function CustomFields(_ref) {
       }
     }, /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
       value: 1
-    }, "TextField"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
+    }, "Text Field"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
+      value: 2
+    }, "Rich Text Editor"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
       value: 3
     }, "Number"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
       value: 4
     }, "Date"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
       value: 5
-    }, "Yes / No"))), /*#__PURE__*/_react["default"].createElement(_system.Box, {
+    }, "Yes / No"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
+      value: 6
+    }, "Image"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
+      value: 7
+    }, "Select"))), /*#__PURE__*/_react["default"].createElement(_system.Box, {
       sx: {
         paddingBottom: 2
       }
@@ -844,9 +1118,7 @@ function CustomFields(_ref) {
         return tabOptions.find(function (t) {
           return t.id == selected;
         }).name;
-      }
-      //displayEmpty
-      ,
+      },
       value: tabSelection,
       label: "tabs",
       onChange: function onChange(event) {
@@ -892,6 +1164,17 @@ function CustomFields(_ref) {
       sx: {
         paddingBottom: 2
       }
+    }), /*#__PURE__*/_react["default"].createElement(_FormControlLabel["default"], {
+      control: /*#__PURE__*/_react["default"].createElement(_Switch["default"], {
+        checked: isColumnVisibleInDatagrid,
+        onChange: function onChange(event) {
+          setIsColumnVisibleInDatagrid(event.target.checked);
+        }
+      }),
+      label: "Is column visible in datagrid",
+      sx: {
+        paddingBottom: 2
+      }
     }), /*#__PURE__*/_react["default"].createElement(_FormControl["default"], {
       fullWidth: true,
       sx: {
@@ -931,36 +1214,183 @@ function CustomFields(_ref) {
       value: 11
     }, "11"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
       value: 12
-    }, "12")))), /*#__PURE__*/_react["default"].createElement(_DialogActions["default"], null, /*#__PURE__*/_react["default"].createElement(_material.Button, {
+    }, "12"))))), (fieldType == 6 || fieldType == 7) && /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+      size: 6
+    }, /*#__PURE__*/_react["default"].createElement(_system.Box, null, "Properties"), /*#__PURE__*/_react["default"].createElement(_system.Box, null, fieldType == 6 && /*#__PURE__*/_react["default"].createElement(_system.Box, {
+      sx: {
+        paddingTop: 2
+      }
+    }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+      size: 6
+    }, "Image Size"), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+      size: 6,
+      sx: {
+        textAlign: "right"
+      }
+    }, /*#__PURE__*/_react["default"].createElement(_material.Button, {
+      variant: "contained",
+      onClick: function onClick() {
+        var newItem = {
+          id: Date.now(),
+          key: "",
+          value: ""
+        };
+        setSelectProperties(function (prevItems) {
+          return Array.isArray(prevItems) ? [].concat(_toConsumableArray(prevItems), [newItem]) : [newItem];
+        });
+      }
+    }, "Add Option")), selectProperties && selectProperties.map(function (propObj) {
+      return /*#__PURE__*/_react["default"].createElement(_Stack["default"], {
+        key: propObj.id,
+        direction: "row",
+        spacing: 1,
+        sx: {
+          paddingTop: 2
+        }
+      }, /*#__PURE__*/_react["default"].createElement(_TextField["default"], {
+        label: "Name",
+        defaultValue: propObj.name,
+        InputLabelProps: {
+          shrink: true
+        },
+        variant: "outlined",
+        onChange: function onChange(val) {
+          propObj.name = val.currentTarget.value;
+        }
+      }), /*#__PURE__*/_react["default"].createElement(_TextField["default"], {
+        label: "Width",
+        defaultValue: propObj.width,
+        InputLabelProps: {
+          shrink: true
+        },
+        variant: "outlined",
+        onChange: function onChange(val) {
+          propObj.width = val.currentTarget.value;
+        }
+      }), /*#__PURE__*/_react["default"].createElement(_TextField["default"], {
+        label: "Height",
+        defaultValue: propObj.height,
+        InputLabelProps: {
+          shrink: true
+        },
+        variant: "outlined",
+        onChange: function onChange(val) {
+          propObj.height = val.currentTarget.value;
+        }
+      }), /*#__PURE__*/_react["default"].createElement(_material.IconButton, {
+        "aria-label": "delete",
+        onClick: function onClick() {
+          setSelectProperties(function (prevItems) {
+            return prevItems.filter(function (item) {
+              return item.id !== propObj.id;
+            });
+          });
+        }
+      }, /*#__PURE__*/_react["default"].createElement(_Delete["default"], null)));
+    })), fieldType == 7 && /*#__PURE__*/_react["default"].createElement(_system.Box, {
+      sx: {
+        paddingTop: 2
+      }
+    }, /*#__PURE__*/_react["default"].createElement(_system.Box, {
+      sx: {
+        paddingBottom: 1
+      }
+    }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+      container: true,
+      spacing: 2
+    }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+      size: 6
+    }, "Select"), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+      size: 6,
+      sx: {
+        textAlign: "right"
+      }
+    }, /*#__PURE__*/_react["default"].createElement(_material.Button, {
+      variant: "contained",
+      onClick: function onClick() {
+        var newItem = {
+          id: Date.now(),
+          key: "",
+          value: ""
+        };
+        setSelectProperties(function (prevItems) {
+          return Array.isArray(prevItems) ? [].concat(_toConsumableArray(prevItems), [newItem]) : [newItem];
+        });
+      }
+    }, "Add Option")))), selectProperties && selectProperties.map(function (propObj) {
+      return /*#__PURE__*/_react["default"].createElement(_Stack["default"], {
+        key: propObj.id,
+        direction: "row",
+        spacing: 1,
+        sx: {
+          paddingTop: 2
+        }
+      }, /*#__PURE__*/_react["default"].createElement(_TextField["default"], {
+        label: "Key",
+        variant: "outlined",
+        defaultValue: propObj.key,
+        InputLabelProps: {
+          shrink: true
+        },
+        onChange: function onChange(val) {
+          propObj.key = val.currentTarget.value;
+        }
+      }), /*#__PURE__*/_react["default"].createElement(_TextField["default"], {
+        label: "Value",
+        variant: "outlined",
+        defaultValue: propObj.value,
+        InputLabelProps: {
+          shrink: true
+        },
+        onChange: function onChange(val) {
+          propObj.value = val.currentTarget.value;
+        }
+      }), /*#__PURE__*/_react["default"].createElement(_material.IconButton, {
+        "aria-label": "delete",
+        onClick: function onClick() {
+          setSelectProperties(function (prevItems) {
+            return prevItems.filter(function (item) {
+              return item.id !== propObj.id;
+            });
+          });
+        }
+      }, /*#__PURE__*/_react["default"].createElement(_Delete["default"], null)));
+    })))))), /*#__PURE__*/_react["default"].createElement(_DialogActions["default"], null, /*#__PURE__*/_react["default"].createElement(_material.Button, {
       onClick: function onClick() {
         setNewCustomFieldOpen(null);
       }
     }, "Cancel"), /*#__PURE__*/_react["default"].createElement(_material.Button, {
       onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-        var id;
+        var properties, id;
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
+              properties = null;
+              if (selectProperties != null && selectProperties != "") {
+                properties = JSON.stringify(selectProperties);
+              }
               id = null;
               if (newCustomFieldOpen != -1) {
                 id = newCustomFieldOpen;
               }
-              _context5.next = 4;
+              _context5.next = 6;
               return (0, _authscape.apiService)().post("/UserManagement/AddOrUpdateCustomField", {
                 id: id,
                 name: refName.current.value,
                 fieldType: fieldType,
                 customFieldPlatformType: platformType,
                 isRequired: isRequired,
+                isColumnVisibleInDatagrid: isColumnVisibleInDatagrid,
                 gridSize: gridSize,
-                tabSelection: tabSelection
+                tabSelection: tabSelection,
+                properties: properties
               });
-            case 4:
-              _context5.next = 6;
-              return RefreshFields();
             case 6:
+              _context5.next = 8;
+              return RefreshFields();
+            case 8:
               setNewCustomFieldOpen(null);
-            case 7:
+            case 9:
             case "end":
               return _context5.stop();
           }
@@ -1042,7 +1472,7 @@ function CustomFields(_ref) {
       minWidth: 650
     },
     "aria-label": "simple table"
-  }, /*#__PURE__*/_react["default"].createElement(_TableHead["default"], null, /*#__PURE__*/_react["default"].createElement(_TableRow["default"], null, /*#__PURE__*/_react["default"].createElement(_TableCell["default"], null, "Id"), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], null, "Name"), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], null, "Field Type"), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], null, "Tabs"), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], null, "Is Required"), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], null, "Grid Size"))), /*#__PURE__*/_react["default"].createElement(_TableBody["default"], null, customFields.map(function (row) {
+  }, /*#__PURE__*/_react["default"].createElement(_TableHead["default"], null, /*#__PURE__*/_react["default"].createElement(_TableRow["default"], null, /*#__PURE__*/_react["default"].createElement(_TableCell["default"], null, "Id"), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], null, "Name"), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], null, "Field Type"), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], null, "Tabs"), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], null, "Is Required"), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], null, "Grid Size"), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], null, "Is Available In Datagrid"))), /*#__PURE__*/_react["default"].createElement(_TableBody["default"], null, customFields.map(function (row) {
     return /*#__PURE__*/_react["default"].createElement(_TableRow["default"], {
       key: row.id,
       sx: {
@@ -1063,7 +1493,7 @@ function CustomFields(_ref) {
     }, row.name), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], {
       component: "th",
       scope: "row"
-    }, row.fieldType == 1 && "Text Field", row.fieldType == 2 && "Rich Text Field", row.fieldType == 3 && "Number", row.fieldType == 4 && "Date", row.fieldType == 5 && "Yes / No"), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], {
+    }, row.fieldType == 1 && "Text Field", row.fieldType == 2 && "Rich Text Editor", row.fieldType == 3 && "Number", row.fieldType == 4 && "Date", row.fieldType == 5 && "Yes / No", row.fieldType == 6 && "Image", row.fieldType == 7 && "Select"), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], {
       component: "th",
       scope: "row"
     }, row.customFieldTab ? row.customFieldTab.name : ""), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], {
@@ -1073,6 +1503,9 @@ function CustomFields(_ref) {
       component: "th",
       scope: "row"
     }, row.gridSize), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], {
+      component: "th",
+      scope: "row"
+    }, row.isColumnOnDatagrid ? "Yes" : "No"), /*#__PURE__*/_react["default"].createElement(_TableCell["default"], {
       component: "th",
       scope: "row"
     }, /*#__PURE__*/_react["default"].createElement(_material.IconButton, {
@@ -1121,6 +1554,7 @@ function CustomFields(_ref) {
 }
 "use strict";
 
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -1135,24 +1569,14 @@ var _dayjs = _interopRequireDefault(require("dayjs"));
 var _LocalizationProvider = require("@mui/x-date-pickers/LocalizationProvider");
 var _AdapterDayjs = require("@mui/x-date-pickers/AdapterDayjs");
 var _DatePicker = require("@mui/x-date-pickers/DatePicker");
-var _dynamic = _interopRequireDefault(require("next/dynamic"));
+var _authscape = require("authscape");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; } // import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
-var Editor = (0, _dynamic["default"])(function () {
-  return Promise.resolve().then(function () {
-    return _interopRequireWildcard(require("react-draft-wysiwyg"));
-  }).then(function (mod) {
-    return mod.Editor;
-  });
-}, {
-  ssr: false
-});
-
-// import { RichTextEditor } from 'authscape';
-
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 var findTheValue = function findTheValue(fieldObject, field) {
   var result = "";
   if (fieldObject != null) {
@@ -1193,9 +1617,7 @@ var renderCustomField = function renderCustomField(identifier, fieldObject, cont
     }, /*#__PURE__*/_react["default"].createElement(_reactHookForm.Controller, {
       name: field.customFieldId,
       control: control,
-      defaultValue: result
-      // defaultChecked={result}
-      ,
+      defaultValue: result,
       rules: {
         required: field.isRequired
       },
@@ -1208,6 +1630,18 @@ var renderCustomField = function renderCustomField(identifier, fieldObject, cont
           variant: "outlined",
           margin: "normal",
           fullWidth: true
+        }, register(field.customFieldId, {
+          required: field.isRequired
+        }), {
+          onChange: onChange,
+          value: value || ''
+        })), field.customFieldType === 2 && /*#__PURE__*/_react["default"].createElement(_material.TextField, _extends({
+          label: field.name,
+          variant: "outlined",
+          margin: "normal",
+          fullWidth: true,
+          minRows: 4,
+          multiline: true
         }, register(field.customFieldId, {
           required: field.isRequired
         }), {
@@ -1247,7 +1681,43 @@ var renderCustomField = function renderCustomField(identifier, fieldObject, cont
             onChange: onChange
           })),
           label: field.name
-        }));
+        }), field.customFieldType === 6 && /*#__PURE__*/_react["default"].createElement(_material.Box, null, /*#__PURE__*/_react["default"].createElement(_material.Box, null, field.name), /*#__PURE__*/_react["default"].createElement(_authscape.DropZone, _extends({}, register(field.customFieldId, {
+          required: field.isRequired
+        }), {
+          image: value,
+          text: "Drag 'n' drop your logo here, or click to select your logo",
+          onDrop: /*#__PURE__*/function () {
+            var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(blob) {
+              return _regeneratorRuntime().wrap(function _callee$(_context) {
+                while (1) switch (_context.prev = _context.next) {
+                  case 0:
+                    value = blob;
+                    onChange(blob);
+                  case 2:
+                  case "end":
+                    return _context.stop();
+                }
+              }, _callee);
+            }));
+            return function (_x) {
+              return _ref2.apply(this, arguments);
+            };
+          }()
+        }))), field.customFieldType === 7 && /*#__PURE__*/_react["default"].createElement(_material.Box, null, /*#__PURE__*/_react["default"].createElement(_material.FormControl, {
+          fullWidth: true
+        }, /*#__PURE__*/_react["default"].createElement(_material.InputLabel, {
+          id: "demo-simple-select-label"
+        }, field.name), /*#__PURE__*/_react["default"].createElement(_material.Select, _extends({}, register(field.customFieldId, {
+          required: field.isRequired
+        }), {
+          label: field.name,
+          value: value || '',
+          onChange: onChange
+        }), field.properties != null && field.properties != "" && JSON.parse(field.properties).map(function (property) {
+          return /*#__PURE__*/_react["default"].createElement(_material.MenuItem, {
+            value: property.key
+          }, property.value);
+        })))));
       }
     }), errors[field.customFieldId] && /*#__PURE__*/_react["default"].createElement(_material.Typography, {
       color: "red"
@@ -1262,16 +1732,22 @@ var renderSystemField = function renderSystemField(identifier, fieldObject, cont
     if (field == "PhoneNumber") {
       isRequied = false;
     }
+    if (field == "IsDeactivated")
+      // we are doing this to make the naming the same (IsActive)
+      {
+        field = "IsActive";
+        result = !result;
+      }
     return /*#__PURE__*/_react["default"].createElement(_material.Box, {
       key: index
-    }, (field == "IsActive" || field == "isDeactivated") && /*#__PURE__*/_react["default"].createElement(_material.Box, null, /*#__PURE__*/_react["default"].createElement(_reactHookForm.Controller, {
+    }, field == "IsActive" && /*#__PURE__*/_react["default"].createElement(_material.Box, null, /*#__PURE__*/_react["default"].createElement(_reactHookForm.Controller, {
       name: field,
       control: control,
       rules: {
         required: false
       },
-      render: function render(_ref2) {
-        var renderField = _ref2.renderField;
+      render: function render(_ref3) {
+        var renderField = _ref3.renderField;
         return /*#__PURE__*/_react["default"].createElement(_FormControlLabel["default"], _extends({
           control: /*#__PURE__*/_react["default"].createElement(_Switch["default"], {
             defaultChecked: result
@@ -1283,14 +1759,14 @@ var renderSystemField = function renderSystemField(identifier, fieldObject, cont
       }
     }), errors[field] && /*#__PURE__*/_react["default"].createElement(_material.Typography, {
       color: "red"
-    }, field, " is required.")), field != "IsActive" && field != "isDeactivated" && /*#__PURE__*/_react["default"].createElement(_material.Box, null, /*#__PURE__*/_react["default"].createElement(_reactHookForm.Controller, {
+    }, field, " is required.")), field != "IsActive" && field != "IsDeactivated" && /*#__PURE__*/_react["default"].createElement(_material.Box, null, /*#__PURE__*/_react["default"].createElement(_reactHookForm.Controller, {
       name: field,
       control: control,
       rules: {
         required: isRequied
       },
-      render: function render(_ref3) {
-        var renderField = _ref3.renderField;
+      render: function render(_ref4) {
+        var renderField = _ref4.renderField;
         return /*#__PURE__*/_react["default"].createElement(_material.TextField, _extends({
           label: field,
           variant: "outlined",
@@ -1319,21 +1795,18 @@ var _system = require("@mui/system");
 var _TextField = _interopRequireDefault(require("@mui/material/TextField"));
 var _material = require("@mui/material");
 var _Typography = _interopRequireDefault(require("@mui/material/Typography"));
-var _FormControl = _interopRequireDefault(require("@mui/material/FormControl"));
-var _InputLabel = _interopRequireDefault(require("@mui/material/InputLabel"));
-var _Select = _interopRequireDefault(require("@mui/material/Select"));
-var _Checkbox = _interopRequireDefault(require("@mui/material/Checkbox"));
-var _OutlinedInput = _interopRequireDefault(require("@mui/material/OutlinedInput"));
-var _MenuItem = _interopRequireDefault(require("@mui/material/MenuItem"));
-var _ListItemText = _interopRequireDefault(require("@mui/material/ListItemText"));
 var _reactHookForm = require("react-hook-form");
-var _draftJs = require("draft-js");
 var _BusinessRounded = _interopRequireDefault(require("@mui/icons-material/BusinessRounded"));
 var _authscape = require("authscape");
 var _Grid = _interopRequireDefault(require("@mui/material/Grid2"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
@@ -1353,11 +1826,11 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 var LocationEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   var _ref$locationId = _ref.locationId,
     locationId = _ref$locationId === void 0 ? null : _ref$locationId,
-    _ref$companyId = _ref.companyId,
-    companyId = _ref$companyId === void 0 ? null : _ref$companyId,
     platformType = _ref.platformType,
     _ref$onSaved = _ref.onSaved,
-    onSaved = _ref$onSaved === void 0 ? null : _ref$onSaved;
+    onSaved = _ref$onSaved === void 0 ? null : _ref$onSaved,
+    _ref$onCustomTabs = _ref.onCustomTabs,
+    onCustomTabs = _ref$onCustomTabs === void 0 ? null : _ref$onCustomTabs;
   var _useForm = (0, _reactHookForm.useForm)(),
     control = _useForm.control,
     register = _useForm.register,
@@ -1369,7 +1842,7 @@ var LocationEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     _useState2 = _slicedToArray(_useState, 2),
     editors = _useState2[0],
     setEditors = _useState2[1];
-  var refShouldClose = (0, _react.useRef)(null);
+  var refShouldClose = (0, _react.useRef)(false);
   var refSubmitButton = (0, _react.useRef)(null);
   var _useState3 = (0, _react.useState)([]),
     _useState4 = _slicedToArray(_useState3, 2),
@@ -1379,36 +1852,44 @@ var LocationEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     _useState6 = _slicedToArray(_useState5, 2),
     selectedPermission = _useState6[0],
     setSelectedPermission = _useState6[1];
-  var _useState7 = (0, _react.useState)([]),
+  var _useState7 = (0, _react.useState)(null),
     _useState8 = _slicedToArray(_useState7, 2),
-    locations = _useState8[0],
-    setLocations = _useState8[1];
-  var _useState9 = (0, _react.useState)(null),
+    company = _useState8[0],
+    setCompany = _useState8[1];
+  var _useState9 = (0, _react.useState)([]),
     _useState10 = _slicedToArray(_useState9, 2),
-    location = _useState10[0],
-    setLocation = _useState10[1];
-  var _useState11 = (0, _react.useState)(''),
+    locations = _useState10[0],
+    setLocations = _useState10[1];
+  var _useState11 = (0, _react.useState)(null),
     _useState12 = _slicedToArray(_useState11, 2),
-    inputLocationValue = _useState12[0],
-    setInputLocationValue = _useState12[1];
-  var _useState13 = (0, _react.useState)([]),
+    location = _useState12[0],
+    setLocation = _useState12[1];
+  var _useState13 = (0, _react.useState)(''),
     _useState14 = _slicedToArray(_useState13, 2),
-    customFields = _useState14[0],
-    setCustomFields = _useState14[1];
-  var _useState15 = (0, _react.useState)(null),
+    inputCompanyValue = _useState14[0],
+    setInputCompanyValue = _useState14[1];
+  var _useState15 = (0, _react.useState)([]),
     _useState16 = _slicedToArray(_useState15, 2),
-    user = _useState16[0],
-    setUser = _useState16[1];
-  var _useState17 = (0, _react.useState)([]),
+    customFields = _useState16[0],
+    setCustomFields = _useState16[1];
+  var _useState17 = (0, _react.useState)(null),
     _useState18 = _slicedToArray(_useState17, 2),
-    tabOptions = _useState18[0],
-    setTabOptions = _useState18[1];
+    user = _useState18[0],
+    setUser = _useState18[1];
+  var _useState19 = (0, _react.useState)(null),
+    _useState20 = _slicedToArray(_useState19, 2),
+    customTabs = _useState20[0],
+    setCustomTabs = _useState20[1];
+  var _useState21 = (0, _react.useState)([]),
+    _useState22 = _slicedToArray(_useState21, 2),
+    tabOptions = _useState22[0],
+    setTabOptions = _useState22[1];
   var ITEM_HEIGHT = 48;
   var ITEM_PADDING_TOP = 8;
-  var _useState19 = (0, _react.useState)(0),
-    _useState20 = _slicedToArray(_useState19, 2),
-    tabValue = _useState20[0],
-    setTabValue = _useState20[1];
+  var _useState23 = (0, _react.useState)(0),
+    _useState24 = _slicedToArray(_useState23, 2),
+    tabValue = _useState24[0],
+    setTabValue = _useState24[1];
   var handleTabChange = function handleTabChange(event, newValue) {
     setTabValue(newValue);
   };
@@ -1428,6 +1909,7 @@ var LocationEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
               response = _context.sent;
               if (response != null && response.status == 200) {
                 setLocation(response.data);
+                setCompany(response.data.company);
                 if (response.data.customFields != null) {
                   setCustomFields(response.data.customFields);
                 }
@@ -1467,17 +1949,45 @@ var LocationEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       fetchData();
     }
   }, [locationId]);
-  var fields = ["Title"];
+  (0, _react.useEffect)(function () {
+    if (locationId != null && onCustomTabs != null) {
+      var fetchData = /*#__PURE__*/function () {
+        var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+          var tabs;
+          return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+            while (1) switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return onCustomTabs(platformType, locationId);
+              case 2:
+                tabs = _context2.sent;
+                if (tabs != null) {
+                  setCustomTabs(tabs);
+                }
+              case 4:
+              case "end":
+                return _context2.stop();
+            }
+          }, _callee2);
+        }));
+        return function fetchData() {
+          return _ref3.apply(this, arguments);
+        };
+      }();
+      fetchData();
+    }
+  }, [locationId]);
+  var fields = ["Title", "Address", "City", "State", "ZipCode", "IsDeactivated"];
   var refreshTabOptions = /*#__PURE__*/function () {
-    var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+    var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
       var customTabResponse, dataElement;
-      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-        while (1) switch (_context2.prev = _context2.next) {
+      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
           case 0:
-            _context2.next = 2;
+            _context3.next = 2;
             return (0, _authscape.apiService)().get("/UserManagement/GetCustomTabs?platformType=" + platformType);
           case 2:
-            customTabResponse = _context2.sent;
+            customTabResponse = _context3.sent;
             if (customTabResponse != null && customTabResponse.status == 200) {
               dataElement = customTabResponse.data;
               setTabOptions(dataElement);
@@ -1487,60 +1997,42 @@ var LocationEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
             }
           case 4:
           case "end":
-            return _context2.stop();
+            return _context3.stop();
         }
-      }, _callee2);
+      }, _callee3);
     }));
     return function refreshTabOptions() {
-      return _ref3.apply(this, arguments);
+      return _ref4.apply(this, arguments);
     };
   }();
   (0, _react.useEffect)(function () {
-    var fetchData = /*#__PURE__*/function () {
-      var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
-        var response, _response;
-        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-          while (1) switch (_context3.prev = _context3.next) {
-            case 0:
-              if (!(location != null)) {
-                _context3.next = 12;
-                break;
-              }
-              if (!(inputLocationValue == null || inputLocationValue == "")) {
-                _context3.next = 8;
-                break;
-              }
-              _context3.next = 4;
-              return (0, _authscape.apiService)().get("/UserManagement/GetLocations?locationId=" + locationId);
-            case 4:
-              response = _context3.sent;
-              if (response != null && response.status == 200) {
-                setLocations(response.data);
-              }
-              _context3.next = 12;
-              break;
-            case 8:
-              _context3.next = 10;
-              return (0, _authscape.apiService)().get("/UserManagement/GetLocations?locationId=" + locationId + "&name=" + inputLocationValue);
-            case 10:
-              _response = _context3.sent;
-              if (_response != null && _response.status == 200) {
-                setLocations(_response.data);
-              }
-            case 12:
-            case "end":
-              return _context3.stop();
-          }
-        }, _callee3);
-      }));
-      return function fetchData() {
-        return _ref4.apply(this, arguments);
-      };
-    }();
-    if (location != null || locationId == -1) {
+    if (inputCompanyValue != null) {
+      var fetchData = /*#__PURE__*/function () {
+        var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+          var response;
+          return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+            while (1) switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.next = 2;
+                return (0, _authscape.apiService)().get("/UserManagement/GetCompaniesForLocation?searchBName=" + inputCompanyValue);
+              case 2:
+                response = _context4.sent;
+                if (response != null && response.status == 200) {
+                  setLocations(response.data);
+                }
+              case 4:
+              case "end":
+                return _context4.stop();
+            }
+          }, _callee4);
+        }));
+        return function fetchData() {
+          return _ref5.apply(this, arguments);
+        };
+      }();
       fetchData();
     }
-  }, [location, locationId, inputLocationValue]);
+  }, [inputCompanyValue]);
   var saveChanges = function saveChanges(shouldClose) {
     refShouldClose.current = shouldClose;
     refSubmitButton.current.click();
@@ -1552,51 +2044,99 @@ var LocationEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   });
   return /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement("form", {
     onSubmit: handleSubmit( /*#__PURE__*/function () {
-      var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(data) {
+      var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(data) {
         var userCustomFields, response;
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-          while (1) switch (_context4.prev = _context4.next) {
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) switch (_context6.prev = _context6.next) {
             case 0:
               userCustomFields = [];
-              customFields && customFields.forEach(function (customField) {
-                var newValue =
-                // customField.customFieldType == 2 ? 
-                // draftToHTML(editors[customField.customFieldId].getCurrentContent()) 
-                // : 
-                data[customField.customFieldId];
-                if (newValue != null) {
-                  userCustomFields.push({
-                    customFieldId: customField.customFieldId,
-                    name: customField.name,
-                    isRequired: customField.isRequired,
-                    customFieldType: customField.customFieldType,
-                    value: newValue.toString()
-                  });
-                }
-              });
-              _context4.next = 4;
+              customFields && customFields.forEach( /*#__PURE__*/function () {
+                var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(customField) {
+                  var newValue, newBlob, _data, _response;
+                  return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+                    while (1) switch (_context5.prev = _context5.next) {
+                      case 0:
+                        newValue =
+                        // customField.customFieldType == 2 ? 
+                        // draftToHTML(editors[customField.customFieldId].getCurrentContent()) 
+                        // : 
+                        data[customField.customFieldId];
+                        if (!(newValue != null && typeof newValue === 'string')) {
+                          _context5.next = 5;
+                          break;
+                        }
+                        userCustomFields.push({
+                          customFieldId: customField.customFieldId,
+                          name: customField.name,
+                          isRequired: customField.isRequired,
+                          customFieldType: customField.customFieldType,
+                          value: newValue.toString()
+                        });
+                        _context5.next = 16;
+                        break;
+                      case 5:
+                        if (!(newValue instanceof Blob)) {
+                          _context5.next = 16;
+                          break;
+                        }
+                        newBlob = new Blob([newValue], {
+                          type: newValue.type
+                        });
+                        _data = new FormData();
+                        _data.append("file", newBlob);
+                        _data.append("identifier", locationId);
+                        _data.append("platformType", 3); // company
+                        _data.append("customFieldId", customField.customFieldId);
+                        _context5.next = 14;
+                        return (0, _authscape.apiService)().post("/UserManagement/UploadCustomFieldImage", _data);
+                      case 14:
+                        _response = _context5.sent;
+                        if (_response != null && _response.status == 200) {
+                          userCustomFields.push({
+                            customFieldId: customField.customFieldId,
+                            name: customField.name,
+                            isRequired: customField.isRequired,
+                            customFieldType: customField.customFieldType,
+                            value: _response.data
+                          });
+                        }
+                      case 16:
+                      case "end":
+                        return _context5.stop();
+                    }
+                  }, _callee5);
+                }));
+                return function (_x3) {
+                  return _ref7.apply(this, arguments);
+                };
+              }());
+              _context6.next = 4;
               return (0, _authscape.apiService)().post("/UserManagement/UpdateLocation", {
                 id: locationId,
-                companyId: companyId,
+                companyId: company != null ? company.id : null,
                 title: data.Title,
-                isDeactivated: false,
+                address: data.Address,
+                city: data.City,
+                state: data.State,
+                postalCode: data.ZipCode,
+                isDeactivated: !data.IsActive,
                 customFields: userCustomFields
               });
             case 4:
-              response = _context4.sent;
+              response = _context6.sent;
               if (response != null && response.status == 200) {
                 if (onSaved != null) {
-                  onSaved(refShouldClose.current);
+                  onSaved(refShouldClose.current, 3, locationId, response.data);
                 }
               }
             case 6:
             case "end":
-              return _context4.stop();
+              return _context6.stop();
           }
-        }, _callee4);
+        }, _callee6);
       }));
       return function (_x2) {
-        return _ref5.apply(this, arguments);
+        return _ref6.apply(this, arguments);
       };
     }()),
     noValidate: true,
@@ -1617,24 +2157,71 @@ var LocationEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     }
   }, /*#__PURE__*/_react["default"].createElement(_system.Box, {
     sx: {
-      textAlign: "center",
-      display: "flex",
-      justifyContent: "center",
-      padding: 2
-    }
-  }, /*#__PURE__*/_react["default"].createElement(_material.Avatar, {
-    alt: "Remy Sharp",
-    src: "/static/images/avatar/1.jpg",
-    sx: {
-      width: 100,
-      height: 100
-    }
-  })), /*#__PURE__*/_react["default"].createElement("hr", null), /*#__PURE__*/_react["default"].createElement(_system.Box, {
-    sx: {
       fontWeight: "bold",
       paddingBottom: 1
     }
-  }, "About this Location"), renderSystemField(locationId, location, control, errors, register, fields)), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+  }, "About this Location"), renderSystemField(locationId, location, control, errors, register, fields), /*#__PURE__*/_react["default"].createElement(_material.Autocomplete, {
+    id: "companySelect",
+    sx: {
+      paddingTop: 2
+    },
+    getOptionLabel: function getOptionLabel(option) {
+      return option.title || option;
+    },
+    options: [].concat(_toConsumableArray(locations), [{
+      title: "Add Company",
+      isAddOption: true
+    }]) // Add option appended here
+    ,
+    autoComplete: true,
+    includeInputInList: true,
+    filterSelectedOptions: true,
+    value: company,
+    noOptionsText: "Company Not Found",
+    onChange: function onChange(event, newValue) {
+      if (newValue !== null && newValue !== void 0 && newValue.isAddOption) {
+        setEditAddLocationId(-1);
+      } else {
+        setCompany(newValue);
+      }
+    },
+    onInputChange: function onInputChange(event, newInputValue) {
+      setInputCompanyValue(newInputValue);
+    },
+    renderInput: function renderInput(params) {
+      return /*#__PURE__*/_react["default"].createElement(_TextField["default"], _extends({}, params, {
+        label: "Company",
+        fullWidth: true
+      }));
+    },
+    renderOption: function renderOption(props, option) {
+      return /*#__PURE__*/_react["default"].createElement("li", _extends({}, props, {
+        key: "company-" + option.title
+      }), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+        container: true,
+        alignItems: "center"
+      }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+        item: true,
+        sx: {
+          display: 'flex',
+          width: 44
+        }
+      }, /*#__PURE__*/_react["default"].createElement(_BusinessRounded["default"], {
+        sx: {
+          color: 'text.secondary'
+        }
+      })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+        item: true,
+        sx: {
+          width: 'calc(100% - 44px)',
+          wordWrap: 'break-word'
+        }
+      }, /*#__PURE__*/_react["default"].createElement(_Typography["default"], {
+        variant: "body2",
+        color: option.isAddOption ? "primary" : "text.secondary"
+      }, option.title))));
+    }
+  })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
     item: true,
     size: 8,
     sx: {
@@ -1657,10 +2244,18 @@ var LocationEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       label: tab.name,
       value: tab.id
     });
+  }), customTabs != null && customTabs.map(function (tab, index) {
+    return /*#__PURE__*/_react["default"].createElement(_material.Tab, {
+      key: "custom-" + tab.id,
+      label: tab.title,
+      value: tab.id
+    });
   }))), /*#__PURE__*/_react["default"].createElement(_system.Box, null, tabOptions.map(function (tab, index) {
     return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, tabValue === tab.id && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, customFields && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, renderCustomField(locationId, location, control, errors, register, setValue, customFields.filter(function (s) {
       return s.tabId == tab.id;
     })))));
+  }), customTabs != null && customTabs.map(function (tab, index) {
+    return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, tabValue === tab.id && /*#__PURE__*/_react["default"].createElement(_system.Box, null, tab.content));
   }))), /*#__PURE__*/_react["default"].createElement(_material.Button, {
     ref: refSubmitButton,
     variant: "contained",
@@ -1728,7 +2323,9 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     userId = _ref$userId === void 0 ? null : _ref$userId,
     platformType = _ref.platformType,
     _ref$onSaved = _ref.onSaved,
-    onSaved = _ref$onSaved === void 0 ? null : _ref$onSaved;
+    onSaved = _ref$onSaved === void 0 ? null : _ref$onSaved,
+    _ref$onCustomTabs = _ref.onCustomTabs,
+    onCustomTabs = _ref$onCustomTabs === void 0 ? null : _ref$onCustomTabs;
   var _useForm = (0, _reactHookForm.useForm)(),
     control = _useForm.control,
     register = _useForm.register,
@@ -1741,7 +2338,7 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     editors = _useState2[0],
     setEditors = _useState2[1];
   var refTimeoutToken = (0, _react.useRef)(null);
-  var refShouldClose = (0, _react.useRef)(null);
+  var refShouldClose = (0, _react.useRef)(false);
   var refSubmitButton = (0, _react.useRef)(null);
   var _useState3 = (0, _react.useState)(null),
     _useState4 = _slicedToArray(_useState3, 2),
@@ -1799,10 +2396,14 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     _useState30 = _slicedToArray(_useState29, 2),
     user = _useState30[0],
     setUser = _useState30[1];
-  var _useState31 = (0, _react.useState)([]),
+  var _useState31 = (0, _react.useState)(null),
     _useState32 = _slicedToArray(_useState31, 2),
-    tabOptions = _useState32[0],
-    setTabOptions = _useState32[1];
+    customTabs = _useState32[0],
+    setCustomTabs = _useState32[1];
+  var _useState33 = (0, _react.useState)([]),
+    _useState34 = _slicedToArray(_useState33, 2),
+    tabOptions = _useState34[0],
+    setTabOptions = _useState34[1];
   var ITEM_HEIGHT = 48;
   var ITEM_PADDING_TOP = 8;
   var MenuProps = {
@@ -1813,18 +2414,18 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       }
     }
   };
-  var _useState33 = (0, _react.useState)(""),
-    _useState34 = _slicedToArray(_useState33, 2),
-    newPassword = _useState34[0],
-    setNewPassword = _useState34[1];
   var _useState35 = (0, _react.useState)(""),
     _useState36 = _slicedToArray(_useState35, 2),
-    confirmPassword = _useState36[0],
-    setConfirmPassword = _useState36[1];
-  var _useState37 = (0, _react.useState)(0),
+    newPassword = _useState36[0],
+    setNewPassword = _useState36[1];
+  var _useState37 = (0, _react.useState)(""),
     _useState38 = _slicedToArray(_useState37, 2),
-    tabValue = _useState38[0],
-    setTabValue = _useState38[1];
+    confirmPassword = _useState38[0],
+    setConfirmPassword = _useState38[1];
+  var _useState39 = (0, _react.useState)(0),
+    _useState40 = _slicedToArray(_useState39, 2),
+    tabValue = _useState40[0],
+    setTabValue = _useState40[1];
   var handleTabChange = function handleTabChange(event, newValue) {
     setTabValue(newValue);
   };
@@ -1919,6 +2520,34 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       fetchUserData();
     }
   }, [userId]);
+  (0, _react.useEffect)(function () {
+    if (userId != null && onCustomTabs != null) {
+      var fetchData = /*#__PURE__*/function () {
+        var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+          var tabs;
+          return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+            while (1) switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return onCustomTabs(platformType, userId);
+              case 2:
+                tabs = _context3.sent;
+                if (tabs != null) {
+                  setCustomTabs(tabs);
+                }
+              case 4:
+              case "end":
+                return _context3.stop();
+            }
+          }, _callee3);
+        }));
+        return function fetchData() {
+          return _ref4.apply(this, arguments);
+        };
+      }();
+      fetchData();
+    }
+  }, [userId]);
   var fields = ["FirstName", "LastName", "IsActive", "Email", "PhoneNumber"];
   function a11yProps(index) {
     return {
@@ -1927,15 +2556,15 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     };
   }
   var refreshTabOptions = /*#__PURE__*/function () {
-    var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+    var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
       var customTabResponse, dataElement;
-      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-        while (1) switch (_context3.prev = _context3.next) {
+      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+        while (1) switch (_context4.prev = _context4.next) {
           case 0:
-            _context3.next = 2;
+            _context4.next = 2;
             return (0, _authscape.apiService)().get("/UserManagement/GetCustomTabs?platformType=" + platformType);
           case 2:
-            customTabResponse = _context3.sent;
+            customTabResponse = _context4.sent;
             if (customTabResponse != null && customTabResponse.status == 200) {
               dataElement = customTabResponse.data;
               setTabOptions(dataElement);
@@ -1945,38 +2574,38 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
             }
           case 4:
           case "end":
-            return _context3.stop();
+            return _context4.stop();
         }
-      }, _callee3);
+      }, _callee4);
     }));
     return function refreshTabOptions() {
-      return _ref4.apply(this, arguments);
+      return _ref5.apply(this, arguments);
     };
   }();
   (0, _react.useEffect)(function () {
     var fetchData = /*#__PURE__*/function () {
-      var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+      var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
         var response2;
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-          while (1) switch (_context4.prev = _context4.next) {
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) switch (_context5.prev = _context5.next) {
             case 0:
-              _context4.next = 2;
+              _context5.next = 2;
               return (0, _authscape.apiService)().get("/UserManagement/GetCompanies?name=" + inputCompanyValue);
             case 2:
-              response2 = _context4.sent;
+              response2 = _context5.sent;
               if (response2 != null && response2.status == 200) {
                 setCompanies(response2.data);
               }
-              _context4.next = 6;
+              _context5.next = 6;
               return refreshTabOptions();
             case 6:
             case "end":
-              return _context4.stop();
+              return _context5.stop();
           }
-        }, _callee4);
+        }, _callee5);
       }));
       return function fetchData() {
-        return _ref5.apply(this, arguments);
+        return _ref6.apply(this, arguments);
       };
     }();
 
@@ -1989,44 +2618,44 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   }, [inputCompanyValue]);
   (0, _react.useEffect)(function () {
     var fetchData = /*#__PURE__*/function () {
-      var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+      var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
         var response, _response;
-        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-          while (1) switch (_context5.prev = _context5.next) {
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) switch (_context6.prev = _context6.next) {
             case 0:
               if (!(company != null)) {
-                _context5.next = 12;
+                _context6.next = 12;
                 break;
               }
               if (!(inputLocationValue == null || inputLocationValue == "")) {
-                _context5.next = 8;
+                _context6.next = 8;
                 break;
               }
-              _context5.next = 4;
+              _context6.next = 4;
               return (0, _authscape.apiService)().get("/UserManagement/GetLocations?companyId=" + company.id);
             case 4:
-              response = _context5.sent;
+              response = _context6.sent;
               if (response != null && response.status == 200) {
                 setLocations(response.data);
               }
-              _context5.next = 12;
+              _context6.next = 12;
               break;
             case 8:
-              _context5.next = 10;
+              _context6.next = 10;
               return (0, _authscape.apiService)().get("/UserManagement/GetLocations?companyId=" + company.id + "&name=" + inputLocationValue);
             case 10:
-              _response = _context5.sent;
+              _response = _context6.sent;
               if (_response != null && _response.status == 200) {
                 setLocations(_response.data);
               }
             case 12:
             case "end":
-              return _context5.stop();
+              return _context6.stop();
           }
-        }, _callee5);
+        }, _callee6);
       }));
       return function fetchData() {
-        return _ref6.apply(this, arguments);
+        return _ref7.apply(this, arguments);
       };
     }();
     if (user != null || userId == -1) {
@@ -2044,29 +2673,73 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   });
   return /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement("form", {
     onSubmit: handleSubmit( /*#__PURE__*/function () {
-      var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(data) {
+      var _ref8 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8(data) {
         var userCustomFields, response;
-        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-          while (1) switch (_context6.prev = _context6.next) {
+        return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+          while (1) switch (_context8.prev = _context8.next) {
             case 0:
               userCustomFields = [];
-              customFields && customFields.forEach(function (customField) {
-                var newValue =
-                // customField.customFieldType == 2 ? 
-                // draftToHTML(editors[customField.customFieldId].getCurrentContent()) 
-                // : 
-                data[customField.customFieldId];
-                if (newValue != null) {
-                  userCustomFields.push({
-                    customFieldId: customField.customFieldId,
-                    name: customField.name,
-                    isRequired: customField.isRequired,
-                    customFieldType: customField.customFieldType,
-                    value: newValue.toString()
-                  });
-                }
-              });
-              _context6.next = 4;
+              customFields && customFields.forEach( /*#__PURE__*/function () {
+                var _ref9 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(customField) {
+                  var newValue, newBlob, _data, _response2;
+                  return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+                    while (1) switch (_context7.prev = _context7.next) {
+                      case 0:
+                        newValue =
+                        // customField.customFieldType == 2 ? 
+                        // draftToHTML(editors[customField.customFieldId].getCurrentContent()) 
+                        // : 
+                        data[customField.customFieldId];
+                        if (!(newValue != null && typeof newValue === 'string')) {
+                          _context7.next = 5;
+                          break;
+                        }
+                        userCustomFields.push({
+                          customFieldId: customField.customFieldId,
+                          name: customField.name,
+                          isRequired: customField.isRequired,
+                          customFieldType: customField.customFieldType,
+                          value: newValue.toString()
+                        });
+                        _context7.next = 16;
+                        break;
+                      case 5:
+                        if (!(newValue instanceof Blob)) {
+                          _context7.next = 16;
+                          break;
+                        }
+                        newBlob = new Blob([newValue], {
+                          type: newValue.type
+                        });
+                        _data = new FormData();
+                        _data.append("file", newBlob);
+                        _data.append("identifier", userId);
+                        _data.append("platformType", 1); // company
+                        _data.append("customFieldId", customField.customFieldId);
+                        _context7.next = 14;
+                        return (0, _authscape.apiService)().post("/UserManagement/UploadCustomFieldImage", _data);
+                      case 14:
+                        _response2 = _context7.sent;
+                        if (_response2 != null && _response2.status == 200) {
+                          userCustomFields.push({
+                            customFieldId: customField.customFieldId,
+                            name: customField.name,
+                            isRequired: customField.isRequired,
+                            customFieldType: customField.customFieldType,
+                            value: _response2.data
+                          });
+                        }
+                      case 16:
+                      case "end":
+                        return _context7.stop();
+                    }
+                  }, _callee7);
+                }));
+                return function (_x3) {
+                  return _ref9.apply(this, arguments);
+                };
+              }());
+              _context8.next = 4;
               return (0, _authscape.apiService)().put("/UserManagement/UpdateUser", {
                 id: userId,
                 firstName: data.FirstName,
@@ -2081,20 +2754,20 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
                 customFields: userCustomFields
               });
             case 4:
-              response = _context6.sent;
+              response = _context8.sent;
               if (response != null && response.status == 200) {
                 if (onSaved != null) {
-                  onSaved(refShouldClose.current);
+                  onSaved(refShouldClose.current, 1, userId, response.data);
                 }
               }
             case 6:
             case "end":
-              return _context6.stop();
+              return _context8.stop();
           }
-        }, _callee6);
+        }, _callee8);
       }));
       return function (_x2) {
-        return _ref7.apply(this, arguments);
+        return _ref8.apply(this, arguments);
       };
     }()),
     noValidate: true,
@@ -2296,7 +2969,7 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   }, /*#__PURE__*/_react["default"].createElement(_material.Button, {
     variant: "text",
     onClick: function onClick() {
-      setEditAddLocationId(company != null ? company.id : -1);
+      setEditAddLocationId(location != null ? location.id : -1);
     }
   }, "Edit Location"), /*#__PURE__*/_react["default"].createElement(_material.Button, {
     variant: "text",
@@ -2411,10 +3084,18 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       label: tab.name,
       value: tab.id
     });
+  }), customTabs != null && customTabs.map(function (tab, index) {
+    return /*#__PURE__*/_react["default"].createElement(_material.Tab, {
+      key: "custom-" + tab.id,
+      label: tab.title,
+      value: tab.id
+    });
   }))), /*#__PURE__*/_react["default"].createElement(_system.Box, null, tabOptions.map(function (tab, index) {
     return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, tabValue === tab.id && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, customFields && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, renderCustomField(userId, user, control, errors, register, setValue, customFields.filter(function (s) {
       return s.tabId == tab.id;
     })))));
+  }), customTabs != null && customTabs.map(function (tab, index) {
+    return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, tabValue === tab.id && /*#__PURE__*/_react["default"].createElement(_system.Box, null, tab.content));
   }))), /*#__PURE__*/_react["default"].createElement(_material.Button, {
     ref: refSubmitButton,
     variant: "contained",
@@ -2445,19 +3126,26 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   }, /*#__PURE__*/_react["default"].createElement(UserManagement, {
     platformType: 2,
     defaultIdentifier: editAddCompanyId,
-    onSaved: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
-      return _regeneratorRuntime().wrap(function _callee7$(_context7) {
-        while (1) switch (_context7.prev = _context7.next) {
-          case 0:
-            setEditAddCompanyId(null);
-            _context7.next = 3;
-            return fetchUserData();
-          case 3:
-          case "end":
-            return _context7.stop();
-        }
-      }, _callee7);
-    }))
+    onSaved: /*#__PURE__*/function () {
+      var _ref10 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9(shouldClose, platformType, id, fields) {
+        return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+          while (1) switch (_context9.prev = _context9.next) {
+            case 0:
+              setEditAddCompanyId(null);
+              _context9.next = 3;
+              return fetchUserData();
+            case 3:
+              onSaved(shouldClose, platformType, id, fields);
+            case 4:
+            case "end":
+              return _context9.stop();
+          }
+        }, _callee9);
+      }));
+      return function (_x4, _x5, _x6, _x7) {
+        return _ref10.apply(this, arguments);
+      };
+    }()
   })))), /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, {
     key: "right"
   }, /*#__PURE__*/_react["default"].createElement(_material.Drawer, {
@@ -2482,19 +3170,26 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     platformType: 3,
     companyId: company != null ? company.id : -1,
     defaultIdentifier: editAddLocationId,
-    onSaved: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
-      return _regeneratorRuntime().wrap(function _callee8$(_context8) {
-        while (1) switch (_context8.prev = _context8.next) {
-          case 0:
-            setEditAddLocationId(null);
-            _context8.next = 3;
-            return fetchUserData();
-          case 3:
-          case "end":
-            return _context8.stop();
-        }
-      }, _callee8);
-    }))
+    onSaved: /*#__PURE__*/function () {
+      var _ref11 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(shouldClose, platformType, id, fields) {
+        return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+          while (1) switch (_context10.prev = _context10.next) {
+            case 0:
+              setEditAddLocationId(null);
+              _context10.next = 3;
+              return fetchUserData();
+            case 3:
+              onSaved(shouldClose, platformType, id, fields);
+            case 4:
+            case "end":
+              return _context10.stop();
+          }
+        }, _callee10);
+      }));
+      return function (_x8, _x9, _x10, _x11) {
+        return _ref11.apply(this, arguments);
+      };
+    }()
   })))));
 });
 UserEditor.displayName = "UserEditor";
@@ -2520,6 +3215,7 @@ var _SaveRounded = _interopRequireDefault(require("@mui/icons-material/SaveRound
 var _SettingsRounded = _interopRequireDefault(require("@mui/icons-material/SettingsRounded"));
 var _PasswordRounded = _interopRequireDefault(require("@mui/icons-material/PasswordRounded"));
 var _Autocomplete = _interopRequireDefault(require("@mui/material/Autocomplete"));
+var _BusinessRounded = _interopRequireDefault(require("@mui/icons-material/BusinessRounded"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
@@ -2558,7 +3254,9 @@ var UserManagement = function UserManagement(_ref) {
     _ref$onAccountCreated = _ref.onAccountCreated,
     onAccountCreated = _ref$onAccountCreated === void 0 ? null : _ref$onAccountCreated,
     _ref$onSaved = _ref.onSaved,
-    _onSaved = _ref$onSaved === void 0 ? null : _ref$onSaved;
+    _onSaved = _ref$onSaved === void 0 ? null : _ref$onSaved,
+    _ref$onCustomTabs = _ref.onCustomTabs,
+    onCustomTabs = _ref$onCustomTabs === void 0 ? null : _ref$onCustomTabs;
   var _useState = (0, _react.useState)(null),
     _useState2 = _slicedToArray(_useState, 2),
     showUserDetails = _useState2[0],
@@ -2575,59 +3273,75 @@ var UserManagement = function UserManagement(_ref) {
     _useState8 = _slicedToArray(_useState7, 2),
     showContactDialog = _useState8[0],
     setShowContactDialog = _useState8[1];
-  var _useState9 = (0, _react.useState)([]),
+  var _useState9 = (0, _react.useState)(''),
     _useState10 = _slicedToArray(_useState9, 2),
-    allRoles = _useState10[0],
-    setAllRoles = _useState10[1];
+    inputCompanyValue = _useState10[0],
+    setInputCompanyValue = _useState10[1];
   var _useState11 = (0, _react.useState)([]),
     _useState12 = _slicedToArray(_useState11, 2),
-    allCompanies = _useState12[0],
-    setAllCompanies = _useState12[1];
-
-  // const [hasLoaded, setHasLoaded] = useState(false);
-
-  var _useState13 = (0, _react.useState)(false),
+    allRoles = _useState12[0],
+    setAllRoles = _useState12[1];
+  var _useState13 = (0, _react.useState)([]),
     _useState14 = _slicedToArray(_useState13, 2),
-    showChangePasswordDialog = _useState14[0],
-    setShowChangePasswordDialog = _useState14[1];
-  var _useState15 = (0, _react.useState)(null),
+    allCompanies = _useState14[0],
+    setAllCompanies = _useState14[1];
+  var _useState15 = (0, _react.useState)(false),
     _useState16 = _slicedToArray(_useState15, 2),
-    newPassword = _useState16[0],
-    setNewPassword = _useState16[1];
+    showChangePasswordDialog = _useState16[0],
+    setShowChangePasswordDialog = _useState16[1];
   var _useState17 = (0, _react.useState)(null),
     _useState18 = _slicedToArray(_useState17, 2),
-    confirmPassword = _useState18[0],
-    setConfirmPassword = _useState18[1];
-  var _useState19 = (0, _react.useState)(0),
+    newPassword = _useState18[0],
+    setNewPassword = _useState18[1];
+  var _useState19 = (0, _react.useState)(null),
     _useState20 = _slicedToArray(_useState19, 2),
-    dataGridRefreshKey = _useState20[0],
-    setDataGridRefreshKey = _useState20[1];
-  var _useState21 = (0, _react.useState)(false),
+    confirmPassword = _useState20[0],
+    setConfirmPassword = _useState20[1];
+  var _useState21 = (0, _react.useState)(0),
     _useState22 = _slicedToArray(_useState21, 2),
-    uploadUsersShowDialog = _useState22[0],
-    setUploadUsersShowDialog = _useState22[1];
-  var _useState23 = (0, _react.useState)(''),
+    dataGridRefreshKey = _useState22[0],
+    setDataGridRefreshKey = _useState22[1];
+  var _useState23 = (0, _react.useState)(false),
     _useState24 = _slicedToArray(_useState23, 2),
-    searchByName = _useState24[0],
-    setSearchByName = _useState24[1];
-  var _useState25 = (0, _react.useState)(null),
+    uploadUsersShowDialog = _useState24[0],
+    setUploadUsersShowDialog = _useState24[1];
+  var _useState25 = (0, _react.useState)(''),
     _useState26 = _slicedToArray(_useState25, 2),
-    searchByCompanyId = _useState26[0],
-    setSearchByCompanyId = _useState26[1];
+    searchByName = _useState26[0],
+    setSearchByName = _useState26[1];
   var _useState27 = (0, _react.useState)(null),
     _useState28 = _slicedToArray(_useState27, 2),
-    searchByRoleId = _useState28[0],
-    setSearchByRoleId = _useState28[1];
-  var _useState29 = (0, _react.useState)([]),
+    searchByCompanyId = _useState28[0],
+    setSearchByCompanyId = _useState28[1];
+  var _useState29 = (0, _react.useState)(null),
     _useState30 = _slicedToArray(_useState29, 2),
-    fields = _useState30[0],
-    setFields = _useState30[1];
+    searchByRoleId = _useState30[0],
+    setSearchByRoleId = _useState30[1];
   var _useState31 = (0, _react.useState)([]),
     _useState32 = _slicedToArray(_useState31, 2),
     columns = _useState32[0],
     setColumns = _useState32[1];
+  var _useState33 = (0, _react.useState)(true),
+    _useState34 = _slicedToArray(_useState33, 2),
+    activeState = _useState34[0],
+    setActiveState = _useState34[1];
   var filterLoaded = (0, _react.useRef)(false);
   var userEditorRef = (0, _react.useRef)();
+  var _useState35 = (0, _react.useState)([]),
+    _useState36 = _slicedToArray(_useState35, 2),
+    companies = _useState36[0],
+    setCompanies = _useState36[1];
+  var _useState37 = (0, _react.useState)(null),
+    _useState38 = _slicedToArray(_useState37, 2),
+    company = _useState38[0],
+    setCompany = _useState38[1];
+  var newCompanyName = (0, _react.useRef)();
+  var newLocationName = (0, _react.useRef)();
+  var newLocationAddress = (0, _react.useRef)();
+  var newLocationCity = (0, _react.useRef)();
+  var newLocationState = (0, _react.useRef)();
+  var newLocationPostalCode = (0, _react.useRef)();
+  var newLocationCompanyId = (0, _react.useRef)();
   var newFirstName = (0, _react.useRef)();
   var newLastName = (0, _react.useRef)();
   var newEmail = (0, _react.useRef)();
@@ -2750,21 +3464,61 @@ var UserManagement = function UserManagement(_ref) {
       return param.row.numberOfUsers != null ? param.row.numberOfUsers : "";
     }
   }];
-
-  // useEffect(() => {
-
-  //     if (hasLoaded == false)
-  //     {
-  //         setHasLoaded(true);
-  //     }
-
-  // }, []);
-
+  var locationColumns = [{
+    field: 'title',
+    headerName: 'Name',
+    flex: 1,
+    renderCell: function renderCell(param) {
+      return param.row.title;
+    }
+  }, {
+    field: 'address',
+    headerName: 'Address',
+    flex: 1,
+    renderCell: function renderCell(param) {
+      return param.row.address != null ? param.row.address : "";
+    }
+  }, {
+    field: 'city',
+    headerName: 'City',
+    flex: 1,
+    renderCell: function renderCell(param) {
+      return param.row.city != null ? param.row.city : "";
+    }
+  }, {
+    field: 'state',
+    headerName: 'State',
+    flex: 1,
+    renderCell: function renderCell(param) {
+      return param.row.state != null ? param.row.state : "";
+    }
+  }, {
+    field: 'zipCode',
+    headerName: 'ZipCode',
+    flex: 1,
+    renderCell: function renderCell(param) {
+      return param.row.zipCode != null ? param.row.zipCode : "";
+    }
+  }, {
+    field: 'isDeactivated',
+    headerName: 'Account Status',
+    flex: 1,
+    renderCell: function renderCell(param) {
+      return param.row.isDeactivated != null ? !param.row.isDeactivated ? "Active" : "Deactive" : "";
+    }
+  }, {
+    field: 'company',
+    headerName: 'Company',
+    flex: 1,
+    renderCell: function renderCell(param) {
+      return param.row.company != null ? param.row.company.title : "";
+    }
+  }];
   (0, _react.useEffect)(function () {
     if (defaultIdentifier == null) {
       setDataGridRefreshKey(dataGridRefreshKey + 1);
     }
-  }, [searchByName, columns]);
+  }, [searchByName, columns, activeState]);
   (0, _react.useEffect)(function () {
     if (!filterLoaded.current) {
       filterLoaded.current = true;
@@ -2779,7 +3533,9 @@ var UserManagement = function UserManagement(_ref) {
       response = "/UserManagement/GetUsers";
     } else if (platformType == 2) {
       response = "/UserManagement/GetCompanies";
-    } else if (platformType == 3) {}
+    } else if (platformType == 3) {
+      response = "/UserManagement/GetLocations";
+    }
     return response;
   };
   var getColumns = function getColumns(customFields) {
@@ -2809,14 +3565,70 @@ var UserManagement = function UserManagement(_ref) {
               e.stopPropagation();
               setShowArchiveUserDialog(param.row);
             }
-          }, "Archive");
+          }, param.row.isActive ? "Archive" : "Activate");
         }
       }]);
       setColumns(cols);
     } else if (platformType == 2) {
-      return companiesColumns;
+      var _cols = [].concat(companiesColumns, _toConsumableArray(customFields.map(function (field, i) {
+        return {
+          field: "customField".concat(i + 1),
+          headerName: field.name,
+          flex: 1,
+          valueGetter: function valueGetter(_, row) {
+            if (row.customFields) {
+              var cf = row.customFields.find(function (f) {
+                return f.customFieldId == field.id;
+              });
+              if (cf) return cf.value;
+            }
+            return null;
+          }
+        };
+      })), [{
+        field: '',
+        headerName: '',
+        flex: 1,
+        renderCell: function renderCell(param) {
+          return /*#__PURE__*/_react["default"].createElement(_material.Button, {
+            onClick: function onClick(e) {
+              e.stopPropagation();
+              setShowArchiveUserDialog(param.row);
+            }
+          }, param.row.isActive ? "Archive" : "Activate");
+        }
+      }]);
+      setColumns(_cols);
     } else if (platformType == 3) {
-      return null;
+      var _cols2 = [].concat(locationColumns, _toConsumableArray(customFields.map(function (field, i) {
+        return {
+          field: "customField".concat(i + 1),
+          headerName: field.name,
+          flex: 1,
+          valueGetter: function valueGetter(_, row) {
+            if (row.customFields) {
+              var cf = row.customFields.find(function (f) {
+                return f.customFieldId == field.id;
+              });
+              if (cf) return cf.value;
+            }
+            return null;
+          }
+        };
+      })), [{
+        field: '',
+        headerName: '',
+        flex: 1,
+        renderCell: function renderCell(param) {
+          return /*#__PURE__*/_react["default"].createElement(_material.Button, {
+            onClick: function onClick(e) {
+              e.stopPropagation();
+              setShowArchiveUserDialog(param.row);
+            }
+          }, param.row.isActive ? "Archive" : "Activate");
+        }
+      }]);
+      setColumns(_cols2);
     }
   };
   var getAllCompanies = /*#__PURE__*/function () {
@@ -2854,7 +3666,7 @@ var UserManagement = function UserManagement(_ref) {
         while (1) switch (_context2.prev = _context2.next) {
           case 0:
             _context2.next = 2;
-            return (0, _authscape.apiService)().get("/UserManagement/GetCustomFields?platformType=".concat(platformType));
+            return (0, _authscape.apiService)().get("/UserManagement/GetCustomFields?platformType=".concat(platformType, "&IsDatagrid=true"));
           case 2:
             res = _context2.sent;
             getColumns(res.data);
@@ -2896,6 +3708,34 @@ var UserManagement = function UserManagement(_ref) {
       return _ref4.apply(this, arguments);
     };
   }();
+  (0, _react.useEffect)(function () {
+    if (inputCompanyValue != null) {
+      var fetchData = /*#__PURE__*/function () {
+        var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+          var response;
+          return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+            while (1) switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.next = 2;
+                return (0, _authscape.apiService)().get("/UserManagement/GetCompaniesForLocation?searchBName=" + inputCompanyValue);
+              case 2:
+                response = _context4.sent;
+                if (response != null && response.status == 200) {
+                  setCompanies(response.data);
+                }
+              case 4:
+              case "end":
+                return _context4.stop();
+            }
+          }, _callee4);
+        }));
+        return function fetchData() {
+          return _ref5.apply(this, arguments);
+        };
+      }();
+      fetchData();
+    }
+  }, [inputCompanyValue]);
   return /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement(_material.AppBar, {
     color: "invert",
     position: "static",
@@ -2939,20 +3779,20 @@ var UserManagement = function UserManagement(_ref) {
       mr: 1,
       cursor: "pointer"
     },
-    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-        while (1) switch (_context4.prev = _context4.next) {
+    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+      return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+        while (1) switch (_context5.prev = _context5.next) {
           case 0:
-            _context4.next = 2;
+            _context5.next = 2;
             return getAllCustomFields();
           case 2:
             setDataGridRefreshKey(dataGridRefreshKey + 1);
             setShowCustomSettings(false);
           case 4:
           case "end":
-            return _context4.stop();
+            return _context5.stop();
         }
-      }, _callee4);
+      }, _callee5);
     }))
   })), /*#__PURE__*/_react["default"].createElement(_material.Divider, {
     orientation: "vertical",
@@ -2965,16 +3805,16 @@ var UserManagement = function UserManagement(_ref) {
   }, /*#__PURE__*/_react["default"].createElement(_material.Button, {
     variant: "text",
     startIcon: /*#__PURE__*/_react["default"].createElement(_SaveRounded["default"], null),
-    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-      return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-        while (1) switch (_context5.prev = _context5.next) {
+    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+      return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+        while (1) switch (_context6.prev = _context6.next) {
           case 0:
             userEditorRef.current.saveChanges();
           case 1:
           case "end":
-            return _context5.stop();
+            return _context6.stop();
         }
-      }, _callee5);
+      }, _callee6);
     }))
   }, "Save")), /*#__PURE__*/_react["default"].createElement(_material.Divider, {
     orientation: "vertical",
@@ -2987,17 +3827,17 @@ var UserManagement = function UserManagement(_ref) {
   }, /*#__PURE__*/_react["default"].createElement(_material.Button, {
     variant: "text",
     startIcon: /*#__PURE__*/_react["default"].createElement(_SaveRounded["default"], null),
-    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
-      return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-        while (1) switch (_context6.prev = _context6.next) {
+    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
+      return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+        while (1) switch (_context7.prev = _context7.next) {
           case 0:
             userEditorRef.current.saveChanges(true);
             setShowUserDetails(null);
           case 2:
           case "end":
-            return _context6.stop();
+            return _context7.stop();
         }
-      }, _callee6);
+      }, _callee7);
     }))
   }, "Save & close")), /*#__PURE__*/_react["default"].createElement(_material.Divider, {
     orientation: "vertical",
@@ -3010,16 +3850,16 @@ var UserManagement = function UserManagement(_ref) {
   }, /*#__PURE__*/_react["default"].createElement(_material.Button, {
     variant: "text",
     startIcon: /*#__PURE__*/_react["default"].createElement(_PasswordRounded["default"], null),
-    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
-      return _regeneratorRuntime().wrap(function _callee7$(_context7) {
-        while (1) switch (_context7.prev = _context7.next) {
+    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
+      return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+        while (1) switch (_context8.prev = _context8.next) {
           case 0:
             setShowChangePasswordDialog(true);
           case 1:
           case "end":
-            return _context7.stop();
+            return _context8.stop();
         }
-      }, _callee7);
+      }, _callee8);
     }))
   }, "Change Password")), /*#__PURE__*/_react["default"].createElement(_material.Divider, {
     orientation: "vertical",
@@ -3032,21 +3872,21 @@ var UserManagement = function UserManagement(_ref) {
   }, /*#__PURE__*/_react["default"].createElement(_material.Button, {
     variant: "text",
     startIcon: /*#__PURE__*/_react["default"].createElement(_AddRounded["default"], null),
-    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
-      return _regeneratorRuntime().wrap(function _callee8$(_context8) {
-        while (1) switch (_context8.prev = _context8.next) {
+    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
+      return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+        while (1) switch (_context9.prev = _context9.next) {
           case 0:
             setShowContactDialog(true);
           case 1:
           case "end":
-            return _context8.stop();
+            return _context9.stop();
         }
-      }, _callee8);
+      }, _callee9);
     }))
-  }, "Add Account")), /*#__PURE__*/_react["default"].createElement(_material.Divider, {
+  }, platformType == 1 ? "Add User" : platformType == 2 ? "Add Company" : "Add Location")), /*#__PURE__*/_react["default"].createElement(_material.Divider, {
     orientation: "vertical",
     flexItem: true
-  })), !showUserDetails && defaultIdentifier == null && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement(_system.Box, {
+  })), !showUserDetails && defaultIdentifier == null && platformType == 1 && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement(_system.Box, {
     sx: {
       paddingRight: 2,
       paddingLeft: 1
@@ -3054,16 +3894,16 @@ var UserManagement = function UserManagement(_ref) {
   }, /*#__PURE__*/_react["default"].createElement(_material.Button, {
     variant: "text",
     startIcon: /*#__PURE__*/_react["default"].createElement(_UploadRounded["default"], null),
-    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
-      return _regeneratorRuntime().wrap(function _callee9$(_context9) {
-        while (1) switch (_context9.prev = _context9.next) {
+    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
+      return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+        while (1) switch (_context10.prev = _context10.next) {
           case 0:
             setUploadUsersShowDialog(true);
           case 1:
           case "end":
-            return _context9.stop();
+            return _context10.stop();
         }
-      }, _callee9);
+      }, _callee10);
     }))
   }, "Upload Users")), /*#__PURE__*/_react["default"].createElement(_material.Divider, {
     orientation: "vertical",
@@ -3116,7 +3956,7 @@ var UserManagement = function UserManagement(_ref) {
       borderRadius: 1,
       boxShadow: "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)"
     }
-  }, showUserDetails == null && defaultIdentifier == null && /*#__PURE__*/_react["default"].createElement(_system.Box, {
+  }, showUserDetails == null && defaultIdentifier == null && platformType == 1 && /*#__PURE__*/_react["default"].createElement(_system.Box, {
     sx: {
       paddingBottom: 1
     }
@@ -3124,7 +3964,7 @@ var UserManagement = function UserManagement(_ref) {
     container: true,
     spacing: 2
   }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
-    size: 4
+    size: 3
   }, /*#__PURE__*/_react["default"].createElement(_authscape.AutoSaveTextField, {
     label: "name or email ",
     fullWidth: true,
@@ -3133,7 +3973,7 @@ var UserManagement = function UserManagement(_ref) {
       setDataGridRefreshKey(dataGridRefreshKey + 1);
     }
   })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
-    size: 4
+    size: 3
   }, /*#__PURE__*/_react["default"].createElement(_Autocomplete["default"], {
     options: allCompanies,
     renderInput: function renderInput(params) {
@@ -3151,7 +3991,7 @@ var UserManagement = function UserManagement(_ref) {
       }
     }
   })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
-    size: 4
+    size: 3
   }, /*#__PURE__*/_react["default"].createElement(_Autocomplete["default"], {
     disablePortal: true,
     options: allRoles,
@@ -3169,7 +4009,105 @@ var UserManagement = function UserManagement(_ref) {
         setDataGridRefreshKey(dataGridRefreshKey + 1);
       }
     }
-  })))), !showCustomSettings && /*#__PURE__*/_react["default"].createElement(_system.Box, null, showUserDetails == null && defaultIdentifier == null && /*#__PURE__*/_react["default"].createElement(_authscape.EditableDatagrid, {
+  })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    size: 3
+  }, /*#__PURE__*/_react["default"].createElement(_material.FormControl, {
+    fullWidth: true
+  }, /*#__PURE__*/_react["default"].createElement(_material.InputLabel, {
+    id: "demo-simple-select-label"
+  }, "State"), /*#__PURE__*/_react["default"].createElement(_material.Select, {
+    labelId: "demo-simple-select-label",
+    id: "demo-simple-select",
+    value: activeState ? 1 : 0,
+    label: "State",
+    onChange: function onChange(evn, newVal) {
+      if (evn.target.value == 0) {
+        setActiveState(false);
+      } else {
+        setActiveState(true);
+      }
+    }
+  }, /*#__PURE__*/_react["default"].createElement(_material.MenuItem, {
+    value: 0
+  }, "Deactivated"), /*#__PURE__*/_react["default"].createElement(_material.MenuItem, {
+    value: 1
+  }, "Activated")))))), showUserDetails == null && defaultIdentifier == null && platformType == 2 && /*#__PURE__*/_react["default"].createElement(_system.Box, {
+    sx: {
+      paddingBottom: 1
+    }
+  }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    container: true,
+    spacing: 2
+  }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    size: 6
+  }, /*#__PURE__*/_react["default"].createElement(_authscape.AutoSaveTextField, {
+    label: "Company Name",
+    fullWidth: true,
+    onChanged: function onChanged(value) {
+      setSearchByName(value);
+      setDataGridRefreshKey(dataGridRefreshKey + 1);
+    }
+  })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    size: 6
+  }, /*#__PURE__*/_react["default"].createElement(_material.FormControl, {
+    fullWidth: true
+  }, /*#__PURE__*/_react["default"].createElement(_material.InputLabel, {
+    id: "demo-simple-select-label"
+  }, "State"), /*#__PURE__*/_react["default"].createElement(_material.Select, {
+    labelId: "demo-simple-select-label",
+    id: "demo-simple-select",
+    value: activeState ? 1 : 0,
+    label: "State",
+    onChange: function onChange(evn, newVal) {
+      if (evn.target.value == 0) {
+        setActiveState(false);
+      } else {
+        setActiveState(true);
+      }
+    }
+  }, /*#__PURE__*/_react["default"].createElement(_material.MenuItem, {
+    value: 0
+  }, "Deactivated"), /*#__PURE__*/_react["default"].createElement(_material.MenuItem, {
+    value: 1
+  }, "Activated")))))), showUserDetails == null && defaultIdentifier == null && platformType == 3 && /*#__PURE__*/_react["default"].createElement(_system.Box, {
+    sx: {
+      paddingBottom: 1
+    }
+  }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    container: true,
+    spacing: 2
+  }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    size: 6
+  }, /*#__PURE__*/_react["default"].createElement(_authscape.AutoSaveTextField, {
+    label: "Location Name",
+    fullWidth: true,
+    onChanged: function onChanged(value) {
+      setSearchByName(value);
+      setDataGridRefreshKey(dataGridRefreshKey + 1);
+    }
+  })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    size: 6
+  }, /*#__PURE__*/_react["default"].createElement(_material.FormControl, {
+    fullWidth: true
+  }, /*#__PURE__*/_react["default"].createElement(_material.InputLabel, {
+    id: "demo-simple-select-label"
+  }, "State"), /*#__PURE__*/_react["default"].createElement(_material.Select, {
+    labelId: "demo-simple-select-label",
+    id: "demo-simple-select",
+    value: activeState ? 1 : 0,
+    label: "State",
+    onChange: function onChange(evn, newVal) {
+      if (evn.target.value == 0) {
+        setActiveState(false);
+      } else {
+        setActiveState(true);
+      }
+    }
+  }, /*#__PURE__*/_react["default"].createElement(_material.MenuItem, {
+    value: 0
+  }, "Deactivated"), /*#__PURE__*/_react["default"].createElement(_material.MenuItem, {
+    value: 1
+  }, "Activated")))))), !showCustomSettings && /*#__PURE__*/_react["default"].createElement(_system.Box, null, showUserDetails == null && defaultIdentifier == null && /*#__PURE__*/_react["default"].createElement(_authscape.EditableDatagrid, {
     key: dataGridRefreshKey,
     height: height,
     pageSize: 25,
@@ -3178,7 +4116,9 @@ var UserManagement = function UserManagement(_ref) {
     params: {
       searchByName: searchByName,
       searchByCompanyId: searchByCompanyId,
-      searchByRoleId: searchByRoleId
+      searchByRoleId: searchByRoleId,
+      name: searchByName,
+      isActive: activeState
     },
     onRowClick: function onRowClick(row) {
       setShowUserDetails(row.id);
@@ -3192,12 +4132,16 @@ var UserManagement = function UserManagement(_ref) {
     }
   }, platformType == 1 && /*#__PURE__*/_react["default"].createElement(UserEditor, {
     platformType: platformType,
+    onCustomTabs: onCustomTabs,
     ref: userEditorRef,
     userId: defaultIdentifier != null ? defaultIdentifier : showUserDetails,
-    onSaved: function onSaved(shouldClose) {
+    onSaved: function onSaved(shouldClose, platformType, userId, fields) {
       setDataGridRefreshKey(dataGridRefreshKey + 1);
       if (_onSaved != null) {
-        _onSaved();
+        if (shouldClose == null) {
+          shouldClose = false;
+        }
+        _onSaved(shouldClose, platformType, userId, fields);
       }
       if (shouldClose) {
         setShowUserDetails(null);
@@ -3205,29 +4149,32 @@ var UserManagement = function UserManagement(_ref) {
     }
   }), platformType == 2 && /*#__PURE__*/_react["default"].createElement(CompanyEditor, {
     companyId: defaultIdentifier != null ? defaultIdentifier : showUserDetails,
+    onCustomTabs: onCustomTabs,
     platformType: platformType,
     ref: userEditorRef,
-    onSaved: function onSaved(shouldClose) {
+    onSaved: function onSaved(shouldClose, platformType, userId, fields) {
       setDataGridRefreshKey(dataGridRefreshKey + 1);
-      if (shouldClose) {
-        // need to add a way to close the company editor
-        if (_onSaved != null) {
-          _onSaved();
+
+      // need to add a way to close the company editor
+      if (_onSaved != null) {
+        if (shouldClose == null) {
+          shouldClose = false;
         }
+        _onSaved(shouldClose, platformType, userId, fields);
       }
     }
   }), platformType == 3 && /*#__PURE__*/_react["default"].createElement(LocationEditor, {
-    companyId: companyId,
     locationId: defaultIdentifier != null ? defaultIdentifier : showUserDetails,
+    onCustomTabs: onCustomTabs,
     platformType: platformType,
     ref: userEditorRef,
-    onSaved: function onSaved(shouldClose) {
+    onSaved: function onSaved(shouldClose, platformType, userId, fields) {
       setDataGridRefreshKey(dataGridRefreshKey + 1);
-      if (shouldClose) {
-        // need to add a way to close the company editor
-        if (_onSaved != null) {
-          _onSaved();
+      if (_onSaved != null) {
+        if (shouldClose == null) {
+          shouldClose = false;
         }
+        _onSaved(shouldClose, platformType, userId, fields);
       }
     }
   }))))), /*#__PURE__*/_react["default"].createElement(_material.Dialog, {
@@ -3274,22 +4221,22 @@ var UserManagement = function UserManagement(_ref) {
       setShowChangePasswordDialog(false);
     }
   }, "Cancel"), /*#__PURE__*/_react["default"].createElement(_material.Button, {
-    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
+    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
       var response;
-      return _regeneratorRuntime().wrap(function _callee10$(_context10) {
-        while (1) switch (_context10.prev = _context10.next) {
+      return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+        while (1) switch (_context11.prev = _context11.next) {
           case 0:
             if (!(newPassword != null && confirmPassword != null && confirmPassword != "" && newPassword != "")) {
-              _context10.next = 5;
+              _context11.next = 5;
               break;
             }
-            _context10.next = 3;
+            _context11.next = 3;
             return (0, _authscape.apiService)().put("/UserManagement/ChangeUserPassword", {
               userId: parseInt(showUserDetails),
               password: newPassword
             });
           case 3:
-            response = _context10.sent;
+            response = _context11.sent;
             if (response.data != null && response.data.error != null) {
               alert(response.data.error);
             } else {
@@ -3297,9 +4244,9 @@ var UserManagement = function UserManagement(_ref) {
             }
           case 5:
           case "end":
-            return _context10.stop();
+            return _context11.stop();
         }
-      }, _callee10);
+      }, _callee11);
     }))
   }, "Change Password"))), showArchiveUserDialog && /*#__PURE__*/_react["default"].createElement(_material.Dialog, {
     open: showArchiveUserDialog,
@@ -3310,29 +4257,85 @@ var UserManagement = function UserManagement(_ref) {
     "aria-describedby": "alert-dialog-description"
   }, /*#__PURE__*/_react["default"].createElement(_material.DialogTitle, {
     id: "alert-dialog-title"
-  }, "Archive ".concat(showArchiveUserDialog.firstName + " " + showArchiveUserDialog.lastName, "?")), /*#__PURE__*/_react["default"].createElement(_material.DialogContent, null, /*#__PURE__*/_react["default"].createElement(_material.DialogContentText, {
+  }, showArchiveUserDialog.isActive == true && platformType == 1 && "Archive User", showArchiveUserDialog.isActive == true && platformType == 2 && "Archive Company", showArchiveUserDialog.isActive == true && platformType == 3 && "Archive Location", showArchiveUserDialog.isActive == false && platformType == 1 && "Activate User", showArchiveUserDialog.isActive == false && platformType == 2 && "Activate Company", showArchiveUserDialog.isActive == false && platformType == 3 && "Activate Location"), /*#__PURE__*/_react["default"].createElement(_material.DialogContent, null, /*#__PURE__*/_react["default"].createElement(_material.DialogContentText, {
     id: "alert-dialog-description"
-  }, "Are you sure you want to archive ", showArchiveUserDialog.firstName + " " + showArchiveUserDialog.lastName, " ?")), /*#__PURE__*/_react["default"].createElement(_material.DialogActions, null, /*#__PURE__*/_react["default"].createElement(_material.Button, {
+  }, showArchiveUserDialog.isActive == true && platformType == 1 && "Are you sure you want to archive " + showArchiveUserDialog.firstName + " " + showArchiveUserDialog.lastName, showArchiveUserDialog.isActive == true && platformType == 2 && "Are you sure you want to archive this company?", showArchiveUserDialog.isActive == true && platformType == 3 && "Are you sure you want to archive this location?", showArchiveUserDialog.isActive == false && platformType == 1 && "Are you sure you want to activate " + showArchiveUserDialog.firstName + " " + showArchiveUserDialog.lastName, showArchiveUserDialog.isActive == false && platformType == 2 && "Are you sure you want to activate " + showArchiveUserDialog.title, showArchiveUserDialog.isActive == false && platformType == 3 && "Are you sure you want to activate " + showArchiveUserDialog.address + " " + showArchiveUserDialog.city + " " + showArchiveUserDialog.state + " " + showArchiveUserDialog.zipCode)), /*#__PURE__*/_react["default"].createElement(_material.DialogActions, null, /*#__PURE__*/_react["default"].createElement(_material.Button, {
     onClick: function onClick() {
       setShowArchiveUserDialog(null);
     }
   }, "Cancel"), /*#__PURE__*/_react["default"].createElement(_material.Button, {
-    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
-      var res;
-      return _regeneratorRuntime().wrap(function _callee11$(_context11) {
-        while (1) switch (_context11.prev = _context11.next) {
+    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
+      return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+        while (1) switch (_context12.prev = _context12.next) {
           case 0:
-            _context11.next = 2;
+            if (!showArchiveUserDialog.isActive) {
+              _context12.next = 16;
+              break;
+            }
+            if (!(platformType == 1)) {
+              _context12.next = 6;
+              break;
+            }
+            _context12.next = 4;
             return (0, _authscape.apiService)()["delete"]("/UserManagement/ArchiveUser?id=".concat(showArchiveUserDialog.id));
-          case 2:
-            res = _context11.sent;
+          case 4:
+            _context12.next = 14;
+            break;
+          case 6:
+            if (!(platformType == 2)) {
+              _context12.next = 11;
+              break;
+            }
+            _context12.next = 9;
+            return (0, _authscape.apiService)()["delete"]("/UserManagement/ArchiveCompany?id=".concat(showArchiveUserDialog.id));
+          case 9:
+            _context12.next = 14;
+            break;
+          case 11:
+            if (!(platformType == 3)) {
+              _context12.next = 14;
+              break;
+            }
+            _context12.next = 14;
+            return (0, _authscape.apiService)()["delete"]("/UserManagement/ArchiveLocation?id=".concat(showArchiveUserDialog.id));
+          case 14:
+            _context12.next = 29;
+            break;
+          case 16:
+            if (!(platformType == 1)) {
+              _context12.next = 21;
+              break;
+            }
+            _context12.next = 19;
+            return (0, _authscape.apiService)()["delete"]("/UserManagement/ActivateUser?id=".concat(showArchiveUserDialog.id));
+          case 19:
+            _context12.next = 29;
+            break;
+          case 21:
+            if (!(platformType == 2)) {
+              _context12.next = 26;
+              break;
+            }
+            _context12.next = 24;
+            return (0, _authscape.apiService)()["delete"]("/UserManagement/ActivateCompany?id=".concat(showArchiveUserDialog.id));
+          case 24:
+            _context12.next = 29;
+            break;
+          case 26:
+            if (!(platformType == 3)) {
+              _context12.next = 29;
+              break;
+            }
+            _context12.next = 29;
+            return (0, _authscape.apiService)()["delete"]("/UserManagement/ActivateLocation?id=".concat(showArchiveUserDialog.id));
+          case 29:
             setDataGridRefreshKey(dataGridRefreshKey + 1);
             setShowArchiveUserDialog(null);
-          case 5:
+          case 31:
           case "end":
-            return _context11.stop();
+            return _context12.stop();
         }
-      }, _callee11);
+      }, _callee12);
     }))
   }, "Yes"))), /*#__PURE__*/_react["default"].createElement(_material.Dialog, {
     open: showContactDialog,
@@ -3343,9 +4346,9 @@ var UserManagement = function UserManagement(_ref) {
     "aria-describedby": "alert-dialog-description"
   }, /*#__PURE__*/_react["default"].createElement(_material.DialogTitle, {
     id: "alert-dialog-title"
-  }, "Setup Contact Account"), /*#__PURE__*/_react["default"].createElement(_material.DialogContent, null, /*#__PURE__*/_react["default"].createElement(_material.DialogContentText, {
+  }, platformType == 1 ? "Setup User Account" : platformType == 2 ? "Setup Company Account" : "Setup Location Account"), /*#__PURE__*/_react["default"].createElement(_material.DialogContent, null, /*#__PURE__*/_react["default"].createElement(_material.DialogContentText, {
     id: "alert-dialog-description"
-  }, "Please provide the following information to proceed and complete the account setup."), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+  }, "Please provide the following information to proceed and complete the account setup."), platformType == 1 && /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
     container: true,
     spacing: 2,
     sx: {
@@ -3372,26 +4375,165 @@ var UserManagement = function UserManagement(_ref) {
     label: "Email",
     variant: "outlined",
     fullWidth: true
+  }))), platformType == 2 && /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    container: true,
+    spacing: 2,
+    sx: {
+      paddingTop: 2
+    }
+  }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    size: 12
+  }, /*#__PURE__*/_react["default"].createElement(_material.TextField, {
+    inputRef: newCompanyName,
+    label: "Company Name",
+    variant: "outlined",
+    fullWidth: true
+  }))), platformType == 3 && /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    container: true,
+    spacing: 2,
+    sx: {
+      paddingTop: 2
+    }
+  }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    size: 12
+  }, /*#__PURE__*/_react["default"].createElement(_material.TextField, {
+    inputRef: newLocationName,
+    label: "Location Name",
+    variant: "outlined",
+    fullWidth: true
+  })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    size: 12
+  }, /*#__PURE__*/_react["default"].createElement(_material.TextField, {
+    inputRef: newLocationAddress,
+    label: "Address",
+    variant: "outlined",
+    fullWidth: true
+  })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    size: 6
+  }, /*#__PURE__*/_react["default"].createElement(_material.TextField, {
+    inputRef: newLocationCity,
+    label: "City",
+    variant: "outlined",
+    fullWidth: true
+  })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    size: 6
+  }, /*#__PURE__*/_react["default"].createElement(_material.TextField, {
+    inputRef: newLocationState,
+    label: "State",
+    variant: "outlined",
+    fullWidth: true
+  })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    size: 12
+  }, /*#__PURE__*/_react["default"].createElement(_material.TextField, {
+    inputRef: newLocationPostalCode,
+    label: "Postal Code",
+    variant: "outlined",
+    fullWidth: true
+  })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+    size: 12
+  }, /*#__PURE__*/_react["default"].createElement(_Autocomplete["default"], {
+    id: "companySelect",
+    inputRef: newLocationCompanyId,
+    sx: {
+      paddingTop: 2
+    },
+    getOptionLabel: function getOptionLabel(option) {
+      return option.title || option;
+    },
+    options: [].concat(_toConsumableArray(companies), [{
+      title: "Add Company",
+      isAddOption: true
+    }]) // Add option appended here
+    ,
+    autoComplete: true,
+    includeInputInList: true,
+    filterSelectedOptions: true,
+    value: company,
+    noOptionsText: "Company Not Found",
+    onChange: function onChange(event, newValue) {
+      if (newValue !== null && newValue !== void 0 && newValue.isAddOption) {
+        setEditAddLocationId(-1);
+      } else {
+        setCompany(newValue);
+      }
+    },
+    onInputChange: function onInputChange(event, newInputValue) {
+      setInputCompanyValue(newInputValue);
+    },
+    renderInput: function renderInput(params) {
+      return /*#__PURE__*/_react["default"].createElement(_material.TextField, _extends({}, params, {
+        label: "Company",
+        fullWidth: true
+      }));
+    },
+    renderOption: function renderOption(props, option) {
+      return /*#__PURE__*/_react["default"].createElement("li", _extends({}, props, {
+        key: "company-" + option.title
+      }), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+        container: true,
+        alignItems: "center"
+      }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+        item: true,
+        sx: {
+          display: 'flex',
+          width: 44
+        }
+      }, /*#__PURE__*/_react["default"].createElement(_BusinessRounded["default"], {
+        sx: {
+          color: 'text.secondary'
+        }
+      })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+        item: true,
+        sx: {
+          width: 'calc(100% - 44px)',
+          wordWrap: 'break-word'
+        }
+      }, /*#__PURE__*/_react["default"].createElement(_material.Typography, {
+        variant: "body2",
+        color: option.isAddOption ? "primary" : "text.secondary"
+      }, option.title))));
+    }
   })))), /*#__PURE__*/_react["default"].createElement(_material.DialogActions, null, /*#__PURE__*/_react["default"].createElement(_material.Button, {
     onClick: function onClick() {
       setShowContactDialog(false);
     }
   }, "Cancel"), /*#__PURE__*/_react["default"].createElement(_material.Button, {
-    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
-      return _regeneratorRuntime().wrap(function _callee12$(_context12) {
-        while (1) switch (_context12.prev = _context12.next) {
+    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
+      return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+        while (1) switch (_context13.prev = _context13.next) {
           case 0:
-            onAccountCreated({
-              firstName: newFirstName.current.value,
-              lastName: newLastName.current.value,
-              email: newEmail.current.value
-            });
+            if (platformType == 1) {
+              onAccountCreated({
+                firstName: newFirstName.current.value,
+                lastName: newLastName.current.value,
+                email: newEmail.current.value
+              });
+            }
+            if (platformType == 2)
+              // company
+              {
+                onAccountCreated({
+                  companyName: newCompanyName.current.value
+                });
+              }
+            if (platformType == 3)
+              // location
+              {
+                onAccountCreated({
+                  Name: newLocationName.current.value,
+                  address: newLocationAddress.current.value,
+                  city: newLocationCity.current.value,
+                  state: newLocationState.current.value,
+                  postalCode: newLocationPostalCode.current.value,
+                  companyId: company.id
+                });
+              }
             setShowContactDialog(false);
-          case 2:
+          case 4:
           case "end":
-            return _context12.stop();
+            return _context13.stop();
         }
-      }, _callee12);
+      }, _callee13);
     }))
   }, "Create Account"))), showCustomSettings && /*#__PURE__*/_react["default"].createElement(CustomFields, {
     platformType: platformType
