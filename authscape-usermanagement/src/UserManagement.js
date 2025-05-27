@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import { Box } from '@mui/system';
-import { AppBar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Menu, TextField, Toolbar, Tooltip, Typography } from '@mui/material';
+import { AppBar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControl, InputLabel, Menu, MenuItem, Select, TextField, Toolbar, Tooltip, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import UploadRoundedIcon from '@mui/icons-material/UploadRounded';
 import { EditableDatagrid, FileUploader, AutoSaveTextField, apiService } from 'authscape';
@@ -11,6 +11,7 @@ import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import PasswordRoundedIcon from '@mui/icons-material/PasswordRounded';
 import Autocomplete from '@mui/material/Autocomplete';
+import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
 
 // comment this out when done
 // import UserEditor from './UserEditor'; // remove when done
@@ -20,19 +21,19 @@ import Autocomplete from '@mui/material/Autocomplete';
 // import LocationEditor from './LocationsEditor';
 
 
-export const UserManagement = ({height = "50vh", platformType = 1, defaultIdentifier = null, companyId = null, onUploadCompleted = null, onAccountCreated = null, onSaved = null}) => {
+export const UserManagement = ({height = "50vh", platformType = 1, defaultIdentifier = null, companyId = null, onUploadCompleted = null, onAccountCreated = null, onSaved = null, onCustomTabs = null}) => {
 
     const [showUserDetails, setShowUserDetails] = useState(null);
+    
     const [showCustomSettings, setShowCustomSettings] = useState(false);
 
     const [showArchiveUserDialog, setShowArchiveUserDialog] = useState(null);
     const [showContactDialog, setShowContactDialog] = useState(false);
 
+    const [inputCompanyValue, setInputCompanyValue] = useState('');
 
     const [allRoles, setAllRoles] = useState([]);
     const [allCompanies, setAllCompanies] = useState([]);
-
-    // const [hasLoaded, setHasLoaded] = useState(false);
 
 
     const [showChangePasswordDialog, setShowChangePasswordDialog] = useState(false);
@@ -45,18 +46,33 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
     const [searchByName, setSearchByName] = useState('');
     const [searchByCompanyId, setSearchByCompanyId] = useState(null);
     const [searchByRoleId, setSearchByRoleId] = useState(null);
-    const [fields, setFields] = useState([]);
     const [columns, setColumns] = useState([]);
+
+    const [activeState, setActiveState] = useState(true);
 
     const filterLoaded = useRef(false);
 
     const userEditorRef = useRef();
 
 
+    const [companies, setCompanies] = useState([]);
+    const [company, setCompany] = useState(null);
+
+
+    const newCompanyName = useRef();
+
+
+    const newLocationName = useRef();
+    const newLocationAddress = useRef();
+    const newLocationCity = useRef();
+    const newLocationState = useRef();
+    const newLocationPostalCode = useRef();
+    const newLocationCompanyId = useRef();
+
+
     const newFirstName = useRef();
     const newLastName = useRef();
     const newEmail = useRef();
-
 
     const userColumns = [
         {
@@ -134,7 +150,6 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
         // }
     ];
 
-
     const companiesColumns = [
         {
             field: 'logo',
@@ -170,15 +185,64 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
         },
     ];
 
-    // useEffect(() => {
-
-    //     if (hasLoaded == false)
-    //     {
-    //         setHasLoaded(true);
-    //     }
-
-    // }, []);
-
+    const locationColumns = [
+        {
+            field: 'title',
+            headerName: 'Name',
+            flex: 1,
+            renderCell: (param) => {
+                return param.row.title; 
+            }
+        },
+        {
+            field: 'address',
+            headerName: 'Address',
+            flex: 1,    
+            renderCell: (param) => {
+                return param.row.address != null ? param.row.address : ""; 
+            }
+        },
+        {
+            field: 'city',
+            headerName: 'City',
+            flex: 1,    
+            renderCell: (param) => {
+                return param.row.city != null ? param.row.city : ""; 
+            }
+        },
+        {
+            field: 'state',
+            headerName: 'State',
+            flex: 1,    
+            renderCell: (param) => {
+                return param.row.state != null ? param.row.state : ""; 
+            }
+        },
+        {
+            field: 'zipCode',
+            headerName: 'ZipCode',
+            flex: 1,    
+            renderCell: (param) => {
+                return param.row.zipCode != null ? param.row.zipCode : ""; 
+            }
+        },
+        {
+            field: 'isDeactivated',
+            headerName: 'Account Status',
+            flex: 1,    
+            renderCell: (param) => {
+                return param.row.isDeactivated != null ? (!param.row.isDeactivated ? "Active" : "Deactive") : ""; 
+            }
+        },
+        {
+            field: 'company',
+            headerName: 'Company',
+            flex: 1,    
+            renderCell: (param) => {
+                return param.row.company != null ? param.row.company.title : ""; 
+            }
+        },
+    ];
 
     useEffect(() => {
 
@@ -186,7 +250,7 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
         {
             setDataGridRefreshKey(dataGridRefreshKey + 1);
         }
-    }, [searchByName, columns]);
+    }, [searchByName, columns, activeState]);
 
     useEffect(() => {
 
@@ -213,7 +277,7 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
         }
         else if (platformType == 3)
         {
-
+            response = "/UserManagement/GetLocations";
         }
 
         return response;
@@ -253,7 +317,7 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                                 setShowArchiveUserDialog(param.row);
 
                             }}>
-                                Archive
+                                {param.row.isActive ? "Archive" : "Activate"}
                             </Button>
                         )
                     }
@@ -264,11 +328,82 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
         }
         else if (platformType == 2)
         {
-            return companiesColumns;
+            let cols = [...companiesColumns, ...customFields.map((field, i) => {
+               
+                return {
+                    field: `customField${i + 1}`,
+                    headerName: field.name,
+                    flex: 1,
+                    valueGetter: (_, row) => {
+                        
+                        if (row.customFields)
+                        {
+                            let cf = row.customFields.find(f => f.customFieldId == field.id);
+                            if (cf) return cf.value;
+                        }
+
+                        return null;
+                    } 
+                };
+            }), {
+                field: '',
+                headerName: '',
+                flex: 1,
+                renderCell: 
+                    (param) => {
+                        return (
+                            <Button onClick={(e) =>{
+                                e.stopPropagation();
+                                setShowArchiveUserDialog(param.row);
+
+                            }}>
+                                {param.row.isActive ? "Archive" : "Activate"}
+                            </Button>
+                        )
+                    }
+            }];
+
+            setColumns(cols);
+
         }
         else if (platformType == 3)
         {
-            return null;
+            let cols = [...locationColumns, ...customFields.map((field, i) => {
+               
+                return {
+                    field: `customField${i + 1}`,
+                    headerName: field.name,
+                    flex: 1,
+                    valueGetter: (_, row) => {
+                        
+                        if (row.customFields)
+                        {
+                            let cf = row.customFields.find(f => f.customFieldId == field.id);
+                            if (cf) return cf.value;
+                        }
+
+                        return null;
+                    } 
+                };
+            }), {
+                field: '',
+                headerName: '',
+                flex: 1,
+                renderCell: 
+                    (param) => {
+                        return (
+                            <Button onClick={(e) =>{
+                                e.stopPropagation();
+                                setShowArchiveUserDialog(param.row);
+
+                            }}>
+                                {param.row.isActive ? "Archive" : "Activate"}
+                            </Button>
+                        )
+                    }
+            }];
+
+            setColumns(cols);
         }
     }
 
@@ -291,7 +426,7 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
 
     const getAllCustomFields = async () => {
 
-        let res = await apiService().get(`/UserManagement/GetCustomFields?platformType=${platformType}`);
+        let res = await apiService().get(`/UserManagement/GetCustomFields?platformType=${platformType}&IsDatagrid=true`);
         getColumns(res.data);
 
     }
@@ -311,6 +446,24 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
 
         setAllRoles(results);
     }
+
+    useEffect(() => {
+
+        if (inputCompanyValue != null)
+        {
+            const fetchData = async () => {
+
+            const response = await apiService().get("/UserManagement/GetCompaniesForLocation?searchBName=" + inputCompanyValue);
+            if (response != null && response.status == 200)
+            {
+                setCompanies(response.data)
+            }
+
+            }
+            fetchData();
+        }
+
+    }, [inputCompanyValue]);
 
     return (
         <Box>
@@ -393,13 +546,15 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
 
                                     setShowContactDialog(true);
 
-                                }}>Add Account</Button>
+                                }}>
+                                    {platformType == 1 ? "Add User" : (platformType == 2 ? "Add Company" : "Add Location")}
+                                </Button>
                             </Box>
                             <Divider orientation="vertical" flexItem />
                         </>
                         }
 
-                        {(!showUserDetails && defaultIdentifier == null) &&
+                        {(!showUserDetails && defaultIdentifier == null && platformType == 1) &&
                         <>
                             <Box sx={{paddingRight:2, paddingLeft:1}}>
                                 <Button variant="text" startIcon={<UploadRoundedIcon />} onClick={async () => {
@@ -444,11 +599,11 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                 </AppBar>
 
                 <Box sx={{marginTop:1, padding:2, borderRadius:1, boxShadow:"0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)"}}>
-                    {(showUserDetails == null && defaultIdentifier == null) &&
+                    {(showUserDetails == null && defaultIdentifier == null && platformType == 1) &&
                         <Box sx={{paddingBottom:1}}>
 
                             <Grid container spacing={2}>
-                                <Grid size={4}>
+                                <Grid size={3}>
                                     <AutoSaveTextField label="name or email " fullWidth={true} onChanged={(value) => {
                                     
                                         setSearchByName(value);
@@ -456,7 +611,7 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
 
                                     }} />
                                 </Grid>
-                                <Grid size={4}>
+                                <Grid size={3}>
                                     <Autocomplete
                                         options={allCompanies}
                                         renderInput={(params) => <TextField {...params} label="Companies" />}
@@ -475,7 +630,7 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                                         }}
                                     />
                                 </Grid>
-                                <Grid size={4}>
+                                <Grid size={3}>
                                     <Autocomplete
                                         disablePortal
                                         options={allRoles}
@@ -494,6 +649,134 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                                             }
                                         }}
                                     />
+                                </Grid>
+
+
+
+                                <Grid size={3}>
+
+                                    <FormControl fullWidth>
+                                        <InputLabel id="demo-simple-select-label">State</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={activeState ? 1 : 0}
+                                            label="State"
+                                            onChange={(evn, newVal) => {
+
+                                                if (evn.target.value == 0)
+                                                {
+                                                    setActiveState(false);
+                                                }
+                                                else
+                                                {
+                                                    setActiveState(true);
+                                                }
+
+                                            }}>
+                                            <MenuItem value={0}>Deactivated</MenuItem>
+                                            <MenuItem value={1}>Activated</MenuItem>
+                                        </Select>
+                                    </FormControl>
+
+                                </Grid>
+                            </Grid>
+
+                            
+                        </Box>
+                    }
+
+                    {(showUserDetails == null && defaultIdentifier == null && platformType == 2) &&
+                        <Box sx={{paddingBottom:1}}>
+
+                            <Grid container spacing={2}>
+                                <Grid size={6}>
+                                    <AutoSaveTextField label="Company Name" fullWidth={true} onChanged={(value) => {
+                                    
+                                        setSearchByName(value);
+                                        setDataGridRefreshKey(dataGridRefreshKey + 1);
+
+                                    }} />
+
+
+                                </Grid>
+
+
+                                <Grid size={6}>
+
+                                    <FormControl fullWidth>
+                                        <InputLabel id="demo-simple-select-label">State</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={activeState ? 1 : 0}
+                                            label="State"
+                                            onChange={(evn, newVal) => {
+
+                                                if (evn.target.value == 0)
+                                                {
+                                                    setActiveState(false);
+                                                }
+                                                else
+                                                {
+                                                    setActiveState(true);
+                                                }
+
+                                            }}>
+                                            <MenuItem value={0}>Deactivated</MenuItem>
+                                            <MenuItem value={1}>Activated</MenuItem>
+                                        </Select>
+                                    </FormControl>
+
+                                </Grid>
+                            </Grid>
+
+                            
+                        </Box>
+                    }
+
+
+                    {(showUserDetails == null && defaultIdentifier == null && platformType == 3) &&
+                        <Box sx={{paddingBottom:1}}>
+
+                            <Grid container spacing={2}>
+                                <Grid size={6}>
+                                    <AutoSaveTextField label="Location Name" fullWidth={true} onChanged={(value) => {
+                                    
+                                        setSearchByName(value);
+                                        setDataGridRefreshKey(dataGridRefreshKey + 1);
+
+                                    }} />
+
+                                </Grid>
+
+
+                                <Grid size={6}>
+
+                                    <FormControl fullWidth>
+                                        <InputLabel id="demo-simple-select-label">State</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={activeState ? 1 : 0}
+                                            label="State"
+                                            onChange={(evn, newVal) => {
+
+                                                if (evn.target.value == 0)
+                                                {
+                                                    setActiveState(false);
+                                                }
+                                                else
+                                                {
+                                                    setActiveState(true);
+                                                }
+
+                                            }}>
+                                            <MenuItem value={0}>Deactivated</MenuItem>
+                                            <MenuItem value={1}>Activated</MenuItem>
+                                        </Select>
+                                    </FormControl>
+
                                 </Grid>
                             </Grid>
 
@@ -515,8 +798,11 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                                 searchByName: searchByName,
                                 searchByCompanyId: searchByCompanyId,
                                 searchByRoleId: searchByRoleId,
+                                name: searchByName,
+
+                                isActive: activeState
                             }} 
-                            onRowClick={(row) => {
+                            onRowClick={(row) => {                                
                                 setShowUserDetails(row.id);
                             }} />
                         }
@@ -528,15 +814,21 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                                     {platformType == 1 &&
                                         <UserEditor
                                             platformType={platformType}
+                                            onCustomTabs={onCustomTabs}
                                             ref={userEditorRef}
                                             userId={defaultIdentifier != null ? defaultIdentifier : showUserDetails}
-                                            onSaved={(shouldClose) => {
+                                            onSaved={(shouldClose, platformType, userId, fields) => {
 
                                                 setDataGridRefreshKey(dataGridRefreshKey + 1);
 
                                                 if (onSaved != null)
                                                 {
-                                                    onSaved();
+                                                    if (shouldClose == null)
+                                                    {
+                                                        shouldClose = false;
+                                                    }
+
+                                                    onSaved(shouldClose, platformType, userId, fields);
                                                 }
                                                 
                                                 if (shouldClose)
@@ -549,40 +841,44 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                                     {platformType == 2 &&
                                         <CompanyEditor 
                                             companyId={defaultIdentifier != null ? defaultIdentifier : showUserDetails}
+                                            onCustomTabs={onCustomTabs}
                                             platformType={platformType}
                                             ref={userEditorRef}
-                                            onSaved={(shouldClose) => {
+                                            onSaved={(shouldClose, platformType, userId, fields) => {
 
                                                 setDataGridRefreshKey(dataGridRefreshKey + 1);
 
-                                                if (shouldClose)
+                                                // need to add a way to close the company editor
+                                                if (onSaved != null)
                                                 {
-                                                    // need to add a way to close the company editor
-                                                    if (onSaved != null)
+                                                    if (shouldClose == null)
                                                     {
-                                                        onSaved();
+                                                        shouldClose = false;
                                                     }
+
+                                                    onSaved(shouldClose, platformType, userId, fields);
                                                 }
                                             }}
                                         />
                                     }
                                     {platformType == 3 &&
-                                        <LocationEditor 
-                                            companyId={companyId}
+                                        <LocationEditor
                                             locationId={defaultIdentifier != null ? defaultIdentifier : showUserDetails}
+                                            onCustomTabs={onCustomTabs}
                                             platformType={platformType}
                                             ref={userEditorRef}
-                                            onSaved={(shouldClose) => {
+                                            onSaved={(shouldClose, platformType, userId, fields) => {
 
                                                 setDataGridRefreshKey(dataGridRefreshKey + 1);
 
-                                                if (shouldClose)
+                                                if (onSaved != null)
                                                 {
-                                                    // need to add a way to close the company editor
-                                                    if (onSaved != null)
+                                                    if (shouldClose == null)
                                                     {
-                                                        onSaved();
+                                                        shouldClose = false;
                                                     }
+
+                                                    onSaved(shouldClose, platformType, userId, fields);
                                                 }
                                             }}
                                         />
@@ -662,7 +958,6 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                         </Button>
                         </DialogActions>
                     </Dialog>
-
                     
                     {
                         showArchiveUserDialog &&
@@ -674,11 +969,28 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                             aria-labelledby="alert-dialog-title"
                             aria-describedby="alert-dialog-description">
                             <DialogTitle id="alert-dialog-title">
-                            {`Archive ${showArchiveUserDialog.firstName + " " + showArchiveUserDialog.lastName}?`}
+
+                                {(showArchiveUserDialog.isActive == true && platformType == 1) && "Archive User"}
+                                {(showArchiveUserDialog.isActive == true && platformType == 2) && "Archive Company"}
+                                {(showArchiveUserDialog.isActive == true && platformType == 3) && "Archive Location"}
+
+                                {(showArchiveUserDialog.isActive == false && platformType == 1) && "Activate User"}
+                                {(showArchiveUserDialog.isActive == false && platformType == 2) && "Activate Company"}
+                                {(showArchiveUserDialog.isActive == false && platformType == 3) && "Activate Location"}
+
                             </DialogTitle>
                             <DialogContent>
                                 <DialogContentText id="alert-dialog-description">
-                                    Are you sure you want to archive {showArchiveUserDialog.firstName + " " + showArchiveUserDialog.lastName} ?
+
+
+                                    {(showArchiveUserDialog.isActive == true && platformType == 1) && "Are you sure you want to archive " + showArchiveUserDialog.firstName + " " + showArchiveUserDialog.lastName}
+                                    {(showArchiveUserDialog.isActive == true && platformType == 2) && "Are you sure you want to archive this company?"}
+                                    {(showArchiveUserDialog.isActive == true && platformType == 3) && "Are you sure you want to archive this location?"}
+
+                                    {(showArchiveUserDialog.isActive == false && platformType == 1) && "Are you sure you want to activate " + showArchiveUserDialog.firstName + " " + showArchiveUserDialog.lastName}
+                                    {(showArchiveUserDialog.isActive == false && platformType == 2) && "Are you sure you want to activate " + showArchiveUserDialog.title}
+                                    {(showArchiveUserDialog.isActive == false && platformType == 3) && "Are you sure you want to activate " + showArchiveUserDialog.address + " " + showArchiveUserDialog.city + " " + showArchiveUserDialog.state + " " + showArchiveUserDialog.zipCode}
+
                                 </DialogContentText>
                             </DialogContent>
                             <DialogActions>
@@ -687,7 +999,37 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                             }}>Cancel</Button>
                             <Button onClick={async () => {
 
-                                let res = await apiService().delete(`/UserManagement/ArchiveUser?id=${showArchiveUserDialog.id}`);
+                                if (showArchiveUserDialog.isActive)
+                                {
+                                    if (platformType == 1)
+                                    {
+                                        await apiService().delete(`/UserManagement/ArchiveUser?id=${showArchiveUserDialog.id}`);
+                                    }
+                                    else if (platformType == 2)
+                                    {
+                                        await apiService().delete(`/UserManagement/ArchiveCompany?id=${showArchiveUserDialog.id}`);
+                                    }
+                                    else if (platformType == 3)
+                                    {
+                                        await apiService().delete(`/UserManagement/ArchiveLocation?id=${showArchiveUserDialog.id}`);
+                                    }
+                                }
+                                else
+                                {
+                                    if (platformType == 1)
+                                    {
+                                        await apiService().delete(`/UserManagement/ActivateUser?id=${showArchiveUserDialog.id}`);
+                                    }
+                                    else if (platformType == 2)
+                                    {
+                                        await apiService().delete(`/UserManagement/ActivateCompany?id=${showArchiveUserDialog.id}`);
+                                    }
+                                    else if (platformType == 3)
+                                    {
+                                        await apiService().delete(`/UserManagement/ActivateLocation?id=${showArchiveUserDialog.id}`);
+                                    }
+                                }
+
                                 setDataGridRefreshKey(dataGridRefreshKey + 1);
                                 setShowArchiveUserDialog(null);
 
@@ -706,24 +1048,103 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                         aria-labelledby="alert-dialog-title"
                         aria-describedby="alert-dialog-description">
                         <DialogTitle id="alert-dialog-title">
-                        {"Setup Contact Account"}
+                        {platformType == 1 ? "Setup User Account" : (platformType == 2 ? "Setup Company Account" : "Setup Location Account")}
                         </DialogTitle>
                         <DialogContent>
                             <DialogContentText id="alert-dialog-description">
                                 Please provide the following information to proceed and complete the account setup.
                             </DialogContentText>
 
-                            <Grid container spacing={2} sx={{paddingTop:2}}>
-                                <Grid size={6}>
-                                    <TextField inputRef={newFirstName} label="First Name" variant="outlined" fullWidth={true} />
+                            {platformType == 1 &&
+                                <Grid container spacing={2} sx={{paddingTop:2}}>
+                                    <Grid size={6}>
+                                        <TextField inputRef={newFirstName} label="First Name" variant="outlined" fullWidth={true} />
+                                    </Grid>
+                                    <Grid size={6}>
+                                        <TextField inputRef={newLastName} label="Last Name" variant="outlined" fullWidth={true} />
+                                    </Grid>
+                                    <Grid size={12}>
+                                        <TextField inputRef={newEmail} label="Email" variant="outlined" fullWidth={true} />
+                                    </Grid>
                                 </Grid>
-                                <Grid size={6}>
-                                    <TextField inputRef={newLastName} label="Last Name" variant="outlined" fullWidth={true} />
+                            }
+
+                            {platformType == 2 &&
+                                <Grid container spacing={2} sx={{paddingTop:2}}>
+                                    <Grid size={12}>
+                                        <TextField inputRef={newCompanyName} label="Company Name" variant="outlined" fullWidth={true} />
+                                    </Grid>
                                 </Grid>
-                                <Grid size={12}>
-                                    <TextField inputRef={newEmail} label="Email" variant="outlined" fullWidth={true} />
+                            }
+
+                            {platformType == 3 &&
+                                <Grid container spacing={2} sx={{paddingTop:2}}>
+                                    <Grid size={12}>
+                                        <TextField inputRef={newLocationName} label="Location Name" variant="outlined" fullWidth={true} />
+                                    </Grid>
+                                    <Grid size={12}>
+                                        <TextField inputRef={newLocationAddress} label="Address" variant="outlined" fullWidth={true} />
+                                    </Grid>
+                                    <Grid size={6}>
+                                        <TextField inputRef={newLocationCity} label="City" variant="outlined" fullWidth={true} />
+                                    </Grid>
+                                    <Grid size={6}>
+                                        <TextField inputRef={newLocationState} label="State" variant="outlined" fullWidth={true} />
+                                    </Grid>
+                                    <Grid size={12}>
+                                        <TextField inputRef={newLocationPostalCode} label="Postal Code" variant="outlined" fullWidth={true} />
+                                    </Grid>
+                                    <Grid size={12}>
+
+                                        <Autocomplete
+                                        id="companySelect"
+                                        inputRef={newLocationCompanyId}
+                                        sx={{paddingTop: 2}}
+                                        getOptionLabel={(option) => option.title || option}
+                                        options={[...companies, { title: "Add Company", isAddOption: true }]} // Add option appended here
+                                        autoComplete
+                                        includeInputInList
+                                        filterSelectedOptions
+                                        value={company}
+                                        noOptionsText="Company Not Found"
+                                        onChange={(event, newValue) => {
+                                            if (newValue?.isAddOption) {
+
+                                            setEditAddLocationId(-1);
+
+                                            } else {
+
+                                            setCompany(newValue);
+
+                                            }
+                                        }}
+                                        onInputChange={(event, newInputValue) => {
+                                            
+                                            setInputCompanyValue(newInputValue);
+                                        }}
+                                        renderInput={(params) => (
+                                            <TextField {...params} label="Company" fullWidth />
+                                        )}
+                                        renderOption={(props, option) => (
+                                            <li {...props} key={"company-" + option.title}>
+                                            <Grid container alignItems="center">
+                                                <Grid item sx={{ display: 'flex', width: 44 }}>
+                                                    <BusinessRoundedIcon sx={{ color: 'text.secondary' }} />
+                                                    </Grid>
+                                                    <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                                                    <Typography variant="body2" color={option.isAddOption ? "primary" : "text.secondary"}>
+                                                        {option.title}
+                                                    </Typography>
+                                                </Grid>
+                                            </Grid>
+                                            </li>
+                                        )}
+                                        />
+
+                                        {/* <TextField inputRef={newLocationCompanyId} label="Company" variant="outlined" fullWidth={true} /> */}
+                                    </Grid>
                                 </Grid>
-                            </Grid>
+                            }
 
                         </DialogContent>
                         <DialogActions>
@@ -732,11 +1153,31 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                         }}>Cancel</Button>
                         <Button onClick={async () => {
 
-                            onAccountCreated({
-                                firstName: newFirstName.current.value,
-                                lastName: newLastName.current.value,
-                                email: newEmail.current.value
-                            });
+                            if (platformType == 1)
+                            {
+                                onAccountCreated({
+                                    firstName: newFirstName.current.value,
+                                    lastName: newLastName.current.value,
+                                    email: newEmail.current.value
+                                });
+                            }
+                            if (platformType == 2) // company
+                            {
+                                onAccountCreated({
+                                    companyName: newCompanyName.current.value
+                                });
+                            }
+                            if (platformType == 3) // location
+                            {
+                                onAccountCreated({
+                                    Name: newLocationName.current.value,
+                                    address: newLocationAddress.current.value,
+                                    city: newLocationCity.current.value,
+                                    state: newLocationState.current.value,
+                                    postalCode: newLocationPostalCode.current.value,
+                                    companyId: company.id
+                                });
+                            }
                             setShowContactDialog(false);
 
                         }}>
@@ -744,6 +1185,7 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                         </Button>
                         </DialogActions>
                     </Dialog>
+
 
                     {showCustomSettings &&
                         <CustomFields platformType={platformType} />

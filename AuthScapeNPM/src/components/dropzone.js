@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import React, {useMemo} from 'react';
+import React, {useMemo, useState, useEffect, useRef} from 'react';
 import {useDropzone} from 'react-dropzone';
 
 let baseStyle = {
@@ -32,10 +32,41 @@ const rejectStyle = {
   borderColor: '#ff1744'
 };
 
-export const Dropzone = ({text = "Drag 'n' drop some files here, or click to select files", image = null, styleOverride = null, onDrop = null, maxFiles = 1, multiple = false, accept = {
-  'image/*': []
-}}) => {
+const handleOneDriveFilePick = () => {
+    const odOptions = {
+      clientId: 'clientId',
+      action: 'share',
+      multiSelect: false,
+      advanced: {
+        redirectUri: 'http://localhost:3000/fileUploading',
+      },
+      success: (files) => {
+        console.log('Files picked:', files);
+      },
+      cancel: () => {
+        console.log('File picking cancelled');
+      },
+      error: (error) => {
+        console.error('Error picking file:', error);
+      },
+    };
+    OneDrive.open(odOptions);
+};
 
+
+export const DropZone = ({text = "Drag 'n' drop some files here, or click to select files", image = null, styleOverride = null, onDrop = null, maxFiles = 1, multiple = false, accept = null}) => {
+
+  const [loading, setLoading] = useState(false);
+  const [tempUrl, setTempUrl] = useState(null);
+
+  const imageUrl = useRef(image);
+
+  // in the event the image hasn't loaded yet from the caller
+  useEffect(() => {
+
+    imageUrl.current = image;
+
+  }, [image]);
 
   if (styleOverride != null)
   {
@@ -50,18 +81,21 @@ export const Dropzone = ({text = "Drag 'n' drop some files here, or click to sel
     isDragAccept,
     isDragReject
   } = useDropzone({
-        accept: accept,
+        accept: accept != null ? accept : "*",
         maxFiles: maxFiles,
         multiple: multiple,
-        onDrop: files => {
+        onDrop: async (files) => {
 
           if (multiple)
           {
-            onDrop(files);
+            await onDrop(files);
           }
           else
           {
-            onDrop(files[0]);
+            const newUrl = URL.createObjectURL(files[0]);
+            imageUrl.current = newUrl;
+
+            await onDrop(files[0]);
           }
           
         }
@@ -72,23 +106,36 @@ export const Dropzone = ({text = "Drag 'n' drop some files here, or click to sel
     ...(isFocused ? focusedStyle : {}),
     ...(isDragAccept ? acceptStyle : {}),
     ...(isDragReject ? rejectStyle : {})
-  }), [
-    isFocused,
-    isDragAccept,
-    isDragReject
-  ]);
+  }), [isFocused, isDragAccept, isDragReject]);
 
   return (
-    <Box className="container" sx={{cursor:"pointer"}}>
-      <Box {...getRootProps({style})}>
-        <input {...getInputProps()} />
-        <Box sx={{paddingBottom:1}}>
-          {image != null &&
-            <img src={image} width={200} height={200} style={{objectFit: "contain"}} />
-          }
+    <>
+        {/* <Script crossorigin src="https://js.live.net/v7.2/OneDrive.js" /> */}
+
+        {/* <Backdrop
+          sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+          open={isLoading.current}>
+          <CircularProgress color="inherit" sx={{marginRight:4}} /> Uploading...
+        </Backdrop> */}
+        <Box className="container" sx={{cursor:"pointer"}}>
+            
+            {/* <Box onClick={() => {
+                handleFilePick();
+            }}>
+                OneDrive
+            </Box> */}
+
+            <Box {...getRootProps({style})} >
+                <input {...getInputProps()} />
+                <Box sx={{paddingBottom:1}}>
+
+                {(imageUrl.current != null && imageUrl.current != "") &&
+                    <img src={imageUrl.current} width={200} height={200} style={{objectFit: "contain"}} />
+                }
+                </Box>
+                <Box>{text}</Box>
+            </Box>
         </Box>
-        <Box>{text}</Box>
-      </Box>
-    </Box>
+    </>
   );
 }

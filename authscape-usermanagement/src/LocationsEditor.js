@@ -1,17 +1,9 @@
 import React, {useEffect, useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import { Box } from '@mui/system';
 import TextField from '@mui/material/TextField';
-import { Autocomplete, Avatar, Button, Drawer } from '@mui/material';
+import { Autocomplete, Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import Checkbox from '@mui/material/Checkbox';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemText from '@mui/material/ListItemText';
-import { useForm, Controller } from 'react-hook-form';
-import { EditorState, ContentState } from 'draft-js';
+import { useForm } from 'react-hook-form';
 import { Tab, Tabs, Stack } from '@mui/material';
 import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
 import { apiService } from 'authscape';
@@ -21,25 +13,28 @@ import Grid from '@mui/material/Grid2';
 // import {renderCustomField, renderSystemField } from './EditorFields';
 
 
-const LocationEditor = forwardRef(({locationId = null, companyId = null, platformType, onSaved = null}, ref) => {
+const LocationEditor = forwardRef(({locationId = null, platformType, onSaved = null, onCustomTabs = null}, ref) => {
 
   const {control, register, handleSubmit, formState: { errors }, watch, setValue } = useForm();
 
   const [editors, setEditors] = useState({});
 
-  const refShouldClose = useRef(null);
+  const refShouldClose = useRef(false);
   const refSubmitButton = useRef(null);
 
   const [selectedRoles, setSelectedRole] = useState([]);
   const [selectedPermission, setSelectedPermission] = useState([]);
 
+  const [company, setCompany] = useState(null);
+
   const [locations, setLocations] = useState([]);
   const [location, setLocation] = useState(null);
-  const [inputLocationValue, setInputLocationValue] = useState('');
+  const [inputCompanyValue, setInputCompanyValue] = useState('');
 
   const [customFields, setCustomFields] = useState([]);
 
   const [user, setUser] = useState(null);
+  const [customTabs, setCustomTabs] = useState(null);
 
   const [tabOptions, setTabOptions] = useState([]);
 
@@ -63,6 +58,8 @@ const LocationEditor = forwardRef(({locationId = null, companyId = null, platfor
       if (response != null && response.status == 200)
       {
         setLocation(response.data);
+
+        setCompany(response.data.company);
 
         if (response.data.customFields != null)
         {
@@ -104,8 +101,30 @@ const LocationEditor = forwardRef(({locationId = null, companyId = null, platfor
 
   }, [locationId])
 
+
+  useEffect(() => {
+
+    if (locationId != null && onCustomTabs != null)
+    {
+      const fetchData = async () => {
+        let tabs = await onCustomTabs(platformType, locationId)
+        if (tabs != null)
+        {
+          setCustomTabs(tabs);
+        }
+      }
+      fetchData();
+    }
+
+  }, [locationId]);
+
   const fields = [
-    "Title"
+    "Title",
+    "Address",
+    "City",
+    "State",
+    "ZipCode",
+    "IsDeactivated"
   ]
 
   const refreshTabOptions = async () => {
@@ -122,38 +141,23 @@ const LocationEditor = forwardRef(({locationId = null, companyId = null, platfor
       }
   }
 
-
   useEffect(() => {
 
-    const fetchData = async () => {
-
-      if (location != null)
-      {
-        if (inputLocationValue == null || inputLocationValue == "")
-        {
-          let response = await apiService().get("/UserManagement/GetLocations?locationId=" + locationId);
-          if (response != null && response.status == 200)
-          {
-            setLocations(response.data);
-          }
-        }
-        else
-        {
-          let response = await apiService().get("/UserManagement/GetLocations?locationId=" + locationId + "&name=" + inputLocationValue);
-          if (response != null && response.status == 200)
-          {
-            setLocations(response.data);
-          }
-        }
-      }
-    }
-
-    if (location != null || locationId == -1)
+    if (inputCompanyValue != null)
     {
+      const fetchData = async () => {
+
+        const response = await apiService().get("/UserManagement/GetCompaniesForLocation?searchBName=" + inputCompanyValue);
+        if (response != null && response.status == 200)
+        {
+          setLocations(response.data)
+        }
+
+      }
       fetchData();
     }
 
-  }, [location, locationId, inputLocationValue])
+  }, [inputCompanyValue]);
 
 
   const saveChanges = (shouldClose) => {
@@ -166,8 +170,6 @@ const LocationEditor = forwardRef(({locationId = null, companyId = null, platfor
     saveChanges,
   }));
 
-
-
   return (
       <Box>
 
@@ -175,14 +177,14 @@ const LocationEditor = forwardRef(({locationId = null, companyId = null, platfor
             
             let userCustomFields = [];
 
-            customFields && customFields.forEach(customField => {
+            customFields && customFields.forEach(async (customField) => {
 
               let newValue = 
               // customField.customFieldType == 2 ? 
               // draftToHTML(editors[customField.customFieldId].getCurrentContent()) 
               // : 
               data[customField.customFieldId];
-              if (newValue != null)
+              if (newValue != null && typeof newValue === 'string')
               {
                 userCustomFields.push({
                     customFieldId: customField.customFieldId,
@@ -192,14 +194,45 @@ const LocationEditor = forwardRef(({locationId = null, companyId = null, platfor
                     value: newValue.toString()
                 });
               }
+              else if (newValue instanceof Blob)
+              {
+                  const newBlob = new Blob([newValue], { type: newValue.type });
+                
+                  const data = new FormData();
+                  data.append("file", newBlob);
+                  data.append("identifier", locationId);
+
+                  data.append("platformType", 3); // company
+                  data.append("customFieldId", customField.customFieldId); 
+
+                  const response = await apiService().post("/UserManagement/UploadCustomFieldImage", data);
+                  if (response != null && response.status == 200)
+                  {
+
+                    userCustomFields.push({
+                        customFieldId: customField.customFieldId,
+                        name: customField.name,
+                        isRequired: customField.isRequired,
+                        customFieldType: customField.customFieldType,
+                        value: response.data
+                    });
+
+                  }
+              }
                 
             });
 
             let response = await apiService().post("/UserManagement/UpdateLocation", {
                 id: locationId,
-                companyId: companyId,
+                companyId: company != null ? company.id : null,
                 title: data.Title,
-                isDeactivated: false,
+
+                address: data.Address,
+                city: data.City,
+                state: data.State,
+                postalCode: data.ZipCode,
+
+                isDeactivated: !data.IsActive,
                 customFields: userCustomFields
             });
 
@@ -207,7 +240,7 @@ const LocationEditor = forwardRef(({locationId = null, companyId = null, platfor
             {
                 if (onSaved != null)
                 {
-                    onSaved(refShouldClose.current);
+                  onSaved(refShouldClose.current, 3, locationId, response.data);
                 }
             }
 
@@ -215,16 +248,60 @@ const LocationEditor = forwardRef(({locationId = null, companyId = null, platfor
             
             <Grid container spacing={2} sx={{paddingTop:2}}>
               <Grid size={4} sx={{backgroundColor:"#f5f8fa", borderRadius:2, border: "1px solid lightgray", padding:2}}>
-                <Box sx={{textAlign:"center", display:"flex", justifyContent:"center", padding:2 }}>
+                {/* <Box sx={{textAlign:"center", display:"flex", justifyContent:"center", padding:2 }}>
                     <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"  sx={{ width: 100, height: 100 }} />
-                </Box>
+                </Box> */}
 
-                <hr />
+                {/* <hr /> */}
                 <Box sx={{fontWeight:"bold", paddingBottom: 1}}>
                   About this Location
                 </Box>
 
                 {renderSystemField(locationId, location, control, errors, register, fields)}
+
+                <Autocomplete
+                  id="companySelect"
+                  sx={{paddingTop: 2}}
+                  getOptionLabel={(option) => option.title || option}
+                  options={[...locations, { title: "Add Company", isAddOption: true }]} // Add option appended here
+                  autoComplete
+                  includeInputInList
+                  filterSelectedOptions
+                  value={company}
+                  noOptionsText="Company Not Found"
+                  onChange={(event, newValue) => {
+                    if (newValue?.isAddOption) {
+
+                      setEditAddLocationId(-1);
+
+                    } else {
+
+                      setCompany(newValue);
+
+                    }
+                  }}
+                  onInputChange={(event, newInputValue) => {
+                    
+                    setInputCompanyValue(newInputValue);
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Company" fullWidth />
+                  )}
+                  renderOption={(props, option) => (
+                    <li {...props} key={"company-" + option.title}>
+                      <Grid container alignItems="center">
+                        <Grid item sx={{ display: 'flex', width: 44 }}>
+                          <BusinessRoundedIcon sx={{ color: 'text.secondary' }} />
+                        </Grid>
+                        <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                          <Typography variant="body2" color={option.isAddOption ? "primary" : "text.secondary"}>
+                            {option.title}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </li>
+                  )}
+                />
 
               </Grid>
               <Grid item size={8} sx={{backgroundColor:"#f5f8fa", borderRadius:2, border: "1px solid lightgray", padding:2}}>
@@ -234,6 +311,12 @@ const LocationEditor = forwardRef(({locationId = null, companyId = null, platfor
                         {tabOptions.map((tab, index) => {
                           return (
                             <Tab key={tab.id} label={tab.name} value={tab.id} />
+                          )
+                        })}
+
+                        {customTabs != null && customTabs.map((tab, index) => {
+                          return (
+                            <Tab key={"custom-" + tab.id} label={tab.title} value={tab.id} />
                           )
                         })}
                       </Tabs>
@@ -253,6 +336,18 @@ const LocationEditor = forwardRef(({locationId = null, companyId = null, platfor
                         }
                         </>
                       )
+                    })}
+
+                    {customTabs != null && customTabs.map((tab, index) => {
+                        return (
+                          <>
+                            {tabValue === tab.id && 
+                              <Box>
+                                {tab.content}
+                              </Box>
+                            }
+                          </>
+                        )
                     })}
                     </Box>
                   </Stack>

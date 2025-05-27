@@ -1,25 +1,14 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useForm, Controller } from 'react-hook-form';
-
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Grid2';
-// import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
-import dynamic from "next/dynamic";
-
-const Editor = dynamic(
-  () => import("react-draft-wysiwyg").then((mod) => mod.Editor),
-  { ssr: false }
-);
-
-
-// import { RichTextEditor } from 'authscape';
+import { DropZone } from 'authscape';
 
 export const findTheValue = (fieldObject, field) => {
 
@@ -77,12 +66,10 @@ export const renderCustomField = (identifier, fieldObject, control, errors, regi
 
           return (
             <Grid key={index} item size={field.size ? field.size : 12}>
-              {/* {JSON.stringify(field)} */}
               <Controller
                 name={field.customFieldId}
                 control={control}
                 defaultValue={result}
-                // defaultChecked={result}
                 rules={{ required: field.isRequired }}
                 render={({ field: { onChange, value } }) => (
                   <>
@@ -97,40 +84,25 @@ export const renderCustomField = (identifier, fieldObject, control, errors, regi
                         value={value || ''}
                       />
                     )}
-                    {/* {(field.customFieldType == 2) && (
-                      <Box sx={{backgroundColor: "transparent", 
-                        
-                          '& .MuiButtonBase-root': {
-                            display: 'none'
-                          }
-                      }}>
-                        <Editor editorState={editors[field.customFieldId]} 
-                        onEditorStateChange={(newEditorState) => {
-                          setEditors({...editors, 
-                          [field.customFieldId]: newEditorState});
-                        }} />
-                       
 
+                    {(field.customFieldType === 2) && (
                       
-                      </Box>
+                        <TextField
+                          label={field.name}
+                          variant="outlined"
+                          margin="normal"
+                          fullWidth
+                          minRows={4}
+                          multiline={true}
+                          {...register(field.customFieldId, { required: field.isRequired })}
+                          onChange={onChange}
+                          value={value || ''}
+                        />
+                    )}
 
-                    )} */}
-                     {/* <RichTextEditor ref={textEditorRef} html={value} 
-                        
-                        {...register(field.customFieldId, { required: field.isRequired })}
-
-                        onChange={(value) => {
-                          debugger;
-                        }}
-                         
-                        onSave={(html) => {
-                        
-                          onChange(html);
-                        }}/> */}
-                        
                     {
                       field.customFieldType === 3 && (
-                          <TextField
+                        <TextField
                           variant="outlined"
                           label={field.name}
                           type="number"
@@ -171,6 +143,40 @@ export const renderCustomField = (identifier, fieldObject, control, errors, regi
                         label={field.name}
                       />
                     )}
+
+                    {field.customFieldType === 6 && (
+                      <Box>
+                        <Box>{field.name}</Box>
+                          <DropZone {...register(field.customFieldId, { required: field.isRequired })} 
+                            image={value} 
+                            text={"Drag 'n' drop your logo here, or click to select your logo"} 
+                            onDrop={async (blob) => {
+
+                              value = blob;
+                              onChange(blob);                                  
+
+                          }} />
+                      </Box>
+                    )}
+
+                    {field.customFieldType === 7 && (
+                      <Box>
+                          <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">{field.name}</InputLabel>
+                            <Select
+                              {...register(field.customFieldId, { required: field.isRequired })}
+                              label={field.name}
+                              value={value || ''}
+                              onChange={onChange}>
+                                {(field.properties != null && field.properties != "") && JSON.parse(field.properties).map((property) => {
+                                  return <MenuItem value={property.key}>{property.value}</MenuItem>
+                                })}
+                              
+                            </Select>
+                          </FormControl>
+                      </Box>
+                    )}
+
                   </>
                 )}
               />
@@ -200,10 +206,15 @@ export const renderSystemField = (identifier, fieldObject, control, errors, regi
             isRequied = false;
           }
 
+          if (field == "IsDeactivated") // we are doing this to make the naming the same (IsActive)
+          {
+            field = "IsActive";
+            result = !result;
+          }
+
           return (
           <Box key={index}>
-
-            {(field == "IsActive" || field == "isDeactivated") &&
+            {(field == "IsActive") &&
                 <Box>
                   <Controller name={field} 
                       control={control}
@@ -211,14 +222,14 @@ export const renderSystemField = (identifier, fieldObject, control, errors, regi
                           required: false,
                       }}
                       render={({renderField}) => 
-                      <FormControlLabel control={<Switch defaultChecked={result} />} label={field} {...register(field, { required: false })} {...renderField} />
+                        <FormControlLabel control={<Switch defaultChecked={result} />} label={field} {...register(field, { required: false })} {...renderField} />
                       }
                   />
                   {errors[field] && <Typography color={"red"}>{field} is required.</Typography>}
                 </Box>
             }
 
-            {(field != "IsActive" && field != "isDeactivated") &&
+            {(field != "IsActive" && field != "IsDeactivated") &&
             <Box>
                 <Controller name={field} 
                     control={control}
