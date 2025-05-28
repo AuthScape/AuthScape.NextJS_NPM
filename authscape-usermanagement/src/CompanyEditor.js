@@ -175,6 +175,8 @@ const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = nul
               // draftToHTML(editors[customField.customFieldId].getCurrentContent()) 
               // : 
               data[customField.customFieldId];
+
+
               if (newValue != null && typeof newValue === 'string')
               {
                 userCustomFields.push({
@@ -184,6 +186,30 @@ const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = nul
                     customFieldType: customField.customFieldType,
                     value: newValue.toString()
                 });
+              }
+              else if (newValue != null && typeof newValue === 'boolean')
+              {
+                userCustomFields.push({
+                    customFieldId: customField.customFieldId,
+                    name: customField.name,
+                    isRequired: customField.isRequired,
+                    customFieldType: customField.customFieldType,
+                    value: newValue.toString()
+                });
+              }
+              else if (newValue != null && typeof newValue === 'object')
+              {
+                const dateObject = new Date(newValue);
+                const simpleDate = dateObject.toISOString().split('T')[0];
+
+                userCustomFields.push({
+                    customFieldId: customField.customFieldId,
+                    name: customField.name,
+                    isRequired: customField.isRequired,
+                    customFieldType: customField.customFieldType,
+                    value: simpleDate.toString()
+                });
+
               }
               else if (newValue instanceof Blob)
               {
@@ -199,7 +225,6 @@ const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = nul
                   const response = await apiService().post("/UserManagement/UploadCustomFieldImage", data);
                   if (response != null && response.status == 200)
                   {
-
                     userCustomFields.push({
                         customFieldId: customField.customFieldId,
                         name: customField.name,
@@ -207,9 +232,7 @@ const CompanyEditor = forwardRef(({companyId = null, platformType, onSaved = nul
                         customFieldType: customField.customFieldType,
                         value: response.data
                     });
-
                   }
-
               }
                 
             });
