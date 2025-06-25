@@ -271,14 +271,16 @@ function AuthScapeApp(_ref) {
             userProperty: signedInUser.current.id.toString()
           });
         }
-      } else if (process.env.microsoftClarityTrackingCode != "") {
-        _reactMicrosoftClarity.clarity.init(process.env.microsoftClarityTrackingCode);
-        if (signedInUser.current != null && _reactMicrosoftClarity.clarity.hasStarted()) {
-          _reactMicrosoftClarity.clarity.identify('USER_ID', {
-            userProperty: signedInUser.current.id.toString()
-          });
+      } else if (process.env.microsoftClarityTrackingCode != "")
+        // if there isn't a private label tracking code use the one built in the app
+        {
+          _reactMicrosoftClarity.clarity.init(process.env.microsoftClarityTrackingCode);
+          if (signedInUser.current != null && _reactMicrosoftClarity.clarity.hasStarted()) {
+            _reactMicrosoftClarity.clarity.identify('USER_ID', {
+              userProperty: signedInUser.current.id.toString()
+            });
+          }
         }
-      }
       databaseDrivenPageView(window.location.pathname);
       _router["default"].events.on('routeChangeComplete', function () {
         if (ga4React != null && ga4React != "") {
@@ -288,6 +290,14 @@ function AuthScapeApp(_ref) {
         }
         databaseDrivenPageView(window.location.pathname);
       });
+      if (pageProps.hubspotTrackingCode != null && pageProps.hubspotTrackingCode != "") {
+        var script = document.createElement("script");
+        script.src = pageProps.hubspotTrackingCode;
+        script.async = true;
+        script.defer = true;
+        script.id = "hs-script-loader";
+        document.body.appendChild(script);
+      }
     }
   }, [frontEndLoadedState]);
   var validateUserSignedIn = /*#__PURE__*/function () {

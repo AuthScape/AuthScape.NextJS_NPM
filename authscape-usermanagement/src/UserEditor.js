@@ -297,7 +297,6 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null, onC
               // draftToHTML(editors[customField.customFieldId].getCurrentContent()) 
               // : 
               data[customField.customFieldId];
-
               if (newValue != null && typeof newValue === 'string')
               {
                 userCustomFields.push({

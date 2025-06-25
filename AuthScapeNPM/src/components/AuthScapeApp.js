@@ -234,7 +234,7 @@ export function AuthScapeApp ({Component, layout, loadingLayout, pageProps, muiT
                     clarity.identify('USER_ID', { userProperty: signedInUser.current.id.toString() });
                 }
             }
-            else if (process.env.microsoftClarityTrackingCode != "")
+            else if (process.env.microsoftClarityTrackingCode != "") // if there isn't a private label tracking code use the one built in the app
             {
                 clarity.init(process.env.microsoftClarityTrackingCode);
 
@@ -258,6 +258,16 @@ export function AuthScapeApp ({Component, layout, loadingLayout, pageProps, muiT
 
                 databaseDrivenPageView(window.location.pathname);
             });
+
+            if (pageProps.hubspotTrackingCode != null && pageProps.hubspotTrackingCode != "")
+            {
+                const script = document.createElement("script");
+                script.src = pageProps.hubspotTrackingCode;
+                script.async = true;
+                script.defer = true;
+                script.id = "hs-script-loader";
+                document.body.appendChild(script);
+            }
         }
 
     }, [frontEndLoadedState]);

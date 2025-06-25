@@ -184,7 +184,6 @@ const LocationEditor = forwardRef(({locationId = null, platformType, onSaved = n
               // draftToHTML(editors[customField.customFieldId].getCurrentContent()) 
               // : 
               data[customField.customFieldId];
-
               if (newValue != null && typeof newValue === 'string')
               {
                 userCustomFields.push({
@@ -242,6 +241,7 @@ const LocationEditor = forwardRef(({locationId = null, platformType, onSaved = n
                     });
                   }
               }
+              
                 
             });
 
