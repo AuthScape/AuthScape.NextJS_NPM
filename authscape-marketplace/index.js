@@ -538,7 +538,7 @@ var Marketplace = function Marketplace(_ref) {
     return /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
       size: {
         sm: 12,
-        md: cardGridSize
+        md: Number(productData.CardSize)
       },
       sx: {
         width: "100%"
