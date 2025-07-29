@@ -27,7 +27,7 @@ import { apiService } from 'authscape';
 // import {SpreadSheetRichTextEditor} from './spreadsheetRichTextEditor';
 
 const SpreadsheetViewer = forwardRef(({
-    currentUser, documentId, url, sx, leftColumnSticky = 0, rightColumnSticky = 0, topRowSticky = 0, bottomRowSticky = 0, hideToolbar = false, onFocusLocationChanged = null, noPhotoText = "No Photo", photoWidth = 130, advanceQuery = null, onChange = null, onAddPhoto = null, onPhotoDelete = null, hubUrl = null, onLoading = null, usePagination = null
+    currentUser, documentId, url, sx, leftColumnSticky = 0, rightColumnSticky = 0, topRowSticky = 0, bottomRowSticky = 0, hideToolbar = false, onFocusLocationChanged = null, noPhotoText = "No Photo", photoWidth = 130, advanceQuery = null, onChange = null, onAddPhoto = null, onPhotoDelete = null, hubUrl = null, onLoading = null, usePagination = null, param = {}
   }, ref) =>
 {
     const hasLoadedSignalR = useRef(false);
@@ -72,7 +72,10 @@ const SpreadsheetViewer = forwardRef(({
 
     const [hubConnection, setHubConnection] = useState(null);
 
-    const [paginationParam, setPaginationParam] = useState(usePagination)
+    const [paginationParam, setPaginationParam] = useState({
+    ...usePagination,
+    ...param
+    });
 
     const getRows = () => {
         return returnedRef.current;
@@ -1633,7 +1636,32 @@ const SpreadsheetViewer = forwardRef(({
             />
             <Box mt={3} mb={3}>
             {paginationParam != null && paginationParam.offset != null && paginationParam.length != null &&
-                <Pagination  variant="outlined" color="primary" onChange={(e, v) => {setPaginationParam({...paginationParam, offset : v})}}   page={paginationParam.offset}  count={Math.ceil(totalCount / paginationParam.length)}  />
+
+
+                <Pagination
+                variant="outlined"
+                color="primary"
+                onChange={(e, v) => {
+                    setPaginationParam({
+                    ...paginationParam,
+                    ...param,             // Spread any additional param values here
+                    offset: v             // Always update the current page (offset)
+                    });
+                }}
+                page={paginationParam.offset}
+                count={Math.ceil(totalCount / paginationParam.length)}
+                />
+
+
+
+
+
+
+
+
+
+
+                // <Pagination  variant="outlined" color="primary" onChange={(e, v) => {setPaginationParam({...paginationParam, offset : v})}}   page={paginationParam.offset}  count={Math.ceil(totalCount / paginationParam.length)}  />
             }
         </Box>
         </Box>
