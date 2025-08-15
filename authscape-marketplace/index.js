@@ -387,7 +387,7 @@ var Marketplace = function Marketplace(_ref) {
         borderTop: "1px solid #e0e0e0",
         marginLeft: -1
       }
-    }, category.category == "Manufacturer" ? "Brand" : category.category), /*#__PURE__*/_react["default"].createElement(_material.Box, {
+    }, category.category), /*#__PURE__*/_react["default"].createElement(_material.Box, {
       sx: {
         marginTop: 0,
         paddingLeft: 1,
