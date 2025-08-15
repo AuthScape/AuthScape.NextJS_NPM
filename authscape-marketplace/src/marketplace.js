@@ -291,7 +291,7 @@ const Marketplace = ({
                       marginLeft: -1,
                     }}
                   >
-                    {category.category == "Manufacturer" ? "Brand" : category.category}
+                    {category.category}
                   </AccordionSummary>
                   <Box
                     sx={{
