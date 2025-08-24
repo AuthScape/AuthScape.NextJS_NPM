@@ -1,509 +1,296 @@
-import React, {useState, useRef, useEffect} from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import { ThemeProvider } from '@mui/material/styles';
+import React, { useState, useRef, useEffect, useMemo } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import { ThemeProvider } from "@mui/material/styles";
 import Head from "next/head";
-import { useSearchParams, usePathname } from 'next/navigation';
-import axios from 'axios';
+import { useSearchParams, usePathname } from "next/navigation";
+import axios from "axios";
 import querystring from "query-string";
-import Router from 'next/router';
-import GA4React from 'ga-4-react';
-import { create } from 'zustand'
-import { clarity } from 'react-microsoft-clarity';
-import { authService } from 'authscape';
+import Router from "next/router";
+import GA4React from "ga-4-react";
+import { create } from "zustand";
+import { clarity } from "react-microsoft-clarity";
+import { authService } from "authscape";
 
-export function AuthScapeApp ({Component, layout, loadingLayout, pageProps, muiTheme = {}, store={}, enforceLoggedIn = false, enableAuth = true}) {
+// ---- optional: import your cookie util if not global ----
+// import { setCookie } from "cookies-next";
+// import { apiService } from "@/services/api"; // wherever yours lives
 
-    const [frontEndLoadedState, setFrontEndLoadedState] = useState(false);
+// Decorate a user object with role/permission helpers (idempotent)
+function ensureUserHelpers(u) {
+  if (!u || typeof u !== "object") return u;
 
-    const [isLoadingShow, setIsLoadingShow] = useState(false);
+  // Avoid redefining on every call
+  if (typeof u.hasRole === "function" &&
+      typeof u.hasRoleId === "function" &&
+      typeof u.hasPermission === "function") {
+    return u;
+  }
 
-    const [signedInUserState, setSignedInUserState] = useState(null);
+  const rolesArr = Array.isArray(u.roles) ? u.roles : [];
+  const permsArr = Array.isArray(u.permissions) ? u.permissions : [];
 
-    const loadingAuth = useRef(false);
-    const frontEndLoaded = useRef(false);
-    const signedInUser = useRef(null);
-    const queryCodeUsed = useRef(null);
+  // defineProperty keeps them non-enumerable
+  Object.defineProperty(u, "hasRole", {
+    value: function hasRole(name) {
+      if (!name) return false;
+      return rolesArr.some(r => r?.name === name);
+    },
+    writable: false
+  });
 
-    const ga4React = useRef(null);
+  Object.defineProperty(u, "hasRoleId", {
+    value: function hasRoleId(id) {
+      if (id === undefined || id === null) return false;
+      return rolesArr.some(r => r?.id === id);
+    },
+    writable: false
+  });
 
-    const searchParams = useSearchParams();
-    const queryRef = searchParams.get('ref');
-    const queryCode = searchParams.get('code');
+  Object.defineProperty(u, "hasPermission", {
+    value: function hasPermission(name) {
+      if (!name) return false;
+      return permsArr.includes(name);
+    },
+    writable: false
+  });
 
-    const pathname = usePathname();
+  return u;
+}
 
-    const signInValidator = async (queryCode) => {
- 
-        if (queryCodeUsed.current != queryCode)
-        {
-            queryCodeUsed.current = queryCode;
-        }
-        else
-        {
-            return;
-        }
+export function AuthScapeApp({
+  Component,
+  layout,
+  loadingLayout,
+  pageProps,
+  muiTheme = {},
+  store = {},
+  enforceLoggedIn = false,
+  enableAuth = true,
+}) {
+  const [frontEndLoadedState, setFrontEndLoadedState] = useState(false);
+  const [isLoadingShow, setIsLoadingShow] = useState(false);
+  const [signedInUserState, setSignedInUserState] = useState(null);
 
-        let codeVerifier = window.localStorage.getItem("verifier");
-        if (queryCode != null && codeVerifier != null)
-            {
-              const headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-      
-              let queryString = querystring.stringify({
-                code: queryCode,
-                grant_type: "authorization_code",
-                redirect_uri: window.location.origin + "/signin-oidc",
-                client_id: process.env.client_id,
-                client_secret: process.env.client_secret,
-                code_verifier: codeVerifier
-              });
-      
-              try
-              {
-                let response = await axios.post(process.env.authorityUri + '/connect/token', queryString, {
-                    headers: headers
-                });
-        
-                let domainHost = window.location.hostname.split('.').slice(-2).join('.');
-                window.localStorage.removeItem("verifier");
-        
-                await setCookie('access_token', response.data.access_token, {
-                    maxAge: 60 * 60 * 24 * 365, // 1 year,
-                    path: '/',
-                    domain: domainHost,
-                    secure: true
-                });
+  const loadingAuth = useRef(false);
+  const signedInUser = useRef(null);
+  const queryCodeUsed = useRef(null);
+  const ga4React = useRef(null);
 
-                await setCookie('expires_in', response.data.expires_in, {
-                    maxAge: 60 * 60 * 24 * 365, // 1 year,
-                    path: '/',
-                    domain: domainHost,
-                    secure: true
-                });
+  const searchParams = useSearchParams();
+  const queryCode = searchParams.get("code");
+  const pathname = usePathname();
 
-                await setCookie('refresh_token', response.data.refresh_token, {
-                    maxAge: 60 * 60 * 24 * 365, // 1 year,
-                    path: '/',
-                    domain: domainHost,
-                    secure: true
-                });
+  // ----- PKCE Sign-in (browser-only) -----
+  const signInValidator = async (codeFromQuery) => {
+    if (queryCodeUsed.current === codeFromQuery) return;
+    queryCodeUsed.current = codeFromQuery;
 
-                // await setCookie(null, "access_token", response.data.access_token,
-                // {
-                //     maxAge: 2147483647,
-                //     path: '/',
-                //     domain: domainHost,
-                //     secure: true
-                // });
-            
-                // await setCookie(null, "expires_in", response.data.expires_in,
-                // {
-                //     maxAge: 2147483647,
-                //     path: '/',
-                //     domain: domainHost,
-                //     secure: true
-                // });
-            
-                // await setCookie(null, "refresh_token", response.data.refresh_token,
-                // {
-                //     maxAge: 2147483647,
-                //     path: '/',
-                //     domain: domainHost,
-                //     secure: true
-                // });
-        
-        
-                let redirectUri = localStorage.getItem("redirectUri")
-                localStorage.clear();
-                if (redirectUri != null)
-                {
-                    window.location.href = redirectUri;
-                }
-                else
-                {
-                    window.location.href = "/";
-                }
-            }
-            catch(exp)
-            {
-                //alert(exp)
-            }
-        }
+    if (typeof window === "undefined") return;
+
+    const codeVerifier = window.localStorage.getItem("verifier");
+    if (!codeFromQuery || !codeVerifier) return;
+
+    const headers = { "Content-Type": "application/x-www-form-urlencoded" };
+
+    const body = querystring.stringify({
+      code: codeFromQuery,
+      grant_type: "authorization_code",
+      redirect_uri: window.location.origin + "/signin-oidc",
+      client_id: process.env.client_id,
+      client_secret: process.env.client_secret,
+      code_verifier: codeVerifier,
+    });
+
+    try {
+      const response = await axios.post(
+        process.env.authorityUri + "/connect/token",
+        body,
+        { headers }
+      );
+
+      const domainHost = window.location.hostname.split(".").slice(-2).join(".");
+
+      window.localStorage.removeItem("verifier");
+
+      // NOTE: replace setCookie below with your implementation if different
+      await setCookie("access_token", response.data.access_token, {
+        maxAge: 60 * 60 * 24 * 365,
+        path: "/",
+        domain: domainHost,
+        secure: true,
+      });
+      await setCookie("expires_in", response.data.expires_in, {
+        maxAge: 60 * 60 * 24 * 365,
+        path: "/",
+        domain: domainHost,
+        secure: true,
+      });
+      await setCookie("refresh_token", response.data.refresh_token, {
+        maxAge: 60 * 60 * 24 * 365,
+        path: "/",
+        domain: domainHost,
+        secure: true,
+      });
+
+      const redirectUri = window.localStorage.getItem("redirectUri");
+      window.localStorage.clear();
+      window.location.href = redirectUri || "/";
+    } catch (exp) {
+      console.error("PKCE sign-in failed", exp);
+    }
+  };
+
+  // ----- GA + Clarity -----
+  async function initGA(G) {
+    if (typeof window !== "undefined" && !GA4React.isInitialized() && G) {
+      ga4React.current = new GA4React(G, { debug_mode: !process.env.production });
+      try {
+        await ga4React.current.initialize();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
+  const logEvent = (category, action, label) => {
+    if (ga4React.current) ga4React.current.event(action, label, category);
+    // your DB analytics can go here if desired
+  };
+
+  const databaseDrivenPageView = (pathName) => {
+    if (process.env.enableDatabaseAnalytics !== "true") return;
+    if (typeof window === "undefined") return;
+    if (pathName === "/signin-oidc") return;
+
+    const host = window.location.protocol + "//" + window.location.host;
+
+    apiService().post("/Analytics/PageView", {
+      userId: signedInUser.current?.id,
+      locationId: signedInUser.current?.locationId,
+      companyId: signedInUser.current?.companyId,
+      uri: pathName,
+      host,
+    });
+  };
+
+  // ----- Auth init (runs once) -----
+  useEffect(() => {
+    if (queryCode) {
+      signInValidator(queryCode);
+      return;
     }
 
-    async function initGA(G) {
-        if (!GA4React.isInitialized() && G && process.browser) {
-          ga4React.current = new GA4React(G, { debug_mode: !process.env.production });
-      
-          try {
+    if (!loadingAuth.current) {
+      loadingAuth.current = true;
 
-            await ga4React.current.initialize();
-
-        } catch (error) {
-            console.error(error);
-          }
-        }
-    }
-
-    const logEvent = (category, action, label) => {
-  
-        if (ga4React != null && ga4React.current != null && ga4React != "")
-        {
-            ga4React.current.event(action, label, category);
-        }
-
-        if (process.env.enableDatabaseAnalytics == "true")
-        {
-            let userId = null;
-            let locationId = null;
-            let companyId = null;
-
-            var host = window.location.protocol + "//" + window.location.host;
-
-            if (signedInUser.current != null)
-            {
-                userId = signedInUser.current.id;
-                locationId = signedInUser.current.locationId;
-                companyId = signedInUser.current.companyId;
-            }
-
-            apiService().post("/Analytics/Event", {
-                userId: userId,
-                locationId: locationId,
-                companyId: companyId,
-                uri: window.location.pathname,
-                category: category,
-                action: action,
-                label: label,
-                host: host
-            });
-        }
-    }
-
-    const databaseDrivenPageView = (pathName) => {
-
-        if (process.env.enableDatabaseAnalytics == "true")
-        {
-            let userId = null;
-            let locationId = null;
-            let companyId = null;
-
-            var host = window.location.protocol + "//" + window.location.host;
-
-            if (signedInUser.current != null)
-            {
-                userId = signedInUser.current.id;
-                locationId = signedInUser.current.locationId;
-                companyId = signedInUser.current.companyId;
-            }
-
-            if (pathName == "/signin-oidc")
-            {
-                return;
-            }
-
-            apiService().post("/Analytics/PageView", {
-                userId: userId,
-                locationId: locationId,
-                companyId: companyId,
-                uri: pathName,
-                host: host
-            });
-
-        }
-    }
-
-    useEffect(() => {
-
-        if (frontEndLoadedState)
-        {
-            if (pageProps.googleAnalytics4Code != null)
-            {
-                initGA(pageProps.googleAnalytics4Code);
-            }
-            else if (process.env.googleAnalytics4 != "")
-            {
-                initGA(process.env.googleAnalytics4);
-            }
-
-            if (pageProps.microsoftClarityCode != null)
-            {
-                clarity.init(pageProps.microsoftClarityCode);
-
-                if (signedInUser.current != null && clarity.hasStarted())
-                {
-                    clarity.identify('USER_ID', { userProperty: signedInUser.current.id.toString() });
-                }
-            }
-            else if (process.env.microsoftClarityTrackingCode != "") // if there isn't a private label tracking code use the one built in the app
-            {
-                clarity.init(process.env.microsoftClarityTrackingCode);
-
-                if (signedInUser.current != null && clarity.hasStarted())
-                {
-                    clarity.identify('USER_ID', { userProperty: signedInUser.current.id.toString() });
-                }
-            }
-
-            databaseDrivenPageView(window.location.pathname);
-            Router.events.on('routeChangeComplete', () => {
-
-                if (ga4React != null && ga4React != "")
-                {
-                    try
-                    {
-                        ga4React.current.pageview(window.location.pathname);
-                    }
-                    catch(exp) {}
-                }
-
-                databaseDrivenPageView(window.location.pathname);
-            });
-
-            if (pageProps.hubspotTrackingCode != null && pageProps.hubspotTrackingCode != "")
-            {
-                const script = document.createElement("script");
-                script.src = pageProps.hubspotTrackingCode;
-                script.async = true;
-                script.defer = true;
-                script.id = "hs-script-loader";
-                document.body.appendChild(script);
-            }
-        }
-
-    }, [frontEndLoadedState]);
-
-    const validateUserSignedIn = async () => {
-
-        loadingAuth.current = true;
-
-        if (enableAuth)
-        {
-          let usr = await apiService().GetCurrentUser();
-          if (usr != null)
-          {
-            signedInUser.current = usr;
-          }
-        }
-
+      if (enableAuth) {
+        apiService().GetCurrentUser().then((usr) => {
+          signedInUser.current = ensureUserHelpers(usr);
+          setSignedInUserState(signedInUser.current);
+          setFrontEndLoadedState(true);
+        }).catch(() => {
+          // no user / anonymous
+          signedInUser.current = null;
+          setSignedInUserState(null);
+          setFrontEndLoadedState(true);
+        });
+      } else {
         setFrontEndLoadedState(true);
-        frontEndLoaded.current = true;
-        setSignedInUserState(signedInUser.current);
+      }
+    }
+  }, [queryCode, enableAuth]);
+
+  // ----- Analytics init -----
+  useEffect(() => {
+    if (!frontEndLoadedState || typeof window === "undefined") return;
+
+    if (pageProps.googleAnalytics4Code) {
+      initGA(pageProps.googleAnalytics4Code);
+    } else if (process.env.googleAnalytics4) {
+      initGA(process.env.googleAnalytics4);
     }
 
-    if (queryCode != null)
-    {
-        signInValidator(queryCode);
-    }
-    else
-    {
-        if (!loadingAuth.current)
-        {
-            validateUserSignedIn();
-        }
+    if (pageProps.microsoftClarityCode) {
+      clarity.init(pageProps.microsoftClarityCode);
+    } else if (process.env.microsoftClarityTrackingCode) {
+      clarity.init(process.env.microsoftClarityTrackingCode);
     }
 
-    useEffect(() => {
+    databaseDrivenPageView(window.location.pathname);
 
-        if (signedInUserState == null && enforceLoggedIn && pathname != "/signin-oidc" && frontEndLoadedState == true)
-        {
-            authService().login();
-        }
+    const handler = (url) => {
+      ga4React.current?.pageview(url);
+      databaseDrivenPageView(url);
+    };
+    Router.events.on("routeChangeComplete", handler);
+    return () => Router.events.off("routeChangeComplete", handler);
+  }, [frontEndLoadedState, pageProps.googleAnalytics4Code, pageProps.microsoftClarityCode]);
 
-    }, [signedInUserState, enforceLoggedIn, frontEndLoadedState]);
-
-
-    const setIsLoading = (isLoading) => {
-        setIsLoadingShow(isLoading);
+  // ----- Enforce login (client) -----
+  useEffect(() => {
+    if (
+      enforceLoggedIn &&
+      pathname !== "/signin-oidc" &&
+      frontEndLoadedState &&
+      !signedInUserState
+    ) {
+      authService().login();
     }
+  }, [signedInUserState, enforceLoggedIn, frontEndLoadedState, pathname]);
 
-    const logPurchase = (transactionId, amount, tax, items) => {
-        
-        if (ga4React != null && ga4React != "")
-        {
-            ga4React.current.gtag("event", "purchase", {
-                transaction_id: transactionId,
-                value: amount,
-                tax: tax,
-                currency: "USD",
-                items: items
-            });
-        }
-    }
+  // Stable getter for current user (with helpers)
+  const currentUser = useMemo(() => ensureUserHelpers(signedInUser.current), [signedInUserState]);
 
-    const setToastMessage = (message, options = null) => {
-         
-        if (options != null)
-        {
-            toast(message, options);
-        }
-        else
-        {
-            toast(message);
-        }
-    }
+  const useStore = create(() => store);
 
-    const setInfoToastMessage = (message, options = null) => {
-        if (options != null)
-        {
-            toast.info(message, options);
-        }
-        else
-        {
-            toast.info(message);
-        }
-    }
+  // ----- Render (SSR-safe; always output page so <title> is visible) -----
+  const pageContent = layout
+    ? layout({
+        children: (
+          <Component
+            {...pageProps}
+            currentUser={currentUser}
+            loadedUser={frontEndLoadedState}
+            setIsLoading={setIsLoadingShow}
+            logEvent={logEvent}
+            store={useStore}
+            toast={toast}
+          />
+        ),
+        currentUser,
+        setIsLoading: setIsLoadingShow,
+        logEvent,
+        toast,
+        store: useStore,
+        pageProps,
+      })
+    : (
+      <Component
+        {...pageProps}
+        currentUser={currentUser}
+        loadedUser={frontEndLoadedState}
+        setIsLoading={setIsLoadingShow}
+        logEvent={logEvent}
+        store={useStore}
+        toast={toast}
+      />
+    );
 
-    const setSuccessToastMessage = (message, options = null) => {
-        if (options != null)
-        {
-            toast.success(message, options);
-        }
-        else
-        {
-            toast.success(message);
-        }
-    }
+  return (
+    <>
+      <Head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"
+        />
+      </Head>
 
-    const setWarnToastMessage = (message, options = null) => {
-        if (options != null)
-        {
-            toast.warn(message, options);
-        }
-        else
-        {
-            toast.warn(message);
-        }
-    }
+      <ThemeProvider theme={muiTheme}>
+        {pageContent}
+        <ToastContainer />
+      </ThemeProvider>
 
-    const setErrorToastMessage = (message, options = null) => {
-        if (options != null)
-        {
-            toast.error(message, options);
-        }
-        else
-        {
-            toast.error(message);
-        }
-    }
-    
-
-    const GetSignedInUser = () => {
-
-        if (signedInUser != null)
-        {
-            let _signedInUser = signedInUser.current;
-
-            if (_signedInUser != null)
-            {
-                _signedInUser.hasRole = function(name) {
-
-                    if (_signedInUser.roles != null)
-                    {
-                        if (_signedInUser.roles.find(r => r.name === name) != null)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                };
-
-                _signedInUser.hasRoleId = function(id) {
-
-                    if (_signedInUser.roles != null)
-                    {
-                        if (_signedInUser.roles.find(r => r.id === id) != null)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                };
-
-                _signedInUser.hasPermission = function(name) {
-
-                    if (_signedInUser.permissions != null)
-                    {
-                        if (_signedInUser.permissions.find(r => r === name) != null)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                };
-            }
-
-            return _signedInUser;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-
-    const useStore = create((set) => (store));
-
-    return (
-        <>
-            <Head>
-                <meta name="viewport" content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"></meta>
-
-                {/* {(pageProps != null && pageProps.oemCompanyId != null) ?
-                    <>
-                        <link
-                            href={process.env.apiUri + "/api/PrivateLabel/GetDataFromRecord?oemCompanyId=" + pageProps.oemCompanyId}
-                            rel="stylesheet"
-                        />
-                    </>
-                :
-                <>
-                    <link rel="icon" href="/favicon.ico" />
-                </>
-                } */}
-
-            </Head>
-
-            <ThemeProvider theme={muiTheme}>
-                {frontEndLoadedState != null && frontEndLoadedState && pathname != "/signin-oidc" &&
-                <>
-                    {layout != null && layout({
-                        children: <Component {...pageProps} currentUser={GetSignedInUser()} loadedUser={frontEndLoadedState} setIsLoading={setIsLoading} logEvent={logEvent} logPurchase={logPurchase} store={useStore} setToastMessage={setToastMessage} setInfoToastMessage={setInfoToastMessage} setSuccessToastMessage={setSuccessToastMessage} setWarnToastMessage={setWarnToastMessage} setErrorToastMessage={setErrorToastMessage} />,
-                        currentUser: GetSignedInUser(),
-                        logEvent: logEvent,
-                        setIsLoading: setIsLoading,
-                        toast: toast,
-                        store: useStore,
-                        setToastMessage: setToastMessage,
-                        pageProps: pageProps,
-                        setInfoToastMessage: setInfoToastMessage,
-                        setSuccessToastMessage: setSuccessToastMessage, 
-                        setWarnToastMessage: setWarnToastMessage, 
-                        setErrorToastMessage: setErrorToastMessage
-                    })}
-
-                    {layout == null &&
-                        <Component {...pageProps} currentUser={GetSignedInUser()} loadedUser={frontEndLoadedState} setIsLoading={setIsLoading} logEvent={logEvent} logPurchase={logPurchase} store={useStore} setToastMessage={setToastMessage} setInfoToastMessage={setInfoToastMessage} setSuccessToastMessage={setSuccessToastMessage} setWarnToastMessage={setWarnToastMessage} setErrorToastMessage={setErrorToastMessage} />   
-                    }
-                </>
-                }
-                <ToastContainer />
-
-            </ThemeProvider>
-
-            {loadingLayout &&
-            <>
-                {loadingLayout(isLoadingShow)}
-            </>
-            }
-        </>
-    )
+      {loadingLayout && loadingLayout(isLoadingShow)}
+    </>
+  );
 }

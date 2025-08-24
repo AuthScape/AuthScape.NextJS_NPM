@@ -1,6 +1,5 @@
 "use strict";
 
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -30,6 +29,50 @@ function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) 
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+// ---- optional: import your cookie util if not global ----
+// import { setCookie } from "cookies-next";
+// import { apiService } from "@/services/api"; // wherever yours lives
+
+// Decorate a user object with role/permission helpers (idempotent)
+function ensureUserHelpers(u) {
+  if (!u || _typeof(u) !== "object") return u;
+
+  // Avoid redefining on every call
+  if (typeof u.hasRole === "function" && typeof u.hasRoleId === "function" && typeof u.hasPermission === "function") {
+    return u;
+  }
+  var rolesArr = Array.isArray(u.roles) ? u.roles : [];
+  var permsArr = Array.isArray(u.permissions) ? u.permissions : [];
+
+  // defineProperty keeps them non-enumerable
+  Object.defineProperty(u, "hasRole", {
+    value: function hasRole(name) {
+      if (!name) return false;
+      return rolesArr.some(function (r) {
+        return (r === null || r === void 0 ? void 0 : r.name) === name;
+      });
+    },
+    writable: false
+  });
+  Object.defineProperty(u, "hasRoleId", {
+    value: function hasRoleId(id) {
+      if (id === undefined || id === null) return false;
+      return rolesArr.some(function (r) {
+        return (r === null || r === void 0 ? void 0 : r.id) === id;
+      });
+    },
+    writable: false
+  });
+  Object.defineProperty(u, "hasPermission", {
+    value: function hasPermission(name) {
+      if (!name) return false;
+      return permsArr.includes(name);
+    },
+    writable: false
+  });
+  return u;
+}
 function AuthScapeApp(_ref) {
   var Component = _ref.Component,
     layout = _ref.layout,
@@ -56,437 +99,254 @@ function AuthScapeApp(_ref) {
     signedInUserState = _useState6[0],
     setSignedInUserState = _useState6[1];
   var loadingAuth = (0, _react.useRef)(false);
-  var frontEndLoaded = (0, _react.useRef)(false);
   var signedInUser = (0, _react.useRef)(null);
   var queryCodeUsed = (0, _react.useRef)(null);
   var ga4React = (0, _react.useRef)(null);
   var searchParams = (0, _navigation.useSearchParams)();
-  var queryRef = searchParams.get('ref');
-  var queryCode = searchParams.get('code');
+  var queryCode = searchParams.get("code");
   var pathname = (0, _navigation.usePathname)();
+
+  // ----- PKCE Sign-in (browser-only) -----
   var signInValidator = /*#__PURE__*/function () {
-    var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(queryCode) {
-      var codeVerifier, headers, queryString, response, domainHost, redirectUri;
+    var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(codeFromQuery) {
+      var codeVerifier, headers, body, response, domainHost, redirectUri;
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
-            if (!(queryCodeUsed.current != queryCode)) {
-              _context.next = 4;
+            if (!(queryCodeUsed.current === codeFromQuery)) {
+              _context.next = 2;
               break;
             }
-            queryCodeUsed.current = queryCode;
-            _context.next = 5;
-            break;
-          case 4:
+            return _context.abrupt("return");
+          case 2:
+            queryCodeUsed.current = codeFromQuery;
+            if (!(typeof window === "undefined")) {
+              _context.next = 5;
+              break;
+            }
             return _context.abrupt("return");
           case 5:
             codeVerifier = window.localStorage.getItem("verifier");
-            if (!(queryCode != null && codeVerifier != null)) {
-              _context.next = 28;
+            if (!(!codeFromQuery || !codeVerifier)) {
+              _context.next = 8;
               break;
             }
+            return _context.abrupt("return");
+          case 8:
             headers = {
-              'Content-Type': 'application/x-www-form-urlencoded'
+              "Content-Type": "application/x-www-form-urlencoded"
             };
-            queryString = _queryString["default"].stringify({
-              code: queryCode,
+            body = _queryString["default"].stringify({
+              code: codeFromQuery,
               grant_type: "authorization_code",
               redirect_uri: window.location.origin + "/signin-oidc",
               client_id: process.env.client_id,
               client_secret: process.env.client_secret,
               code_verifier: codeVerifier
             });
-            _context.prev = 9;
-            _context.next = 12;
-            return _axios["default"].post(process.env.authorityUri + '/connect/token', queryString, {
+            _context.prev = 10;
+            _context.next = 13;
+            return _axios["default"].post(process.env.authorityUri + "/connect/token", body, {
               headers: headers
             });
-          case 12:
+          case 13:
             response = _context.sent;
-            domainHost = window.location.hostname.split('.').slice(-2).join('.');
+            domainHost = window.location.hostname.split(".").slice(-2).join(".");
             window.localStorage.removeItem("verifier");
-            _context.next = 17;
-            return setCookie('access_token', response.data.access_token, {
+
+            // NOTE: replace setCookie below with your implementation if different
+            _context.next = 18;
+            return setCookie("access_token", response.data.access_token, {
               maxAge: 60 * 60 * 24 * 365,
-              // 1 year,
-              path: '/',
+              path: "/",
               domain: domainHost,
               secure: true
             });
-          case 17:
-            _context.next = 19;
-            return setCookie('expires_in', response.data.expires_in, {
+          case 18:
+            _context.next = 20;
+            return setCookie("expires_in", response.data.expires_in, {
               maxAge: 60 * 60 * 24 * 365,
-              // 1 year,
-              path: '/',
+              path: "/",
               domain: domainHost,
               secure: true
             });
-          case 19:
-            _context.next = 21;
-            return setCookie('refresh_token', response.data.refresh_token, {
+          case 20:
+            _context.next = 22;
+            return setCookie("refresh_token", response.data.refresh_token, {
               maxAge: 60 * 60 * 24 * 365,
-              // 1 year,
-              path: '/',
+              path: "/",
               domain: domainHost,
               secure: true
             });
-          case 21:
-            // await setCookie(null, "access_token", response.data.access_token,
-            // {
-            //     maxAge: 2147483647,
-            //     path: '/',
-            //     domain: domainHost,
-            //     secure: true
-            // });
-            // await setCookie(null, "expires_in", response.data.expires_in,
-            // {
-            //     maxAge: 2147483647,
-            //     path: '/',
-            //     domain: domainHost,
-            //     secure: true
-            // });
-            // await setCookie(null, "refresh_token", response.data.refresh_token,
-            // {
-            //     maxAge: 2147483647,
-            //     path: '/',
-            //     domain: domainHost,
-            //     secure: true
-            // });
-            redirectUri = localStorage.getItem("redirectUri");
-            localStorage.clear();
-            if (redirectUri != null) {
-              window.location.href = redirectUri;
-            } else {
-              window.location.href = "/";
-            }
-            _context.next = 28;
+          case 22:
+            redirectUri = window.localStorage.getItem("redirectUri");
+            window.localStorage.clear();
+            window.location.href = redirectUri || "/";
+            _context.next = 30;
             break;
-          case 26:
-            _context.prev = 26;
-            _context.t0 = _context["catch"](9);
-          case 28:
+          case 27:
+            _context.prev = 27;
+            _context.t0 = _context["catch"](10);
+            console.error("PKCE sign-in failed", _context.t0);
+          case 30:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[9, 26]]);
+      }, _callee, null, [[10, 27]]);
     }));
     return function signInValidator(_x) {
       return _ref2.apply(this, arguments);
     };
   }();
+
+  // ----- GA + Clarity -----
   function initGA(_x2) {
     return _initGA.apply(this, arguments);
   }
   function _initGA() {
-    _initGA = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(G) {
-      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-        while (1) switch (_context3.prev = _context3.next) {
+    _initGA = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(G) {
+      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
           case 0:
-            if (!(!_ga4React["default"].isInitialized() && G && process.browser)) {
-              _context3.next = 10;
+            if (!(typeof window !== "undefined" && !_ga4React["default"].isInitialized() && G)) {
+              _context2.next = 10;
               break;
             }
             ga4React.current = new _ga4React["default"](G, {
               debug_mode: !process.env.production
             });
-            _context3.prev = 2;
-            _context3.next = 5;
+            _context2.prev = 2;
+            _context2.next = 5;
             return ga4React.current.initialize();
           case 5:
-            _context3.next = 10;
+            _context2.next = 10;
             break;
           case 7:
-            _context3.prev = 7;
-            _context3.t0 = _context3["catch"](2);
-            console.error(_context3.t0);
+            _context2.prev = 7;
+            _context2.t0 = _context2["catch"](2);
+            console.error(_context2.t0);
           case 10:
           case "end":
-            return _context3.stop();
+            return _context2.stop();
         }
-      }, _callee3, null, [[2, 7]]);
+      }, _callee2, null, [[2, 7]]);
     }));
     return _initGA.apply(this, arguments);
   }
   var logEvent = function logEvent(category, action, label) {
-    if (ga4React != null && ga4React.current != null && ga4React != "") {
-      ga4React.current.event(action, label, category);
-    }
-    if (process.env.enableDatabaseAnalytics == "true") {
-      var userId = null;
-      var locationId = null;
-      var companyId = null;
-      var host = window.location.protocol + "//" + window.location.host;
-      if (signedInUser.current != null) {
-        userId = signedInUser.current.id;
-        locationId = signedInUser.current.locationId;
-        companyId = signedInUser.current.companyId;
-      }
-      apiService().post("/Analytics/Event", {
-        userId: userId,
-        locationId: locationId,
-        companyId: companyId,
-        uri: window.location.pathname,
-        category: category,
-        action: action,
-        label: label,
-        host: host
-      });
-    }
+    if (ga4React.current) ga4React.current.event(action, label, category);
+    // your DB analytics can go here if desired
   };
   var databaseDrivenPageView = function databaseDrivenPageView(pathName) {
-    if (process.env.enableDatabaseAnalytics == "true") {
-      var userId = null;
-      var locationId = null;
-      var companyId = null;
-      var host = window.location.protocol + "//" + window.location.host;
-      if (signedInUser.current != null) {
-        userId = signedInUser.current.id;
-        locationId = signedInUser.current.locationId;
-        companyId = signedInUser.current.companyId;
-      }
-      if (pathName == "/signin-oidc") {
-        return;
-      }
-      apiService().post("/Analytics/PageView", {
-        userId: userId,
-        locationId: locationId,
-        companyId: companyId,
-        uri: pathName,
-        host: host
-      });
-    }
+    var _signedInUser$current, _signedInUser$current2, _signedInUser$current3;
+    if (process.env.enableDatabaseAnalytics !== "true") return;
+    if (typeof window === "undefined") return;
+    if (pathName === "/signin-oidc") return;
+    var host = window.location.protocol + "//" + window.location.host;
+    apiService().post("/Analytics/PageView", {
+      userId: (_signedInUser$current = signedInUser.current) === null || _signedInUser$current === void 0 ? void 0 : _signedInUser$current.id,
+      locationId: (_signedInUser$current2 = signedInUser.current) === null || _signedInUser$current2 === void 0 ? void 0 : _signedInUser$current2.locationId,
+      companyId: (_signedInUser$current3 = signedInUser.current) === null || _signedInUser$current3 === void 0 ? void 0 : _signedInUser$current3.companyId,
+      uri: pathName,
+      host: host
+    });
   };
+
+  // ----- Auth init (runs once) -----
   (0, _react.useEffect)(function () {
-    if (frontEndLoadedState) {
-      if (pageProps.googleAnalytics4Code != null) {
-        initGA(pageProps.googleAnalytics4Code);
-      } else if (process.env.googleAnalytics4 != "") {
-        initGA(process.env.googleAnalytics4);
-      }
-      if (pageProps.microsoftClarityCode != null) {
-        _reactMicrosoftClarity.clarity.init(pageProps.microsoftClarityCode);
-        if (signedInUser.current != null && _reactMicrosoftClarity.clarity.hasStarted()) {
-          _reactMicrosoftClarity.clarity.identify('USER_ID', {
-            userProperty: signedInUser.current.id.toString()
-          });
-        }
-      } else if (process.env.microsoftClarityTrackingCode != "")
-        // if there isn't a private label tracking code use the one built in the app
-        {
-          _reactMicrosoftClarity.clarity.init(process.env.microsoftClarityTrackingCode);
-          if (signedInUser.current != null && _reactMicrosoftClarity.clarity.hasStarted()) {
-            _reactMicrosoftClarity.clarity.identify('USER_ID', {
-              userProperty: signedInUser.current.id.toString()
-            });
-          }
-        }
-      databaseDrivenPageView(window.location.pathname);
-      _router["default"].events.on('routeChangeComplete', function () {
-        if (ga4React != null && ga4React != "") {
-          try {
-            ga4React.current.pageview(window.location.pathname);
-          } catch (exp) {}
-        }
-        databaseDrivenPageView(window.location.pathname);
-      });
-      if (pageProps.hubspotTrackingCode != null && pageProps.hubspotTrackingCode != "") {
-        var script = document.createElement("script");
-        script.src = pageProps.hubspotTrackingCode;
-        script.async = true;
-        script.defer = true;
-        script.id = "hs-script-loader";
-        document.body.appendChild(script);
-      }
+    if (queryCode) {
+      signInValidator(queryCode);
+      return;
     }
-  }, [frontEndLoadedState]);
-  var validateUserSignedIn = /*#__PURE__*/function () {
-    var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-      var usr;
-      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-        while (1) switch (_context2.prev = _context2.next) {
-          case 0:
-            loadingAuth.current = true;
-            if (!enableAuth) {
-              _context2.next = 6;
-              break;
-            }
-            _context2.next = 4;
-            return apiService().GetCurrentUser();
-          case 4:
-            usr = _context2.sent;
-            if (usr != null) {
-              signedInUser.current = usr;
-            }
-          case 6:
-            setFrontEndLoadedState(true);
-            frontEndLoaded.current = true;
-            setSignedInUserState(signedInUser.current);
-          case 9:
-          case "end":
-            return _context2.stop();
-        }
-      }, _callee2);
-    }));
-    return function validateUserSignedIn() {
-      return _ref3.apply(this, arguments);
-    };
-  }();
-  if (queryCode != null) {
-    signInValidator(queryCode);
-  } else {
     if (!loadingAuth.current) {
-      validateUserSignedIn();
+      loadingAuth.current = true;
+      if (enableAuth) {
+        apiService().GetCurrentUser().then(function (usr) {
+          signedInUser.current = ensureUserHelpers(usr);
+          setSignedInUserState(signedInUser.current);
+          setFrontEndLoadedState(true);
+        })["catch"](function () {
+          // no user / anonymous
+          signedInUser.current = null;
+          setSignedInUserState(null);
+          setFrontEndLoadedState(true);
+        });
+      } else {
+        setFrontEndLoadedState(true);
+      }
     }
-  }
+  }, [queryCode, enableAuth]);
+
+  // ----- Analytics init -----
   (0, _react.useEffect)(function () {
-    if (signedInUserState == null && enforceLoggedIn && pathname != "/signin-oidc" && frontEndLoadedState == true) {
+    if (!frontEndLoadedState || typeof window === "undefined") return;
+    if (pageProps.googleAnalytics4Code) {
+      initGA(pageProps.googleAnalytics4Code);
+    } else if (process.env.googleAnalytics4) {
+      initGA(process.env.googleAnalytics4);
+    }
+    if (pageProps.microsoftClarityCode) {
+      _reactMicrosoftClarity.clarity.init(pageProps.microsoftClarityCode);
+    } else if (process.env.microsoftClarityTrackingCode) {
+      _reactMicrosoftClarity.clarity.init(process.env.microsoftClarityTrackingCode);
+    }
+    databaseDrivenPageView(window.location.pathname);
+    var handler = function handler(url) {
+      var _ga4React$current;
+      (_ga4React$current = ga4React.current) === null || _ga4React$current === void 0 || _ga4React$current.pageview(url);
+      databaseDrivenPageView(url);
+    };
+    _router["default"].events.on("routeChangeComplete", handler);
+    return function () {
+      return _router["default"].events.off("routeChangeComplete", handler);
+    };
+  }, [frontEndLoadedState, pageProps.googleAnalytics4Code, pageProps.microsoftClarityCode]);
+
+  // ----- Enforce login (client) -----
+  (0, _react.useEffect)(function () {
+    if (enforceLoggedIn && pathname !== "/signin-oidc" && frontEndLoadedState && !signedInUserState) {
       (0, _authscape.authService)().login();
     }
-  }, [signedInUserState, enforceLoggedIn, frontEndLoadedState]);
-  var setIsLoading = function setIsLoading(isLoading) {
-    setIsLoadingShow(isLoading);
-  };
-  var logPurchase = function logPurchase(transactionId, amount, tax, items) {
-    if (ga4React != null && ga4React != "") {
-      ga4React.current.gtag("event", "purchase", {
-        transaction_id: transactionId,
-        value: amount,
-        tax: tax,
-        currency: "USD",
-        items: items
-      });
-    }
-  };
-  var setToastMessage = function setToastMessage(message) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    if (options != null) {
-      (0, _reactToastify.toast)(message, options);
-    } else {
-      (0, _reactToastify.toast)(message);
-    }
-  };
-  var setInfoToastMessage = function setInfoToastMessage(message) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    if (options != null) {
-      _reactToastify.toast.info(message, options);
-    } else {
-      _reactToastify.toast.info(message);
-    }
-  };
-  var setSuccessToastMessage = function setSuccessToastMessage(message) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    if (options != null) {
-      _reactToastify.toast.success(message, options);
-    } else {
-      _reactToastify.toast.success(message);
-    }
-  };
-  var setWarnToastMessage = function setWarnToastMessage(message) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    if (options != null) {
-      _reactToastify.toast.warn(message, options);
-    } else {
-      _reactToastify.toast.warn(message);
-    }
-  };
-  var setErrorToastMessage = function setErrorToastMessage(message) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    if (options != null) {
-      _reactToastify.toast.error(message, options);
-    } else {
-      _reactToastify.toast.error(message);
-    }
-  };
-  var GetSignedInUser = function GetSignedInUser() {
-    if (signedInUser != null) {
-      var _signedInUser = signedInUser.current;
-      if (_signedInUser != null) {
-        _signedInUser.hasRole = function (name) {
-          if (_signedInUser.roles != null) {
-            if (_signedInUser.roles.find(function (r) {
-              return r.name === name;
-            }) != null) {
-              return true;
-            } else {
-              return false;
-            }
-          }
-        };
-        _signedInUser.hasRoleId = function (id) {
-          if (_signedInUser.roles != null) {
-            if (_signedInUser.roles.find(function (r) {
-              return r.id === id;
-            }) != null) {
-              return true;
-            } else {
-              return false;
-            }
-          }
-        };
-        _signedInUser.hasPermission = function (name) {
-          if (_signedInUser.permissions != null) {
-            if (_signedInUser.permissions.find(function (r) {
-              return r === name;
-            }) != null) {
-              return true;
-            } else {
-              return false;
-            }
-          }
-        };
-      }
-      return _signedInUser;
-    } else {
-      return null;
-    }
-  };
-  var useStore = (0, _zustand.create)(function (set) {
+  }, [signedInUserState, enforceLoggedIn, frontEndLoadedState, pathname]);
+
+  // Stable getter for current user (with helpers)
+  var currentUser = (0, _react.useMemo)(function () {
+    return ensureUserHelpers(signedInUser.current);
+  }, [signedInUserState]);
+  var useStore = (0, _zustand.create)(function () {
     return store;
   });
+
+  // ----- Render (SSR-safe; always output page so <title> is visible) -----
+  var pageContent = layout ? layout({
+    children: /*#__PURE__*/_react["default"].createElement(Component, _extends({}, pageProps, {
+      currentUser: currentUser,
+      loadedUser: frontEndLoadedState,
+      setIsLoading: setIsLoadingShow,
+      logEvent: logEvent,
+      store: useStore,
+      toast: _reactToastify.toast
+    })),
+    currentUser: currentUser,
+    setIsLoading: setIsLoadingShow,
+    logEvent: logEvent,
+    toast: _reactToastify.toast,
+    store: useStore,
+    pageProps: pageProps
+  }) : /*#__PURE__*/_react["default"].createElement(Component, _extends({}, pageProps, {
+    currentUser: currentUser,
+    loadedUser: frontEndLoadedState,
+    setIsLoading: setIsLoadingShow,
+    logEvent: logEvent,
+    store: useStore,
+    toast: _reactToastify.toast
+  }));
   return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement(_head["default"], null, /*#__PURE__*/_react["default"].createElement("meta", {
     name: "viewport",
     content: "width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"
   })), /*#__PURE__*/_react["default"].createElement(_styles.ThemeProvider, {
     theme: muiTheme
-  }, frontEndLoadedState != null && frontEndLoadedState && pathname != "/signin-oidc" && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, layout != null && layout({
-    children: /*#__PURE__*/_react["default"].createElement(Component, _extends({}, pageProps, {
-      currentUser: GetSignedInUser(),
-      loadedUser: frontEndLoadedState,
-      setIsLoading: setIsLoading,
-      logEvent: logEvent,
-      logPurchase: logPurchase,
-      store: useStore,
-      setToastMessage: setToastMessage,
-      setInfoToastMessage: setInfoToastMessage,
-      setSuccessToastMessage: setSuccessToastMessage,
-      setWarnToastMessage: setWarnToastMessage,
-      setErrorToastMessage: setErrorToastMessage
-    })),
-    currentUser: GetSignedInUser(),
-    logEvent: logEvent,
-    setIsLoading: setIsLoading,
-    toast: _reactToastify.toast,
-    store: useStore,
-    setToastMessage: setToastMessage,
-    pageProps: pageProps,
-    setInfoToastMessage: setInfoToastMessage,
-    setSuccessToastMessage: setSuccessToastMessage,
-    setWarnToastMessage: setWarnToastMessage,
-    setErrorToastMessage: setErrorToastMessage
-  }), layout == null && /*#__PURE__*/_react["default"].createElement(Component, _extends({}, pageProps, {
-    currentUser: GetSignedInUser(),
-    loadedUser: frontEndLoadedState,
-    setIsLoading: setIsLoading,
-    logEvent: logEvent,
-    logPurchase: logPurchase,
-    store: useStore,
-    setToastMessage: setToastMessage,
-    setInfoToastMessage: setInfoToastMessage,
-    setSuccessToastMessage: setSuccessToastMessage,
-    setWarnToastMessage: setWarnToastMessage,
-    setErrorToastMessage: setErrorToastMessage
-  }))), /*#__PURE__*/_react["default"].createElement(_reactToastify.ToastContainer, null)), loadingLayout && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, loadingLayout(isLoadingShow)));
+  }, pageContent, /*#__PURE__*/_react["default"].createElement(_reactToastify.ToastContainer, null)), loadingLayout && loadingLayout(isLoadingShow));
 }
 "use strict";
 
