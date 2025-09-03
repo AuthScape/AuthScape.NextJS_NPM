@@ -34,6 +34,7 @@ const ContentManagement = ({ config, minHeight, configLoad }) => {
             >
               <Tab label="Page Management" {...a11yProps(0)} />
               <Tab label="Asset Management" {...a11yProps(1)} />
+                     <Tab label="Restricted Contacts" {...a11yProps(2)} />
             </Tabs>
           </Box>
         </>
@@ -51,6 +52,7 @@ const ContentManagement = ({ config, minHeight, configLoad }) => {
         {selectedTab === 1 && (
           <AssetManagement minHeight={minHeight} configLoad={configLoad} />
         )}
+
       </Box>
     </Container>
   );
