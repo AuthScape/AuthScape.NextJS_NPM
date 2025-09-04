@@ -27,7 +27,11 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import ConfirmationModal from "../confirmationModal";
 import CreateBlockListModal from "./CreateBlockListModal";
 
-export const BlockListManagement = ({ minHeight, configLoad, oemCompanyId }) => {
+export const BlockListManagement = ({
+  minHeight,
+  configLoad,
+  oemCompanyId,
+}) => {
   const refDataGrid = useRef(null);
   const initialPaginationModel = {
     offset: 1,
@@ -92,12 +96,14 @@ export const BlockListManagement = ({ minHeight, configLoad, oemCompanyId }) => 
       headerName: "Email",
       flex: 1,
       height: 200,
+      renderCell: (params) => params.value || "N/A",
     },
     {
       field: "keyword",
       headerName: "Key Word",
       flex: 1,
       height: 200,
+      renderCell: (params) => params.value || "N/A",
     },
     {
       field: "description",
@@ -227,7 +233,7 @@ export const BlockListManagement = ({ minHeight, configLoad, oemCompanyId }) => 
               setIsOpen(true);
             }}
           >
-          Add BlockList
+            Add BlockList
           </Button>
         </Box>
         <Box
@@ -306,7 +312,8 @@ export const BlockListManagement = ({ minHeight, configLoad, oemCompanyId }) => 
         }}
         okClicked={async () => {
           let response = await apiService().post(
-            "/ContentManagement/RemoveBlockList?blockId=" + showConfirmDeletePage
+            "/ContentManagement/RemoveBlockList?blockId=" +
+              showConfirmDeletePage
           );
           if (response != null && response.status === 200) {
             reloadUI();
@@ -325,7 +332,6 @@ export const BlockListManagement = ({ minHeight, configLoad, oemCompanyId }) => 
           setPaginationModel(initialPaginationModel);
         }}
       />
-  
     </>
   );
 };
