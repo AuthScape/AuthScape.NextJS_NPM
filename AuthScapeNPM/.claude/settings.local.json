@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(npm run build:*)",
+      "Bash(exit 0)",
+      "Bash(node src/scripts/postinstall.js:*)",
+      "Bash(npm pack:*)",
+      "Read(//d/Development/**)",
+      "Bash(node -e:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
