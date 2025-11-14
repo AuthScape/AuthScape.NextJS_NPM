@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import { Box, textAlign } from '@mui/system';
 import TextField from '@mui/material/TextField';
-import { Autocomplete, Avatar, Button, Drawer } from '@mui/material';
+import { Autocomplete, Avatar, Button, Drawer, useTheme } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -26,6 +26,7 @@ import Grid from '@mui/material/Grid2';
 const UserEditor = forwardRef(({userId = null, platformType, onSaved = null, onCustomTabs = null}, ref) => {
 
   const {control, register, handleSubmit, formState: { errors }, watch, setValue } = useForm();
+  const theme = useTheme();
 
   const [editors, setEditors] = useState({});
   const refTimeoutToken = useRef(null);
@@ -284,7 +285,11 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null, onC
 
 
   return (
-      <Box>
+      <Box sx={{
+        backgroundColor: theme.palette.background.default,
+        minHeight: '100vh',
+        color: theme.palette.text.primary
+      }}>
 
           <form onSubmit={handleSubmit(async (data) => {
             
@@ -382,7 +387,7 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null, onC
           })} noValidate autoComplete="off">
             
             <Grid container spacing={2} sx={{paddingTop:2}}>
-              <Grid size={4} sx={{backgroundColor:"#f5f8fa", borderRadius:2, border: "1px solid lightgray", padding:2}}>
+              <Grid size={4} sx={{backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.paper : "#f5f8fa", borderRadius:2, border: `1px solid ${theme.palette.divider}`, padding:2}}>
                 <Box sx={{textAlign:"center", display:"flex", justifyContent:"center", padding:2 }}>
                     <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"  sx={{ width: 100, height: 100 }} />
                 </Box>
@@ -585,7 +590,7 @@ const UserEditor = forwardRef(({userId = null, platformType, onSaved = null, onC
                 </Box>
 
               </Grid>
-              <Grid item size={8} sx={{backgroundColor:"#f5f8fa", borderRadius:2, border: "1px solid lightgray", padding:2}}>
+              <Grid item size={8} sx={{backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.paper : "#f5f8fa", borderRadius:2, border: `1px solid ${theme.palette.divider}`, padding:2}}>
                   <Stack spacing={2}>
                     <Box>
                       <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" aria-label="basic tabs example" centered>

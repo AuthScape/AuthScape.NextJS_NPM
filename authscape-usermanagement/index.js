@@ -55,6 +55,7 @@ var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     errors = _useForm.formState.errors,
     watch = _useForm.watch,
     setValue = _useForm.setValue;
+  var theme = (0, _material.useTheme)();
   var _useState = (0, _react.useState)({}),
     _useState2 = _slicedToArray(_useState, 2),
     editors = _useState2[0],
@@ -95,30 +96,38 @@ var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     setInputLocationValue = _useState18[1];
   var _useState19 = (0, _react.useState)([]),
     _useState20 = _slicedToArray(_useState19, 2),
-    customFields = _useState20[0],
-    setCustomFields = _useState20[1];
-  var _useState21 = (0, _react.useState)(null),
+    domains = _useState20[0],
+    setDomains = _useState20[1];
+  var _useState21 = (0, _react.useState)(''),
     _useState22 = _slicedToArray(_useState21, 2),
-    user = _useState22[0],
-    setUser = _useState22[1];
-  var _useState23 = (0, _react.useState)(null),
+    domainInput = _useState22[0],
+    setDomainInput = _useState22[1];
+  var _useState23 = (0, _react.useState)([]),
     _useState24 = _slicedToArray(_useState23, 2),
-    customTabs = _useState24[0],
-    setCustomTabs = _useState24[1];
+    customFields = _useState24[0],
+    setCustomFields = _useState24[1];
   var _useState25 = (0, _react.useState)(null),
     _useState26 = _slicedToArray(_useState25, 2),
-    companyLogo = _useState26[0],
-    setCompanyLogo = _useState26[1];
-  var _useState27 = (0, _react.useState)([]),
+    user = _useState26[0],
+    setUser = _useState26[1];
+  var _useState27 = (0, _react.useState)(null),
     _useState28 = _slicedToArray(_useState27, 2),
-    tabOptions = _useState28[0],
-    setTabOptions = _useState28[1];
+    customTabs = _useState28[0],
+    setCustomTabs = _useState28[1];
+  var _useState29 = (0, _react.useState)(null),
+    _useState30 = _slicedToArray(_useState29, 2),
+    companyLogo = _useState30[0],
+    setCompanyLogo = _useState30[1];
+  var _useState31 = (0, _react.useState)([]),
+    _useState32 = _slicedToArray(_useState31, 2),
+    tabOptions = _useState32[0],
+    setTabOptions = _useState32[1];
   var ITEM_HEIGHT = 48;
   var ITEM_PADDING_TOP = 8;
-  var _useState29 = (0, _react.useState)(0),
-    _useState30 = _slicedToArray(_useState29, 2),
-    tabValue = _useState30[0],
-    setTabValue = _useState30[1];
+  var _useState33 = (0, _react.useState)(0),
+    _useState34 = _slicedToArray(_useState33, 2),
+    tabValue = _useState34[0],
+    setTabValue = _useState34[1];
   var handleTabChange = function handleTabChange(event, newValue) {
     setTabValue(newValue);
   };
@@ -138,6 +147,7 @@ var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
             if (response != null && response.status == 200) {
               setCompanyLogo(response.data.logo);
               setLocation(response.data.locations);
+              setDomains(response.data.emailDomains || []);
               setCompany(response.data);
               if (response.data.customFields != null) {
                 setCustomFields(response.data.customFields);
@@ -270,7 +280,13 @@ var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       fetchData();
     }
   }, [companyId]);
-  return /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement("form", {
+  return /*#__PURE__*/_react["default"].createElement(_system.Box, {
+    sx: {
+      backgroundColor: theme.palette.background["default"],
+      minHeight: '100vh',
+      color: theme.palette.text.primary
+    }
+  }, /*#__PURE__*/_react["default"].createElement("form", {
     onSubmit: handleSubmit( /*#__PURE__*/function () {
       var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(data) {
         var userCustomFields, response;
@@ -374,7 +390,8 @@ var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
                 title: data.Title,
                 isDeactivated: !data.IsActive,
                 customFields: userCustomFields,
-                locations: location
+                locations: location,
+                domains: domains
               });
             case 4:
               response = _context6.sent;
@@ -402,11 +419,14 @@ var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       paddingTop: 2
     }
   }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
-    size: 4,
+    size: {
+      xs: 12,
+      md: 4
+    },
     sx: {
-      backgroundColor: "#f5f8fa",
+      backgroundColor: theme.palette.background.paper,
       borderRadius: 2,
-      border: "1px solid lightgray",
+      border: "1px solid ".concat(theme.palette.divider),
       padding: 2
     }
   }, /*#__PURE__*/_react["default"].createElement(_system.Box, {
@@ -543,13 +563,68 @@ var CompanyEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
         color: option.isAddOption ? "primary" : "text.secondary"
       }, option.title))));
     }
+  }), /*#__PURE__*/_react["default"].createElement(_system.Box, {
+    sx: {
+      fontWeight: "bold",
+      paddingTop: 2,
+      paddingBottom: 1
+    }
+  }, "Email Domains"), /*#__PURE__*/_react["default"].createElement(_Typography["default"], {
+    variant: "caption",
+    color: "textSecondary",
+    sx: {
+      display: "block",
+      paddingBottom: 1
+    }
+  }, "Add email domains (e.g., example.org, example.com) to automatically map users to this company when they sign up"), /*#__PURE__*/_react["default"].createElement(_material.Autocomplete, {
+    id: "DomainSelect",
+    multiple: true,
+    freeSolo: true,
+    options: [],
+    value: domains,
+    onChange: function onChange(event, newValue) {
+      // Validate and format domains
+      var formattedDomains = newValue.map(function (domain) {
+        var formatted = domain.trim().toLowerCase();
+        // Add @ if not present
+        if (formatted && !formatted.startsWith('@')) {
+          formatted = '@' + formatted;
+        }
+        return formatted;
+      }).filter(function (domain) {
+        return domain.length > 1;
+      }); // Remove empty or just @ domains
+
+      setDomains(formattedDomains);
+    },
+    renderTags: function renderTags(value, getTagProps) {
+      return value.map(function (option, index) {
+        return /*#__PURE__*/_react["default"].createElement(_material.Chip, _extends({}, getTagProps({
+          index: index
+        }), {
+          label: option,
+          color: "primary",
+          variant: "outlined"
+        }));
+      });
+    },
+    renderInput: function renderInput(params) {
+      return /*#__PURE__*/_react["default"].createElement(_TextField["default"], _extends({}, params, {
+        label: "Email Domains",
+        placeholder: "Type domain and press Enter (e.g., example.org or example.com)",
+        fullWidth: true
+      }));
+    }
   })), /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
     item: true,
-    size: 8,
+    size: {
+      xs: 12,
+      md: 8
+    },
     sx: {
-      backgroundColor: "#f5f8fa",
+      backgroundColor: theme.palette.background.paper,
       borderRadius: 2,
-      border: "1px solid lightgray",
+      border: "1px solid ".concat(theme.palette.divider),
       padding: 2
     }
   }, /*#__PURE__*/_react["default"].createElement(_material.Stack, {
@@ -1868,6 +1943,7 @@ var LocationEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     errors = _useForm.formState.errors,
     watch = _useForm.watch,
     setValue = _useForm.setValue;
+  var theme = (0, _material.useTheme)();
   var _useState = (0, _react.useState)({}),
     _useState2 = _slicedToArray(_useState, 2),
     editors = _useState2[0],
@@ -2072,7 +2148,13 @@ var LocationEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       saveChanges: saveChanges
     };
   });
-  return /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement("form", {
+  return /*#__PURE__*/_react["default"].createElement(_system.Box, {
+    sx: {
+      backgroundColor: theme.palette.background["default"],
+      minHeight: '100vh',
+      color: theme.palette.text.primary
+    }
+  }, /*#__PURE__*/_react["default"].createElement("form", {
     onSubmit: handleSubmit( /*#__PURE__*/function () {
       var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(data) {
         var userCustomFields, response;
@@ -2393,6 +2475,7 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     errors = _useForm.formState.errors,
     watch = _useForm.watch,
     setValue = _useForm.setValue;
+  var theme = (0, _material.useTheme)();
   var _useState = (0, _react.useState)({}),
     _useState2 = _slicedToArray(_useState, 2),
     editors = _useState2[0],
@@ -2731,7 +2814,13 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       saveChanges: saveChanges
     };
   });
-  return /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement("form", {
+  return /*#__PURE__*/_react["default"].createElement(_system.Box, {
+    sx: {
+      backgroundColor: theme.palette.background["default"],
+      minHeight: '100vh',
+      color: theme.palette.text.primary
+    }
+  }, /*#__PURE__*/_react["default"].createElement("form", {
     onSubmit: handleSubmit( /*#__PURE__*/function () {
       var _ref8 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8(data) {
         var userCustomFields, response;
@@ -2871,9 +2960,9 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   }, /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
     size: 4,
     sx: {
-      backgroundColor: "#f5f8fa",
+      backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.paper : "#f5f8fa",
       borderRadius: 2,
-      border: "1px solid lightgray",
+      border: "1px solid ".concat(theme.palette.divider),
       padding: 2
     }
   }, /*#__PURE__*/_react["default"].createElement(_system.Box, {
@@ -3155,9 +3244,9 @@ var UserEditor = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     item: true,
     size: 8,
     sx: {
-      backgroundColor: "#f5f8fa",
+      backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.paper : "#f5f8fa",
       borderRadius: 2,
-      border: "1px solid lightgray",
+      border: "1px solid ".concat(theme.palette.divider),
       padding: 2
     }
   }, /*#__PURE__*/_react["default"].createElement(_material.Stack, {
@@ -3347,6 +3436,7 @@ var UserManagement = function UserManagement(_ref) {
     _onSaved = _ref$onSaved === void 0 ? null : _ref$onSaved,
     _ref$onCustomTabs = _ref.onCustomTabs,
     onCustomTabs = _ref$onCustomTabs === void 0 ? null : _ref$onCustomTabs;
+  var theme = (0, _material.useTheme)();
   var _useState = (0, _react.useState)(null),
     _useState2 = _slicedToArray(_useState, 2),
     showUserDetails = _useState2[0],
@@ -3732,14 +3822,16 @@ var UserManagement = function UserManagement(_ref) {
             return (0, _authscape.apiService)().get("/UserManagement/GetAllCompanies");
           case 3:
             response = _context.sent;
-            response.data.forEach(function (element) {
-              results.push({
-                label: element.title,
-                id: element.id
+            if (response != null && response.status == 200) {
+              response.data.forEach(function (element) {
+                results.push({
+                  label: element.title,
+                  id: element.id
+                });
               });
-            });
-            setAllCompanies(results);
-          case 6:
+              setAllCompanies(results);
+            }
+          case 5:
           case "end":
             return _context.stop();
         }
@@ -3759,7 +3851,9 @@ var UserManagement = function UserManagement(_ref) {
             return (0, _authscape.apiService)().get("/UserManagement/GetCustomFields?platformType=".concat(platformType, "&IsDatagrid=true"));
           case 2:
             res = _context2.sent;
-            getColumns(res.data);
+            if (res != null && res.status == 200) {
+              getColumns(res.data);
+            }
           case 4:
           case "end":
             return _context2.stop();
@@ -3781,14 +3875,16 @@ var UserManagement = function UserManagement(_ref) {
             return (0, _authscape.apiService)().get("/UserManagement/GetRoles");
           case 3:
             response = _context3.sent;
-            response.data.forEach(function (element) {
-              results.push({
-                label: element.name,
-                id: element.id
+            if (response != null && response.status == 200) {
+              response.data.forEach(function (element) {
+                results.push({
+                  label: element.name,
+                  id: element.id
+                });
               });
-            });
-            setAllRoles(results);
-          case 6:
+              setAllRoles(results);
+            }
+          case 5:
           case "end":
             return _context3.stop();
         }
@@ -4213,7 +4309,12 @@ var UserManagement = function UserManagement(_ref) {
     onRowClick: function onRowClick(row) {
       setShowUserDetails(row.id);
     }
-  }), /*#__PURE__*/_react["default"].createElement(_system.Box, null, (showUserDetails != null || defaultIdentifier != null) && /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
+  }), /*#__PURE__*/_react["default"].createElement(_system.Box, {
+    sx: {
+      backgroundColor: theme.palette.background["default"],
+      minHeight: '100vh'
+    }
+  }, (showUserDetails != null || defaultIdentifier != null) && /*#__PURE__*/_react["default"].createElement(_Grid["default"], {
     item: true,
     xs: 12
   }, /*#__PURE__*/_react["default"].createElement(_system.Box, {
