@@ -1,6 +1,6 @@
 {
   "name": "authscape",
-  "version": "1.0.738",
+  "version": "1.0.740",
   "description": "",
   "main": "index.js",
   "files": [
@@ -34,7 +34,7 @@
     "@microsoft/signalr": "^8.0.0",
     "audit": "^0.0.6",
     "axios": "^1.6.1",
-    "eslint-config-next": "^14.1.0",
+    "eslint-config-next": "^16.0.3",
     "fix": "^0.0.3",
     "ga-4-react": "^0.1.281",
     "html2canvas": "^1.4.1",

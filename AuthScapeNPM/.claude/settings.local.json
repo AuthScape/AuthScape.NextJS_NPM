@@ -7,7 +7,12 @@
       "Bash(node src/scripts/postinstall.js:*)",
       "Bash(npm pack:*)",
       "Read(//d/Development/**)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(npm ls:*)",
+      "Bash(npm view:*)",
+      "Bash(cat:*)",
+      "Bash(npm install:*)",
+      "Bash(npm audit:*)"
     ],
     "deny": [],
     "ask": []
