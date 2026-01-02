@@ -15,7 +15,6 @@ var _router = _interopRequireDefault(require("next/router"));
 var _ga4React = _interopRequireDefault(require("ga-4-react"));
 var _zustand = require("zustand");
 var _reactMicrosoftClarity = require("react-microsoft-clarity");
-var _authscape = require("authscape");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != _typeof(e) && "function" != typeof e) return { "default": e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n["default"] = e, t && t.set(e, n), n; }
@@ -243,7 +242,9 @@ function AuthScapeApp(_ref) {
     if (typeof window === "undefined") return;
     if (pathName === "/signin-oidc") return;
     var host = window.location.protocol + "//" + window.location.host;
-    apiService().post("/Analytics/PageView", {
+
+    // Use module.exports to access sibling exports in babel bundle
+    module.exports.apiService().post("/Analytics/PageView", {
       userId: (_signedInUser$current = signedInUser.current) === null || _signedInUser$current === void 0 ? void 0 : _signedInUser$current.id,
       locationId: (_signedInUser$current2 = signedInUser.current) === null || _signedInUser$current2 === void 0 ? void 0 : _signedInUser$current2.locationId,
       companyId: (_signedInUser$current3 = signedInUser.current) === null || _signedInUser$current3 === void 0 ? void 0 : _signedInUser$current3.companyId,
@@ -261,7 +262,8 @@ function AuthScapeApp(_ref) {
     if (!loadingAuth.current) {
       loadingAuth.current = true;
       if (enableAuth) {
-        apiService().GetCurrentUser().then(function (usr) {
+        // Use module.exports to access sibling exports in babel bundle
+        module.exports.apiService().GetCurrentUser().then(function (usr) {
           signedInUser.current = ensureUserHelpers(usr);
           setSignedInUserState(signedInUser.current);
           setFrontEndLoadedState(true);
@@ -305,7 +307,8 @@ function AuthScapeApp(_ref) {
   // ----- Enforce login (client) -----
   (0, _react.useEffect)(function () {
     if (enforceLoggedIn && pathname !== "/signin-oidc" && frontEndLoadedState && !signedInUserState) {
-      (0, _authscape.authService)().login();
+      // Use module.exports to access sibling exports in babel bundle
+      module.exports.authService().login();
     }
   }, [signedInUserState, enforceLoggedIn, frontEndLoadedState, pathname]);
 
@@ -6437,14 +6440,45 @@ function PrivateLabelEditor(_ref) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.RichTextEditor = void 0;
+exports.RichTextEditor = exports.LexicalEditor = void 0;
 var _react = _interopRequireWildcard(require("react"));
-var _draftJs = require("draft-js");
-var _draftjsToHtml = _interopRequireDefault(require("draftjs-to-html"));
-var _dynamic = _interopRequireDefault(require("next/dynamic"));
+var _LexicalComposer = require("@lexical/react/LexicalComposer");
+var _LexicalRichTextPlugin = require("@lexical/react/LexicalRichTextPlugin");
+var _LexicalContentEditable = require("@lexical/react/LexicalContentEditable");
+var _LexicalHistoryPlugin = require("@lexical/react/LexicalHistoryPlugin");
+var _LexicalOnChangePlugin = require("@lexical/react/LexicalOnChangePlugin");
+var _LexicalComposerContext = require("@lexical/react/LexicalComposerContext");
+var _LexicalErrorBoundary = require("@lexical/react/LexicalErrorBoundary");
+var _LexicalListPlugin = require("@lexical/react/LexicalListPlugin");
+var _LexicalLinkPlugin = require("@lexical/react/LexicalLinkPlugin");
+var _html = require("@lexical/html");
+var _lexical = require("lexical");
+var _selection = require("@lexical/selection");
+var _richText = require("@lexical/rich-text");
+var _list = require("@lexical/list");
+var _link = require("@lexical/link");
+var _code = require("@lexical/code");
 var _Box = _interopRequireDefault(require("@mui/material/Box"));
 var _Button = _interopRequireDefault(require("@mui/material/Button"));
+var _IconButton = _interopRequireDefault(require("@mui/material/IconButton"));
+var _Divider = _interopRequireDefault(require("@mui/material/Divider"));
+var _Select = _interopRequireDefault(require("@mui/material/Select"));
+var _MenuItem = _interopRequireDefault(require("@mui/material/MenuItem"));
+var _Tooltip = _interopRequireDefault(require("@mui/material/Tooltip"));
+var _FormatBold = _interopRequireDefault(require("@mui/icons-material/FormatBold"));
+var _FormatItalic = _interopRequireDefault(require("@mui/icons-material/FormatItalic"));
+var _FormatUnderlined = _interopRequireDefault(require("@mui/icons-material/FormatUnderlined"));
+var _StrikethroughS = _interopRequireDefault(require("@mui/icons-material/StrikethroughS"));
+var _FormatListBulleted = _interopRequireDefault(require("@mui/icons-material/FormatListBulleted"));
+var _FormatListNumbered = _interopRequireDefault(require("@mui/icons-material/FormatListNumbered"));
+var _Code = _interopRequireDefault(require("@mui/icons-material/Code"));
+var _Link = _interopRequireDefault(require("@mui/icons-material/Link"));
+var _LinkOff = _interopRequireDefault(require("@mui/icons-material/LinkOff"));
+var _Undo = _interopRequireDefault(require("@mui/icons-material/Undo"));
+var _Redo = _interopRequireDefault(require("@mui/icons-material/Redo"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != _typeof(e) && "function" != typeof e) return { "default": e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n["default"] = e, t && t.set(e, n), n; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
@@ -6455,66 +6489,414 @@ function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) 
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != _typeof(e) && "function" != typeof e) return { "default": e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n["default"] = e, t && t.set(e, n), n; }
-var Editor = (0, _dynamic["default"])(function () {
-  return Promise.resolve().then(function () {
-    return _interopRequireWildcard(require('react-draft-wysiwyg'));
-  }).then(function (mod) {
-    return mod.Editor;
-  });
-}, {
-  ssr: false
-});
-var RichTextEditor = exports.RichTextEditor = function RichTextEditor(_ref) {
-  var html = _ref.html,
-    onSave = _ref.onSave,
-    _ref$height = _ref.height,
-    height = _ref$height === void 0 ? 400 : _ref$height,
-    _ref$isDisabled = _ref.isDisabled,
-    isDisabled = _ref$isDisabled === void 0 ? false : _ref$isDisabled;
-  var _useState = (0, _react.useState)(_draftJs.EditorState.createEmpty()),
-    _useState2 = _slicedToArray(_useState, 2),
-    editorState = _useState2[0],
-    setEditorState = _useState2[1];
-  var onEditorStateChange = function onEditorStateChange(editorState) {
-    setEditorState(editorState);
-  };
-  (0, _react.useEffect)(function () {
-    if (html != null) {
-      var contentBlock = (0, _draftJs.convertFromHTML)(html);
-      if (contentBlock) {
-        var contentState = _draftJs.ContentState.createFromBlockArray(contentBlock.contentBlocks);
-        var _editorState = _draftJs.EditorState.createWithContent(contentState);
-        setEditorState(_editorState);
-      }
-    }
-  }, [html]);
-  return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement(Editor, {
-    editorState: editorState,
-    toolbarClassName: "toolbarClassName",
-    wrapperClassName: "wrapperClassName",
-    editorClassName: "editorClassName",
-    readOnly: isDisabled,
-    editorStyle: {
-      height: height
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+var theme = {
+  paragraph: 'lexical-paragraph',
+  quote: 'lexical-quote',
+  heading: {
+    h1: 'lexical-h1',
+    h2: 'lexical-h2',
+    h3: 'lexical-h3',
+    h4: 'lexical-h4',
+    h5: 'lexical-h5',
+    h6: 'lexical-h6'
+  },
+  list: {
+    nested: {
+      listitem: 'lexical-nested-listitem'
     },
-    onEditorStateChange: onEditorStateChange
-    // mention={{
-    //   separator: " ",
-    //   trigger: "@",
-    //   suggestions: [
-    //     { text: "APPLE", value: "apple" },
-    //     { text: "BANANA", value: "banana", url: "banana" },
-    //     { text: "CHERRY", value: "cherry", url: "cherry" },
-    //     { text: "DURIAN", value: "durian", url: "durian" },
-    //     { text: "EGGFRUIT", value: "eggfruit", url: "eggfruit" },
-    //     { text: "FIG", value: "fig", url: "fig" },
-    //     { text: "GRAPEFRUIT", value: "grapefruit", url: "grapefruit" },
-    //     { text: "HONEYDEW", value: "honeydew", url: "honeydew" }
-    //   ]
-    // }}
-  }), /*#__PURE__*/_react["default"].createElement("hr", null), /*#__PURE__*/_react["default"].createElement(_Box["default"], {
+    ol: 'lexical-ol',
+    ul: 'lexical-ul',
+    listitem: 'lexical-listitem'
+  },
+  text: {
+    bold: 'lexical-bold',
+    italic: 'lexical-italic',
+    underline: 'lexical-underline',
+    strikethrough: 'lexical-strikethrough',
+    code: 'lexical-code'
+  },
+  link: 'lexical-link',
+  code: 'lexical-code-block'
+};
+var editorStyles = "\n  .lexical-editor-container { border: 1px solid #ccc; border-radius: 4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; }\n  .lexical-editor-inner { position: relative; }\n  .lexical-editor-input { padding: 12px; outline: none; overflow-y: auto; }\n  .lexical-editor-input:focus { outline: none; }\n  .lexical-placeholder { position: absolute; top: 12px; left: 12px; color: #999; pointer-events: none; user-select: none; }\n  .lexical-paragraph { margin: 0 0 8px 0; }\n  .lexical-h1 { font-size: 2em; font-weight: bold; margin: 16px 0 8px 0; }\n  .lexical-h2 { font-size: 1.5em; font-weight: bold; margin: 14px 0 8px 0; }\n  .lexical-h3 { font-size: 1.17em; font-weight: bold; margin: 12px 0 8px 0; }\n  .lexical-h4 { font-size: 1em; font-weight: bold; margin: 10px 0 8px 0; }\n  .lexical-h5 { font-size: 0.83em; font-weight: bold; margin: 8px 0 8px 0; }\n  .lexical-h6 { font-size: 0.67em; font-weight: bold; margin: 6px 0 8px 0; }\n  .lexical-quote { margin: 8px 0; padding: 8px 16px; border-left: 4px solid #ccc; background: #f9f9f9; font-style: italic; }\n  .lexical-ul, .lexical-ol { margin: 8px 0; padding-left: 24px; }\n  .lexical-listitem { margin: 4px 0; }\n  .lexical-bold { font-weight: bold; }\n  .lexical-italic { font-style: italic; }\n  .lexical-underline { text-decoration: underline; }\n  .lexical-strikethrough { text-decoration: line-through; }\n  .lexical-code { background: #f0f0f0; padding: 2px 4px; border-radius: 3px; font-family: monospace; }\n  .lexical-link { color: #0066cc; text-decoration: underline; }\n  .lexical-code-block { background: #f5f5f5; padding: 12px; border-radius: 4px; font-family: monospace; overflow-x: auto; }\n";
+var toolbarButtonStyle = {
+  minWidth: 32,
+  width: 32,
+  height: 32,
+  padding: '4px',
+  margin: '2px',
+  borderRadius: '2px',
+  border: '1px solid transparent',
+  '&:hover': {
+    backgroundColor: '#f0f0f0',
+    border: '1px solid #ccc'
+  }
+};
+var activeButtonStyle = _objectSpread(_objectSpread({}, toolbarButtonStyle), {}, {
+  backgroundColor: '#e0e0e0',
+  border: '1px solid #ccc'
+});
+function HtmlImportPlugin(_ref) {
+  var initialHtml = _ref.initialHtml;
+  var _useLexicalComposerCo = (0, _LexicalComposerContext.useLexicalComposerContext)(),
+    _useLexicalComposerCo2 = _slicedToArray(_useLexicalComposerCo, 1),
+    editor = _useLexicalComposerCo2[0];
+  var _useState = (0, _react.useState)(false),
+    _useState2 = _slicedToArray(_useState, 2),
+    initialized = _useState2[0],
+    setInitialized = _useState2[1];
+  (0, _react.useEffect)(function () {
+    if (initialHtml && !initialized) {
+      editor.update(function () {
+        var parser = new DOMParser();
+        var dom = parser.parseFromString(initialHtml, 'text/html');
+        var nodes = (0, _html.$generateNodesFromDOM)(editor, dom);
+        var root = (0, _lexical.$getRoot)();
+        root.clear();
+        nodes.forEach(function (node) {
+          return root.append(node);
+        });
+      });
+      setInitialized(true);
+    }
+  }, [editor, initialHtml, initialized]);
+  return null;
+}
+function HtmlExportPlugin(_ref2) {
+  var onChange = _ref2.onChange;
+  var _useLexicalComposerCo3 = (0, _LexicalComposerContext.useLexicalComposerContext)(),
+    _useLexicalComposerCo4 = _slicedToArray(_useLexicalComposerCo3, 1),
+    editor = _useLexicalComposerCo4[0];
+  var handleChange = (0, _react.useCallback)(function () {
+    editor.update(function () {
+      var html = (0, _html.$generateHtmlFromNodes)(editor, null);
+      onChange(html);
+    });
+  }, [editor, onChange]);
+  return /*#__PURE__*/_react["default"].createElement(_LexicalOnChangePlugin.OnChangePlugin, {
+    onChange: handleChange
+  });
+}
+function Toolbar(_ref3) {
+  var isDisabled = _ref3.isDisabled;
+  var _useLexicalComposerCo5 = (0, _LexicalComposerContext.useLexicalComposerContext)(),
+    _useLexicalComposerCo6 = _slicedToArray(_useLexicalComposerCo5, 1),
+    editor = _useLexicalComposerCo6[0];
+  var _useState3 = (0, _react.useState)(false),
+    _useState4 = _slicedToArray(_useState3, 2),
+    isBold = _useState4[0],
+    setIsBold = _useState4[1];
+  var _useState5 = (0, _react.useState)(false),
+    _useState6 = _slicedToArray(_useState5, 2),
+    isItalic = _useState6[0],
+    setIsItalic = _useState6[1];
+  var _useState7 = (0, _react.useState)(false),
+    _useState8 = _slicedToArray(_useState7, 2),
+    isUnderline = _useState8[0],
+    setIsUnderline = _useState8[1];
+  var _useState9 = (0, _react.useState)(false),
+    _useState10 = _slicedToArray(_useState9, 2),
+    isStrikethrough = _useState10[0],
+    setIsStrikethrough = _useState10[1];
+  var _useState11 = (0, _react.useState)(false),
+    _useState12 = _slicedToArray(_useState11, 2),
+    isCode = _useState12[0],
+    setIsCode = _useState12[1];
+  var _useState13 = (0, _react.useState)('paragraph'),
+    _useState14 = _slicedToArray(_useState13, 2),
+    blockType = _useState14[0],
+    setBlockType = _useState14[1];
+  var updateToolbar = (0, _react.useCallback)(function () {
+    var selection = (0, _lexical.$getSelection)();
+    if ((0, _lexical.$isRangeSelection)(selection)) {
+      setIsBold(selection.hasFormat('bold'));
+      setIsItalic(selection.hasFormat('italic'));
+      setIsUnderline(selection.hasFormat('underline'));
+      setIsStrikethrough(selection.hasFormat('strikethrough'));
+      setIsCode(selection.hasFormat('code'));
+    }
+  }, []);
+  (0, _react.useEffect)(function () {
+    return editor.registerUpdateListener(function (_ref4) {
+      var editorState = _ref4.editorState;
+      editorState.read(function () {
+        updateToolbar();
+      });
+    });
+  }, [editor, updateToolbar]);
+  var formatText = function formatText(format) {
+    editor.dispatchCommand(_lexical.FORMAT_TEXT_COMMAND, format);
+  };
+  var formatBlock = function formatBlock(type) {
+    editor.update(function () {
+      var selection = (0, _lexical.$getSelection)();
+      if ((0, _lexical.$isRangeSelection)(selection)) {
+        if (type === 'paragraph') (0, _selection.$setBlocksType)(selection, function () {
+          return (0, _lexical.$createParagraphNode)();
+        });else if (type === 'quote') (0, _selection.$setBlocksType)(selection, function () {
+          return (0, _richText.$createQuoteNode)();
+        });else if (type.startsWith('h')) (0, _selection.$setBlocksType)(selection, function () {
+          return (0, _richText.$createHeadingNode)(type);
+        });
+        setBlockType(type);
+      }
+    });
+  };
+  var formatList = function formatList(listType) {
+    if (listType === 'bullet') editor.dispatchCommand(_list.INSERT_UNORDERED_LIST_COMMAND, undefined);else if (listType === 'number') editor.dispatchCommand(_list.INSERT_ORDERED_LIST_COMMAND, undefined);
+  };
+  var insertLink = function insertLink() {
+    var url = prompt('Enter URL:');
+    if (url) editor.dispatchCommand(_link.TOGGLE_LINK_COMMAND, url);
+  };
+  var removeLink = function removeLink() {
+    editor.dispatchCommand(_link.TOGGLE_LINK_COMMAND, null);
+  };
+  var undo = function undo() {
+    editor.dispatchCommand('UNDO', undefined);
+  };
+  var redo = function redo() {
+    editor.dispatchCommand('REDO', undefined);
+  };
+  if (isDisabled) return null;
+  return /*#__PURE__*/_react["default"].createElement(_Box["default"], {
+    sx: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      padding: '8px',
+      borderBottom: '1px solid #ccc',
+      backgroundColor: '#f9f9f9',
+      gap: '4px'
+    }
+  }, /*#__PURE__*/_react["default"].createElement(_Select["default"], {
+    size: "small",
+    value: blockType,
+    onChange: function onChange(e) {
+      return formatBlock(e.target.value);
+    },
+    sx: {
+      minWidth: 120,
+      height: 32,
+      mr: 1
+    }
+  }, /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
+    value: "paragraph"
+  }, "Normal"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
+    value: "h1"
+  }, "Heading 1"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
+    value: "h2"
+  }, "Heading 2"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
+    value: "h3"
+  }, "Heading 3"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
+    value: "h4"
+  }, "Heading 4"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
+    value: "h5"
+  }, "Heading 5"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
+    value: "h6"
+  }, "Heading 6"), /*#__PURE__*/_react["default"].createElement(_MenuItem["default"], {
+    value: "quote"
+  }, "Blockquote")), /*#__PURE__*/_react["default"].createElement(_Divider["default"], {
+    orientation: "vertical",
+    flexItem: true,
+    sx: {
+      mx: 1
+    }
+  }), /*#__PURE__*/_react["default"].createElement(_Tooltip["default"], {
+    title: "Bold (Ctrl+B)"
+  }, /*#__PURE__*/_react["default"].createElement(_IconButton["default"], {
+    size: "small",
+    onClick: function onClick() {
+      return formatText('bold');
+    },
+    sx: isBold ? activeButtonStyle : toolbarButtonStyle
+  }, /*#__PURE__*/_react["default"].createElement(_FormatBold["default"], {
+    fontSize: "small"
+  }))), /*#__PURE__*/_react["default"].createElement(_Tooltip["default"], {
+    title: "Italic (Ctrl+I)"
+  }, /*#__PURE__*/_react["default"].createElement(_IconButton["default"], {
+    size: "small",
+    onClick: function onClick() {
+      return formatText('italic');
+    },
+    sx: isItalic ? activeButtonStyle : toolbarButtonStyle
+  }, /*#__PURE__*/_react["default"].createElement(_FormatItalic["default"], {
+    fontSize: "small"
+  }))), /*#__PURE__*/_react["default"].createElement(_Tooltip["default"], {
+    title: "Underline (Ctrl+U)"
+  }, /*#__PURE__*/_react["default"].createElement(_IconButton["default"], {
+    size: "small",
+    onClick: function onClick() {
+      return formatText('underline');
+    },
+    sx: isUnderline ? activeButtonStyle : toolbarButtonStyle
+  }, /*#__PURE__*/_react["default"].createElement(_FormatUnderlined["default"], {
+    fontSize: "small"
+  }))), /*#__PURE__*/_react["default"].createElement(_Tooltip["default"], {
+    title: "Strikethrough"
+  }, /*#__PURE__*/_react["default"].createElement(_IconButton["default"], {
+    size: "small",
+    onClick: function onClick() {
+      return formatText('strikethrough');
+    },
+    sx: isStrikethrough ? activeButtonStyle : toolbarButtonStyle
+  }, /*#__PURE__*/_react["default"].createElement(_StrikethroughS["default"], {
+    fontSize: "small"
+  }))), /*#__PURE__*/_react["default"].createElement(_Tooltip["default"], {
+    title: "Code"
+  }, /*#__PURE__*/_react["default"].createElement(_IconButton["default"], {
+    size: "small",
+    onClick: function onClick() {
+      return formatText('code');
+    },
+    sx: isCode ? activeButtonStyle : toolbarButtonStyle
+  }, /*#__PURE__*/_react["default"].createElement(_Code["default"], {
+    fontSize: "small"
+  }))), /*#__PURE__*/_react["default"].createElement(_Divider["default"], {
+    orientation: "vertical",
+    flexItem: true,
+    sx: {
+      mx: 1
+    }
+  }), /*#__PURE__*/_react["default"].createElement(_Tooltip["default"], {
+    title: "Bullet List"
+  }, /*#__PURE__*/_react["default"].createElement(_IconButton["default"], {
+    size: "small",
+    onClick: function onClick() {
+      return formatList('bullet');
+    },
+    sx: toolbarButtonStyle
+  }, /*#__PURE__*/_react["default"].createElement(_FormatListBulleted["default"], {
+    fontSize: "small"
+  }))), /*#__PURE__*/_react["default"].createElement(_Tooltip["default"], {
+    title: "Numbered List"
+  }, /*#__PURE__*/_react["default"].createElement(_IconButton["default"], {
+    size: "small",
+    onClick: function onClick() {
+      return formatList('number');
+    },
+    sx: toolbarButtonStyle
+  }, /*#__PURE__*/_react["default"].createElement(_FormatListNumbered["default"], {
+    fontSize: "small"
+  }))), /*#__PURE__*/_react["default"].createElement(_Divider["default"], {
+    orientation: "vertical",
+    flexItem: true,
+    sx: {
+      mx: 1
+    }
+  }), /*#__PURE__*/_react["default"].createElement(_Tooltip["default"], {
+    title: "Insert Link"
+  }, /*#__PURE__*/_react["default"].createElement(_IconButton["default"], {
+    size: "small",
+    onClick: insertLink,
+    sx: toolbarButtonStyle
+  }, /*#__PURE__*/_react["default"].createElement(_Link["default"], {
+    fontSize: "small"
+  }))), /*#__PURE__*/_react["default"].createElement(_Tooltip["default"], {
+    title: "Remove Link"
+  }, /*#__PURE__*/_react["default"].createElement(_IconButton["default"], {
+    size: "small",
+    onClick: removeLink,
+    sx: toolbarButtonStyle
+  }, /*#__PURE__*/_react["default"].createElement(_LinkOff["default"], {
+    fontSize: "small"
+  }))), /*#__PURE__*/_react["default"].createElement(_Divider["default"], {
+    orientation: "vertical",
+    flexItem: true,
+    sx: {
+      mx: 1
+    }
+  }), /*#__PURE__*/_react["default"].createElement(_Tooltip["default"], {
+    title: "Undo (Ctrl+Z)"
+  }, /*#__PURE__*/_react["default"].createElement(_IconButton["default"], {
+    size: "small",
+    onClick: undo,
+    sx: toolbarButtonStyle
+  }, /*#__PURE__*/_react["default"].createElement(_Undo["default"], {
+    fontSize: "small"
+  }))), /*#__PURE__*/_react["default"].createElement(_Tooltip["default"], {
+    title: "Redo (Ctrl+Y)"
+  }, /*#__PURE__*/_react["default"].createElement(_IconButton["default"], {
+    size: "small",
+    onClick: redo,
+    sx: toolbarButtonStyle
+  }, /*#__PURE__*/_react["default"].createElement(_Redo["default"], {
+    fontSize: "small"
+  }))));
+}
+function onError(error) {
+  console.error('Lexical error:', error);
+}
+var RichTextEditor = exports.RichTextEditor = function RichTextEditor(_ref5) {
+  var html = _ref5.html,
+    onSave = _ref5.onSave,
+    _ref5$height = _ref5.height,
+    height = _ref5$height === void 0 ? 400 : _ref5$height,
+    _ref5$isDisabled = _ref5.isDisabled,
+    isDisabled = _ref5$isDisabled === void 0 ? false : _ref5$isDisabled;
+  var _useState15 = (0, _react.useState)(html || ''),
+    _useState16 = _slicedToArray(_useState15, 2),
+    editorHtml = _useState16[0],
+    setEditorHtml = _useState16[1];
+  var _useState17 = (0, _react.useState)(false),
+    _useState18 = _slicedToArray(_useState17, 2),
+    isMounted = _useState18[0],
+    setIsMounted = _useState18[1];
+  (0, _react.useEffect)(function () {
+    setIsMounted(true);
+  }, []);
+  (0, _react.useEffect)(function () {
+    if (html != null) setEditorHtml(html);
+  }, [html]);
+  var handleChange = (0, _react.useCallback)(function (newHtml) {
+    setEditorHtml(newHtml);
+  }, []);
+  if (!isMounted) {
+    return /*#__PURE__*/_react["default"].createElement("div", {
+      style: {
+        minHeight: height,
+        border: '1px solid #ccc',
+        borderRadius: 4
+      }
+    });
+  }
+  var initialConfig = {
+    namespace: 'RichTextEditor',
+    theme: theme,
+    onError: onError,
+    nodes: [_richText.HeadingNode, _richText.QuoteNode, _list.ListNode, _list.ListItemNode, _link.LinkNode, _code.CodeNode],
+    editable: !isDisabled
+  };
+  return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement("style", null, editorStyles), /*#__PURE__*/_react["default"].createElement(_LexicalComposer.LexicalComposer, {
+    initialConfig: initialConfig
+  }, /*#__PURE__*/_react["default"].createElement("div", {
+    className: "lexical-editor-container"
+  }, /*#__PURE__*/_react["default"].createElement(Toolbar, {
+    isDisabled: isDisabled
+  }), /*#__PURE__*/_react["default"].createElement("div", {
+    className: "lexical-editor-inner"
+  }, /*#__PURE__*/_react["default"].createElement(_LexicalRichTextPlugin.RichTextPlugin, {
+    contentEditable: /*#__PURE__*/_react["default"].createElement(_LexicalContentEditable.ContentEditable, {
+      className: "lexical-editor-input",
+      style: {
+        minHeight: height,
+        maxHeight: height
+      }
+    }),
+    placeholder: /*#__PURE__*/_react["default"].createElement("div", {
+      className: "lexical-placeholder"
+    }, "Enter text..."),
+    ErrorBoundary: _LexicalErrorBoundary.LexicalErrorBoundary
+  }), /*#__PURE__*/_react["default"].createElement(_LexicalHistoryPlugin.HistoryPlugin, null), /*#__PURE__*/_react["default"].createElement(_LexicalListPlugin.ListPlugin, null), /*#__PURE__*/_react["default"].createElement(_LexicalLinkPlugin.LinkPlugin, null), /*#__PURE__*/_react["default"].createElement(HtmlImportPlugin, {
+    initialHtml: html
+  }), /*#__PURE__*/_react["default"].createElement(HtmlExportPlugin, {
+    onChange: handleChange
+  })))), /*#__PURE__*/_react["default"].createElement("hr", null), /*#__PURE__*/_react["default"].createElement(_Box["default"], {
     sx: {
       textAlign: "right"
     }
@@ -6526,7 +6908,7 @@ var RichTextEditor = exports.RichTextEditor = function RichTextEditor(_ref) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
             _context.next = 2;
-            return onSave((0, _draftjsToHtml["default"])((0, _draftJs.convertToRaw)(editorState.getCurrentContent())));
+            return onSave(editorHtml);
           case 2:
           case "end":
             return _context.stop();
@@ -6535,6 +6917,9 @@ var RichTextEditor = exports.RichTextEditor = function RichTextEditor(_ref) {
     }))
   }, "Save")));
 };
+
+// Also export as LexicalEditor for backwards compatibility
+var LexicalEditor = exports.LexicalEditor = RichTextEditor;
 "use strict";
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
