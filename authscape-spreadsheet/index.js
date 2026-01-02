@@ -24,7 +24,7 @@ function canvasPreview(_x, _x2, _x3) {
   return _canvasPreview.apply(this, arguments);
 }
 function _canvasPreview() {
-  _canvasPreview = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(image, canvas, crop) {
+  _canvasPreview = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(image, canvas, crop) {
     var scale,
       rotate,
       ctx,
@@ -128,7 +128,7 @@ var acceptStyle = {
 var rejectStyle = {
   borderColor: '#ff1744'
 };
-var Dropzone = function Dropzone(_ref) {
+var Dropzone = exports.Dropzone = function Dropzone(_ref) {
   var _ref$text = _ref.text,
     text = _ref$text === void 0 ? "Drag 'n' drop some files here, or click to select files" : _ref$text,
     _ref$styleOverride = _ref.styleOverride,
@@ -176,7 +176,6 @@ var Dropzone = function Dropzone(_ref) {
     style: style
   }), /*#__PURE__*/_react["default"].createElement("input", getInputProps()), /*#__PURE__*/_react["default"].createElement(_material.Box, null, text)));
 };
-exports.Dropzone = Dropzone;
 "use strict";
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
@@ -272,28 +271,28 @@ function PhotoEditor(_ref) {
     rotate = _useState8[0],
     setRotate = _useState8[1];
   var _useState9 = (0, _react.useState)(undefined),
-    _useState10 = _slicedToArray(_useState9, 2),
-    aspect = _useState10[0],
-    setAspect = _useState10[1];
-  var _useState11 = (0, _react.useState)(null),
+    _useState0 = _slicedToArray(_useState9, 2),
+    aspect = _useState0[0],
+    setAspect = _useState0[1];
+  var _useState1 = (0, _react.useState)(null),
+    _useState10 = _slicedToArray(_useState1, 2),
+    photoDimensions = _useState10[0],
+    setPhotoDimensions = _useState10[1];
+  var _useState11 = (0, _react.useState)(photoUrls),
     _useState12 = _slicedToArray(_useState11, 2),
-    photoDimensions = _useState12[0],
-    setPhotoDimensions = _useState12[1];
-  var _useState13 = (0, _react.useState)(photoUrls),
-    _useState14 = _slicedToArray(_useState13, 2),
-    imageUrls = _useState14[0],
-    setImageUrls = _useState14[1];
-  var _useState15 = (0, _react.useState)(imageUrls.length > 0 ? {
+    imageUrls = _useState12[0],
+    setImageUrls = _useState12[1];
+  var _useState13 = (0, _react.useState)(imageUrls.length > 0 ? {
       url: imageUrls[0].url,
       id: imageUrls[0].id
     } : null),
+    _useState14 = _slicedToArray(_useState13, 2),
+    selectedImageUrl = _useState14[0],
+    setSelectedImageUrl = _useState14[1];
+  var _useState15 = (0, _react.useState)(true),
     _useState16 = _slicedToArray(_useState15, 2),
-    selectedImageUrl = _useState16[0],
-    setSelectedImageUrl = _useState16[1];
-  var _useState17 = (0, _react.useState)(true),
-    _useState18 = _slicedToArray(_useState17, 2),
-    hasFiltersReset = _useState18[0],
-    setHasFiltersReset = _useState18[1];
+    hasFiltersReset = _useState16[0],
+    setHasFiltersReset = _useState16[1];
   var DEFAULT_OPTIONS = [{
     name: 'Brightness',
     icon: /*#__PURE__*/_react["default"].createElement(_BrightnessHighRounded["default"], null),
@@ -365,14 +364,14 @@ function PhotoEditor(_ref) {
     },
     unit: 'px'
   }];
-  var _useState19 = (0, _react.useState)(0),
+  var _useState17 = (0, _react.useState)(0),
+    _useState18 = _slicedToArray(_useState17, 2),
+    selectedOptionIndex = _useState18[0],
+    setSelectedOptionIndex = _useState18[1];
+  var _useState19 = (0, _react.useState)(DEFAULT_OPTIONS),
     _useState20 = _slicedToArray(_useState19, 2),
-    selectedOptionIndex = _useState20[0],
-    setSelectedOptionIndex = _useState20[1];
-  var _useState21 = (0, _react.useState)(DEFAULT_OPTIONS),
-    _useState22 = _slicedToArray(_useState21, 2),
-    options = _useState22[0],
-    setOptions = _useState22[1];
+    options = _useState20[0],
+    setOptions = _useState20[1];
   var selectedOption = options[selectedOptionIndex];
   (0, _react.useEffect)(function () {
     if (!isOpen) {
@@ -410,7 +409,7 @@ function PhotoEditor(_ref) {
       filter: filters.join(' ')
     };
   }, [options]);
-  useDebounceEffect( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+  useDebounceEffect(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
@@ -450,7 +449,7 @@ function PhotoEditor(_ref) {
     return _onDownloadCropClick.apply(this, arguments);
   }
   function _onDownloadCropClick() {
-    _onDownloadCropClick = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+    _onDownloadCropClick = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
       var image, previewCanvas, scaleX, scaleY, offscreen, ctx, blob;
       return _regeneratorRuntime().wrap(function _callee5$(_context5) {
         while (1) switch (_context5.prev = _context5.next) {
@@ -527,7 +526,7 @@ function PhotoEditor(_ref) {
     return _urlToBlob.apply(this, arguments);
   }
   function _urlToBlob() {
-    _urlToBlob = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(url) {
+    _urlToBlob = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(url) {
       var response, blob;
       return _regeneratorRuntime().wrap(function _callee6$(_context6) {
         while (1) switch (_context6.prev = _context6.next) {
@@ -593,7 +592,7 @@ function PhotoEditor(_ref) {
     }
   }, /*#__PURE__*/_react["default"].createElement(_material.ListItem, {
     disablePadding: true,
-    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+    onClick: /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
       var canvas, ctx;
       return _regeneratorRuntime().wrap(function _callee2$(_context2) {
         while (1) switch (_context2.prev = _context2.next) {
@@ -711,8 +710,8 @@ function PhotoEditor(_ref) {
       paddingBottom: 0,
       height: 100
     },
-    onDrop: /*#__PURE__*/function () {
-      var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(file) {
+    onDrop: (/*#__PURE__*/function () {
+      var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(file) {
         var fileUrl, response, copyPaths;
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
@@ -749,7 +748,7 @@ function PhotoEditor(_ref) {
       return function (_x2) {
         return _ref5.apply(this, arguments);
       };
-    }()
+    }())
   }))), imageUrls.map(function (item, index) {
     return /*#__PURE__*/_react["default"].createElement(_system.Box, {
       key: index,
@@ -812,8 +811,8 @@ function PhotoEditor(_ref) {
   }))), selectedImageUrl == null && /*#__PURE__*/_react["default"].createElement(_system.Box, null, /*#__PURE__*/_react["default"].createElement(Dropzone, {
     text: "Drag 'n' drop your photo or click to select photo",
     multiple: false,
-    onDrop: /*#__PURE__*/function () {
-      var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(file) {
+    onDrop: (/*#__PURE__*/function () {
+      var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(file) {
         var url, response;
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
@@ -840,7 +839,7 @@ function PhotoEditor(_ref) {
       return function (_x3) {
         return _ref6.apply(this, arguments);
       };
-    }()
+    }())
   }))), hasFiltersReset && /*#__PURE__*/_react["default"].createElement(_DialogActions["default"], null, selectedImageUrl != null && /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement(_system.Box, {
     sx: {
       flexGrow: 1
@@ -984,7 +983,6 @@ function PhotoEditor(_ref) {
         });
       }, 'image/png'); // Specify the image format and quality
     },
-
     autoFocus: true
   }, "Accept Changes")))));
 }
@@ -1159,6 +1157,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 // remove when publishing
 // import {PhotoEditor} from './photoEditor';
 // import {SpreadSheetRichTextEditor} from './spreadsheetRichTextEditor';
+
 var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   var currentUser = _ref.currentUser,
     documentId = _ref.documentId,
@@ -1214,44 +1213,44 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
     rowHeight = _useState8[0],
     setRowHeight = _useState8[1];
   var _useState9 = (0, _react.useState)(null),
-    _useState10 = _slicedToArray(_useState9, 2),
-    columns = _useState10[0],
-    setColumns = _useState10[1];
+    _useState0 = _slicedToArray(_useState9, 2),
+    columns = _useState0[0],
+    setColumns = _useState0[1];
+  var _useState1 = (0, _react.useState)(null),
+    _useState10 = _slicedToArray(_useState1, 2),
+    showPhotoUploadDialog = _useState10[0],
+    setShowPhotoUploadDialog = _useState10[1];
   var _useState11 = (0, _react.useState)(null),
     _useState12 = _slicedToArray(_useState11, 2),
-    showPhotoUploadDialog = _useState12[0],
-    setShowPhotoUploadDialog = _useState12[1];
-  var _useState13 = (0, _react.useState)(null),
+    editDescriptionDialog = _useState12[0],
+    setEditDescriptionDialog = _useState12[1];
+  var _useState13 = (0, _react.useState)(0),
     _useState14 = _slicedToArray(_useState13, 2),
-    editDescriptionDialog = _useState14[0],
-    setEditDescriptionDialog = _useState14[1];
+    photoEditorKey = _useState14[0],
+    setPhotoEditorKey = _useState14[1];
   var _useState15 = (0, _react.useState)(0),
     _useState16 = _slicedToArray(_useState15, 2),
-    photoEditorKey = _useState16[0],
-    setPhotoEditorKey = _useState16[1];
-  var _useState17 = (0, _react.useState)(0),
-    _useState18 = _slicedToArray(_useState17, 2),
-    totalCount = _useState18[0],
-    setTotalCount = _useState18[1];
-  var _useState19 = (0, _react.useState)(function () {
+    totalCount = _useState16[0],
+    setTotalCount = _useState16[1];
+  var _useState17 = (0, _react.useState)(function () {
       return -1;
     }),
-    _useState20 = _slicedToArray(_useState19, 2),
-    cellChangesIndex = _useState20[0],
-    setCellChangesIndex = _useState20[1];
-  var _useState21 = (0, _react.useState)(function () {
+    _useState18 = _slicedToArray(_useState17, 2),
+    cellChangesIndex = _useState18[0],
+    setCellChangesIndex = _useState18[1];
+  var _useState19 = (0, _react.useState)(function () {
       return [];
     }),
-    _useState22 = _slicedToArray(_useState21, 2),
-    cellChanges = _useState22[0],
-    setCellChanges = _useState22[1];
+    _useState20 = _slicedToArray(_useState19, 2),
+    cellChanges = _useState20[0],
+    setCellChanges = _useState20[1];
   var highlightsRef = (0, _react.useRef)([]);
   var userIdRef = (0, _react.useRef)(0);
   var returnedRef = (0, _react.useRef)([]);
-  var _useState23 = (0, _react.useState)(false),
-    _useState24 = _slicedToArray(_useState23, 2),
-    showStickyDialog = _useState24[0],
-    setShowStickyDialog = _useState24[1];
+  var _useState21 = (0, _react.useState)(false),
+    _useState22 = _slicedToArray(_useState21, 2),
+    showStickyDialog = _useState22[0],
+    setShowStickyDialog = _useState22[1];
   var leftColumnRef = (0, _react.useRef)(null);
   var rightColumnRef = (0, _react.useRef)(null);
   var topRowRef = (0, _react.useRef)(null);
@@ -1262,26 +1261,26 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
   // const [topRowSticky, setTopRowSticky] = useState(null);
   // const [bottomRowSticky, setBottomRowSticky] = useState(null);
 
+  var _useState23 = (0, _react.useState)([]),
+    _useState24 = _slicedToArray(_useState23, 2),
+    highlights = _useState24[0],
+    setHighlights = _useState24[1];
   var _useState25 = (0, _react.useState)([]),
     _useState26 = _slicedToArray(_useState25, 2),
-    highlights = _useState26[0],
-    setHighlights = _useState26[1];
+    sessions = _useState26[0],
+    setSessions = _useState26[1];
   var _useState27 = (0, _react.useState)([]),
     _useState28 = _slicedToArray(_useState27, 2),
-    sessions = _useState28[0],
-    setSessions = _useState28[1];
-  var _useState29 = (0, _react.useState)([]),
+    requestedChanges = _useState28[0],
+    setRequestedChanges = _useState28[1];
+  var _useState29 = (0, _react.useState)(null),
     _useState30 = _slicedToArray(_useState29, 2),
-    requestedChanges = _useState30[0],
-    setRequestedChanges = _useState30[1];
-  var _useState31 = (0, _react.useState)(null),
+    hubConnection = _useState30[0],
+    setHubConnection = _useState30[1];
+  var _useState31 = (0, _react.useState)(_objectSpread(_objectSpread({}, usePagination), param)),
     _useState32 = _slicedToArray(_useState31, 2),
-    hubConnection = _useState32[0],
-    setHubConnection = _useState32[1];
-  var _useState33 = (0, _react.useState)(_objectSpread(_objectSpread({}, usePagination), param)),
-    _useState34 = _slicedToArray(_useState33, 2),
-    paginationParam = _useState34[0],
-    setPaginationParam = _useState34[1];
+    paginationParam = _useState32[0],
+    setPaginationParam = _useState32[1];
   var getRows = function getRows() {
     return returnedRef.current;
   };
@@ -1525,7 +1524,7 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
     return data;
   };
   var reloadData = /*#__PURE__*/function () {
-    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+    var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
       var response, data1, modifiedData;
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
@@ -1582,7 +1581,7 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
       // setBottomRowSticky(parseInt(localStorage.getItem("bottomRow")));
 
       var fetchData = /*#__PURE__*/function () {
-        var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+        var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
           return _regeneratorRuntime().wrap(function _callee2$(_context2) {
             while (1) switch (_context2.prev = _context2.next) {
               case 0:
@@ -1603,7 +1602,7 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
   }, [url, currentUser]);
   (0, _react.useEffect)(function () {
     var fetchData = /*#__PURE__*/function () {
-      var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+      var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
@@ -1663,7 +1662,7 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
   // }, [advanceQuery]);
 
   var getSessions = /*#__PURE__*/function () {
-    var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+    var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
       var response, sessionData, _sessions;
       return _regeneratorRuntime().wrap(function _callee4$(_context4) {
         while (1) switch (_context4.prev = _context4.next) {
@@ -1789,8 +1788,8 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
     });
   };
   var applyChangesToPeople = function applyChangesToPeople(changes, prevDetails) {
-    changes.forEach( /*#__PURE__*/function () {
-      var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(change) {
+    changes.forEach(/*#__PURE__*/function () {
+      var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(change) {
         var dataRowId, fieldName, dataRow, cellItem, rowBuilder, JSONBuilder, response, blobFile;
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
@@ -2100,7 +2099,6 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
       }; // Keep the cell in view mode
       // }
     },
-
     handleMouseDown: function handleMouseDown(event) {
       // Prevent the default behavior of ReactGrid's edit mode
       //event.preventDefault();
@@ -2261,7 +2259,6 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
           enableEditMode: true
         }; // Keep the cell in view mode
       }
-
       if (keyCode == 37 || keyCode == 38 || keyCode == 39 || keyCode == 40) {
         return {
           cell: cell,
@@ -2274,7 +2271,6 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
         }; // Keep the cell in view mode
       }
     },
-
     // Update the cell's value (optional)
     update: function update(cell, cellToMerge) {
       return this.getCompatibleCell(Object.assign({}, cell, cellToMerge));
@@ -2326,7 +2322,6 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
         enableEditMode: false
       }; // Keep the cell in view mode
     },
-
     // Update the cell's value (optional)
     update: function update(cell, cellToMerge) {
       return this.getCompatibleCell(Object.assign({}, cell, cellToMerge));
@@ -2387,7 +2382,6 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
       }; // Keep the cell in view mode
       // }
     },
-
     handleMouseDown: function handleMouseDown(event) {
       // Prevent the default behavior of ReactGrid's edit mode
       //event.preventDefault();
@@ -2636,7 +2630,7 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
     onMouseDown: function onMouseDown(e) {
       return e.stopPropagation();
     },
-    onCancelEditor: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+    onCancelEditor: /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
       return _regeneratorRuntime().wrap(function _callee6$(_context6) {
         while (1) switch (_context6.prev = _context6.next) {
           case 0:
@@ -2660,8 +2654,8 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
       }
     } // Prevent DataGrid from taking focus
     ,
-    onPhotoUpdated: /*#__PURE__*/function () {
-      var _ref8 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(photo) {
+    onPhotoUpdated: (/*#__PURE__*/function () {
+      var _ref8 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(photo) {
         var response;
         return _regeneratorRuntime().wrap(function _callee7$(_context7) {
           while (1) switch (_context7.prev = _context7.next) {
@@ -2696,9 +2690,9 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
       return function (_x2) {
         return _ref8.apply(this, arguments);
       };
-    }(),
-    onPhotoDelete: /*#__PURE__*/function () {
-      var _ref9 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8(photo) {
+    }()),
+    onPhotoDelete: (/*#__PURE__*/function () {
+      var _ref9 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(photo) {
         return _regeneratorRuntime().wrap(function _callee8$(_context8) {
           while (1) switch (_context8.prev = _context8.next) {
             case 0:
@@ -2717,7 +2711,7 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
       return function (_x3) {
         return _ref9.apply(this, arguments);
       };
-    }()
+    }())
   }), /*#__PURE__*/_react["default"].createElement(SpreadSheetRichTextEditor, {
     isOpen: editDescriptionDialog != null ? true : false,
     content: editDescriptionDialog != null ? editDescriptionDialog.cell.text : "",
@@ -2748,7 +2742,6 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
         offset: v // Always update the current page (offset)
       }));
     },
-
     page: paginationParam.offset,
     count: Math.ceil(totalCount / paginationParam.length)
   })
@@ -2756,10 +2749,8 @@ var SpreadsheetViewer = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref)
   // <Pagination  variant="outlined" color="primary" onChange={(e, v) => {setPaginationParam({...paginationParam, offset : v})}}   page={paginationParam.offset}  count={Math.ceil(totalCount / paginationParam.length)}  />
   ));
 });
-
 SpreadsheetViewer.displayName = "SpreadsheetViewer";
-var _default = SpreadsheetViewer;
-exports["default"] = _default;
+var _default = exports["default"] = SpreadsheetViewer;
 "use strict";
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }

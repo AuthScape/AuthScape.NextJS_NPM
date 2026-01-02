@@ -1,6 +1,6 @@
 {
   "name": "authscape-spreadsheet",
-  "version": "1.0.62",
+  "version": "1.0.64",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,7 @@
     "react-dom": "^18.2.0"
   },
   "dependencies": {
-    "eslint-config-next": "^14.1.0",
+    "eslint-config-next": "^16.0.3",
     "react": "^18.2.0"
   }
 }
