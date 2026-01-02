@@ -9,7 +9,6 @@ import Router from "next/router";
 import GA4React from "ga-4-react";
 import { create } from "zustand";
 import { clarity } from "react-microsoft-clarity";
-import { authService } from "authscape";
 
 // ---- optional: import your cookie util if not global ----
 // import { setCookie } from "cookies-next";
@@ -164,7 +163,8 @@ export function AuthScapeApp({
 
     const host = window.location.protocol + "//" + window.location.host;
 
-    apiService().post("/Analytics/PageView", {
+    // Use module.exports to access sibling exports in babel bundle
+    module.exports.apiService().post("/Analytics/PageView", {
       userId: signedInUser.current?.id,
       locationId: signedInUser.current?.locationId,
       companyId: signedInUser.current?.companyId,
@@ -184,7 +184,8 @@ export function AuthScapeApp({
       loadingAuth.current = true;
 
       if (enableAuth) {
-        apiService().GetCurrentUser().then((usr) => {
+        // Use module.exports to access sibling exports in babel bundle
+        module.exports.apiService().GetCurrentUser().then((usr) => {
           signedInUser.current = ensureUserHelpers(usr);
           setSignedInUserState(signedInUser.current);
           setFrontEndLoadedState(true);
@@ -234,7 +235,8 @@ export function AuthScapeApp({
       frontEndLoadedState &&
       !signedInUserState
     ) {
-      authService().login();
+      // Use module.exports to access sibling exports in babel bundle
+      module.exports.authService().login();
     }
   }, [signedInUserState, enforceLoggedIn, frontEndLoadedState, pathname]);
 
