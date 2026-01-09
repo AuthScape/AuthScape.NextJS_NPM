@@ -60,6 +60,7 @@ export function AuthScapeApp({
   Component,
   layout,
   loadingLayout,
+  signInLoadingComponent,
   pageProps,
   muiTheme = {},
   store = {},
@@ -69,6 +70,7 @@ export function AuthScapeApp({
   const [frontEndLoadedState, setFrontEndLoadedState] = useState(false);
   const [isLoadingShow, setIsLoadingShow] = useState(false);
   const [signedInUserState, setSignedInUserState] = useState(null);
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   const loadingAuth = useRef(false);
   const signedInUser = useRef(null);
@@ -86,8 +88,15 @@ export function AuthScapeApp({
 
     if (typeof window === "undefined") return;
 
+    setIsSigningIn(true);
+
     const codeVerifier = window.localStorage.getItem("verifier");
-    if (!codeFromQuery || !codeVerifier) return;
+    if (!codeFromQuery || !codeVerifier) {
+      // No code or verifier - redirect to login
+      window.localStorage.clear();
+      module.exports.authService().login();
+      return;
+    }
 
     const headers = { "Content-Type": "application/x-www-form-urlencoded" };
 
@@ -131,11 +140,18 @@ export function AuthScapeApp({
         secure: true,
       });
 
-      const redirectUri = window.localStorage.getItem("redirectUri");
+      const redirectUri = window.localStorage.getItem("redirectUri") || "/";
       window.localStorage.clear();
-      window.location.href = redirectUri || "/";
+
+      // Navigate to the redirect URI - use window.location for a clean page load
+      // This ensures all state is properly initialized on the target page
+      window.location.href = redirectUri;
     } catch (exp) {
       console.error("PKCE sign-in failed", exp);
+      // Invalid code - clear storage and redirect to login
+      window.localStorage.clear();
+      setIsSigningIn(false);
+      module.exports.authService().login();
     }
   };
 
@@ -246,6 +262,53 @@ export function AuthScapeApp({
   const useStore = create(() => store);
 
   // ----- Render (SSR-safe; always output page so <title> is visible) -----
+
+  // Default sign-in loading component if none provided
+  const defaultSignInLoading = (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100vh',
+      width: '100%',
+      backgroundColor: '#f5f5f5'
+    }}>
+      <div style={{
+        width: '40px',
+        height: '40px',
+        border: '4px solid #e0e0e0',
+        borderTop: '4px solid #3498db',
+        borderRadius: '50%',
+        animation: 'spin 1s linear infinite'
+      }} />
+      <p style={{ marginTop: '16px', color: '#666' }}>Signing in...</p>
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
+  );
+
+  // Show loading screen when signing in
+  if (isSigningIn) {
+    return (
+      <>
+        <Head>
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"
+          />
+        </Head>
+        <ThemeProvider theme={muiTheme}>
+          {signInLoadingComponent || defaultSignInLoading}
+        </ThemeProvider>
+      </>
+    );
+  }
+
   const pageContent = layout
     ? layout({
         children: (

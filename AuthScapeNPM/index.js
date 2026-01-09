@@ -76,6 +76,7 @@ function AuthScapeApp(_ref) {
   var Component = _ref.Component,
     layout = _ref.layout,
     loadingLayout = _ref.loadingLayout,
+    signInLoadingComponent = _ref.signInLoadingComponent,
     pageProps = _ref.pageProps,
     _ref$muiTheme = _ref.muiTheme,
     muiTheme = _ref$muiTheme === void 0 ? {} : _ref$muiTheme,
@@ -97,6 +98,10 @@ function AuthScapeApp(_ref) {
     _useState6 = _slicedToArray(_useState5, 2),
     signedInUserState = _useState6[0],
     setSignedInUserState = _useState6[1];
+  var _useState7 = (0, _react.useState)(false),
+    _useState8 = _slicedToArray(_useState7, 2),
+    isSigningIn = _useState8[0],
+    setIsSigningIn = _useState8[1];
   var loadingAuth = (0, _react.useRef)(false);
   var signedInUser = (0, _react.useRef)(null);
   var queryCodeUsed = (0, _react.useRef)(null);
@@ -125,13 +130,17 @@ function AuthScapeApp(_ref) {
             }
             return _context.abrupt("return");
           case 5:
+            setIsSigningIn(true);
             codeVerifier = window.localStorage.getItem("verifier");
             if (!(!codeFromQuery || !codeVerifier)) {
-              _context.next = 8;
+              _context.next = 11;
               break;
             }
+            // No code or verifier - redirect to login
+            window.localStorage.clear();
+            module.exports.authService().login();
             return _context.abrupt("return");
-          case 8:
+          case 11:
             headers = {
               "Content-Type": "application/x-www-form-urlencoded"
             };
@@ -143,55 +152,62 @@ function AuthScapeApp(_ref) {
               client_secret: process.env.client_secret,
               code_verifier: codeVerifier
             });
-            _context.prev = 10;
-            _context.next = 13;
+            _context.prev = 13;
+            _context.next = 16;
             return _axios["default"].post(process.env.authorityUri + "/connect/token", body, {
               headers: headers
             });
-          case 13:
+          case 16:
             response = _context.sent;
             domainHost = window.location.hostname.split(".").slice(-2).join(".");
             window.localStorage.removeItem("verifier");
 
             // NOTE: replace setCookie below with your implementation if different
-            _context.next = 18;
+            _context.next = 21;
             return setCookie("access_token", response.data.access_token, {
               maxAge: 60 * 60 * 24 * 365,
               path: "/",
               domain: domainHost,
               secure: true
             });
-          case 18:
-            _context.next = 20;
+          case 21:
+            _context.next = 23;
             return setCookie("expires_in", response.data.expires_in, {
               maxAge: 60 * 60 * 24 * 365,
               path: "/",
               domain: domainHost,
               secure: true
             });
-          case 20:
-            _context.next = 22;
+          case 23:
+            _context.next = 25;
             return setCookie("refresh_token", response.data.refresh_token, {
               maxAge: 60 * 60 * 24 * 365,
               path: "/",
               domain: domainHost,
               secure: true
             });
-          case 22:
-            redirectUri = window.localStorage.getItem("redirectUri");
+          case 25:
+            redirectUri = window.localStorage.getItem("redirectUri") || "/";
             window.localStorage.clear();
-            window.location.href = redirectUri || "/";
-            _context.next = 30;
+
+            // Navigate to the redirect URI - use window.location for a clean page load
+            // This ensures all state is properly initialized on the target page
+            window.location.href = redirectUri;
+            _context.next = 36;
             break;
-          case 27:
-            _context.prev = 27;
-            _context.t0 = _context["catch"](10);
-            console.error("PKCE sign-in failed", _context.t0);
           case 30:
+            _context.prev = 30;
+            _context.t0 = _context["catch"](13);
+            console.error("PKCE sign-in failed", _context.t0);
+            // Invalid code - clear storage and redirect to login
+            window.localStorage.clear();
+            setIsSigningIn(false);
+            module.exports.authService().login();
+          case 36:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[10, 27]]);
+      }, _callee, null, [[13, 30]]);
     }));
     return function signInValidator(_x) {
       return _ref2.apply(this, arguments);
@@ -321,6 +337,43 @@ function AuthScapeApp(_ref) {
   });
 
   // ----- Render (SSR-safe; always output page so <title> is visible) -----
+
+  // Default sign-in loading component if none provided
+  var defaultSignInLoading = /*#__PURE__*/_react["default"].createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100vh',
+      width: '100%',
+      backgroundColor: '#f5f5f5'
+    }
+  }, /*#__PURE__*/_react["default"].createElement("div", {
+    style: {
+      width: '40px',
+      height: '40px',
+      border: '4px solid #e0e0e0',
+      borderTop: '4px solid #3498db',
+      borderRadius: '50%',
+      animation: 'spin 1s linear infinite'
+    }
+  }), /*#__PURE__*/_react["default"].createElement("p", {
+    style: {
+      marginTop: '16px',
+      color: '#666'
+    }
+  }, "Signing in..."), /*#__PURE__*/_react["default"].createElement("style", null, "\n        @keyframes spin {\n          0% { transform: rotate(0deg); }\n          100% { transform: rotate(360deg); }\n        }\n      "));
+
+  // Show loading screen when signing in
+  if (isSigningIn) {
+    return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement(_head["default"], null, /*#__PURE__*/_react["default"].createElement("meta", {
+      name: "viewport",
+      content: "width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"
+    })), /*#__PURE__*/_react["default"].createElement(_styles.ThemeProvider, {
+      theme: muiTheme
+    }, signInLoadingComponent || defaultSignInLoading));
+  }
   var pageContent = layout ? layout({
     children: /*#__PURE__*/_react["default"].createElement(Component, _extends({}, pageProps, {
       currentUser: currentUser,
