@@ -4,9 +4,42 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.AuthScapeApp = AuthScapeApp;
+Object.defineProperty(exports, "Bounce", {
+  enumerable: true,
+  get: function get() {
+    return _reactToastify.Bounce;
+  }
+});
+Object.defineProperty(exports, "Flip", {
+  enumerable: true,
+  get: function get() {
+    return _reactToastify.Flip;
+  }
+});
+Object.defineProperty(exports, "Slide", {
+  enumerable: true,
+  get: function get() {
+    return _reactToastify.Slide;
+  }
+});
+Object.defineProperty(exports, "Zoom", {
+  enumerable: true,
+  get: function get() {
+    return _reactToastify.Zoom;
+  }
+});
+exports.logError = logError;
+exports.setErrorTrackingUserId = setErrorTrackingUserId;
+Object.defineProperty(exports, "toast", {
+  enumerable: true,
+  get: function get() {
+    return _reactToastify.toast;
+  }
+});
+exports.useAppTheme = void 0;
+exports.useNotifications = useNotifications;
 var _react = _interopRequireWildcard(require("react"));
 var _reactToastify = require("react-toastify");
-var _styles = require("@mui/material/styles");
 var _head = _interopRequireDefault(require("next/head"));
 var _navigation = require("next/navigation");
 var _axios = _interopRequireDefault(require("axios"));
@@ -15,36 +48,641 @@ var _router = _interopRequireDefault(require("next/router"));
 var _ga4React = _interopRequireDefault(require("ga-4-react"));
 var _zustand = require("zustand");
 var _reactMicrosoftClarity = require("react-microsoft-clarity");
+var _styles = require("@mui/material/styles");
+var _CssBaseline = _interopRequireDefault(require("@mui/material/CssBaseline"));
+var _signalr = require("@microsoft/signalr");
+var _jsCookie = _interopRequireDefault(require("js-cookie"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != _typeof(e) && "function" != typeof e) return { "default": e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n["default"] = e, t && t.set(e, n), n; }
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
-function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
-function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-// ---- optional: import your cookie util if not global ----
-// import { setCookie } from "cookies-next";
-// import { apiService } from "@/services/api"; // wherever yours lives
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; } // Re-export toast and transitions so pages can import from authscape
+// ============================================================================
+// Cookie utility function
+// ============================================================================
+var setCookie = function setCookie(name, value) {
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  return new Promise(function (resolve) {
+    var cookieString = "".concat(name, "=").concat(value, ";");
+    if (options.maxAge) cookieString += "max-age=".concat(options.maxAge, ";");
+    if (options.path) cookieString += "path=".concat(options.path, ";");
+    if (options.domain) cookieString += "domain=".concat(options.domain, ";");
+    if (options.secure) cookieString += "secure;";
+    document.cookie = cookieString;
+    resolve();
+  });
+};
 
-// Decorate a user object with role/permission helpers (idempotent)
+// ============================================================================
+// Error Tracking Service
+// ============================================================================
+var errorTrackingSessionId = null;
+var errorTrackingUserId = null;
+var errorTrackingInitialized = false;
+function generateGuid() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16 | 0;
+    var v = c === 'x' ? r : r & 0x3 | 0x8;
+    return v.toString(16);
+  });
+}
+function getOrCreateSessionId() {
+  if (typeof window === 'undefined') return null;
+  var storedSessionId = sessionStorage.getItem('errorTrackingSessionId');
+  if (!storedSessionId) {
+    storedSessionId = sessionStorage.getItem('analyticsSessionId') || generateGuid();
+    sessionStorage.setItem('errorTrackingSessionId', storedSessionId);
+  }
+  return storedSessionId;
+}
+function initializeErrorTracking() {
+  var currentUser = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+  if (currentUser && currentUser.id) {
+    errorTrackingUserId = currentUser.id;
+  }
+  errorTrackingSessionId = getOrCreateSessionId();
+  errorTrackingInitialized = true;
+}
+function logError(_x) {
+  return _logError.apply(this, arguments);
+}
+function _logError() {
+  _logError = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee10(errorData) {
+    var error, response;
+    return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+      while (1) switch (_context10.prev = _context10.next) {
+        case 0:
+          if (!errorTrackingSessionId && typeof window !== 'undefined') {
+            errorTrackingSessionId = getOrCreateSessionId();
+          }
+          error = {
+            message: errorData.message || 'Unknown error',
+            errorType: errorData.errorType || 'JavaScriptError',
+            stackTrace: errorData.stackTrace || '',
+            url: errorData.url || (typeof window !== 'undefined' ? window.location.href : ''),
+            componentName: errorData.componentName || null,
+            userId: errorTrackingUserId || null,
+            sessionId: errorTrackingSessionId || null,
+            userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+            ipAddress: '',
+            metadata: errorData.metadata || null
+          };
+          _context10.prev = 2;
+          _context10.next = 5;
+          return module.exports.apiService().post('/ErrorTracking/LogError', error);
+        case 5:
+          response = _context10.sent;
+          if (response && response.status !== 200) {
+            console.error('Error tracking API returned:', response.status);
+          }
+          _context10.next = 12;
+          break;
+        case 9:
+          _context10.prev = 9;
+          _context10.t0 = _context10["catch"](2);
+          console.error('Failed to send error to tracking system:', _context10.t0.message);
+        case 12:
+        case "end":
+          return _context10.stop();
+      }
+    }, _callee10, null, [[2, 9]]);
+  }));
+  return _logError.apply(this, arguments);
+}
+function setErrorTrackingUserId(newUserId) {
+  errorTrackingUserId = newUserId;
+}
+
+// ============================================================================
+// AppThemeProvider
+// ============================================================================
+var ThemeContext = /*#__PURE__*/(0, _react.createContext)();
+var useAppTheme = exports.useAppTheme = function useAppTheme() {
+  var context = (0, _react.useContext)(ThemeContext);
+  if (!context) {
+    return {
+      mode: 'light',
+      toggleTheme: function toggleTheme() {}
+    };
+  }
+  return context;
+};
+var AppThemeProvider = function AppThemeProvider(_ref) {
+  var children = _ref.children,
+    customTheme = _ref.customTheme;
+  var _useState = (0, _react.useState)('light'),
+    _useState2 = _slicedToArray(_useState, 2),
+    mode = _useState2[0],
+    setMode = _useState2[1];
+  (0, _react.useEffect)(function () {
+    if (typeof window !== 'undefined') {
+      var savedMode = localStorage.getItem('themeMode');
+      if (savedMode) {
+        setMode(savedMode);
+      }
+    }
+  }, []);
+  (0, _react.useEffect)(function () {
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', mode);
+    }
+  }, [mode]);
+  var toggleTheme = function toggleTheme() {
+    var newMode = mode === 'light' ? 'dark' : 'light';
+    setMode(newMode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('themeMode', newMode);
+    }
+  };
+  var theme = customTheme || (0, _styles.createTheme)({
+    palette: _objectSpread({
+      mode: mode
+    }, mode === 'light' ? {
+      primary: {
+        main: '#0098e5',
+        light: '#4db8ff',
+        dark: '#006ba6'
+      },
+      secondary: {
+        main: '#44596e',
+        light: '#6b7f94',
+        dark: '#2d3d4f'
+      },
+      background: {
+        "default": '#f5f8fa',
+        paper: '#ffffff'
+      },
+      text: {
+        primary: '#1a202c',
+        secondary: '#4a5568'
+      },
+      divider: 'rgba(0, 0, 0, 0.12)'
+    } : {
+      primary: {
+        main: '#2196f3',
+        light: '#42a5f5',
+        dark: '#1976d2'
+      },
+      secondary: {
+        main: '#90caf9',
+        light: '#bbdefb',
+        dark: '#42a5f5'
+      },
+      background: {
+        "default": '#121212',
+        paper: '#1e1e1e'
+      },
+      text: {
+        primary: '#ffffff',
+        secondary: '#b0b0b0'
+      },
+      divider: 'rgba(255, 255, 255, 0.12)',
+      action: {
+        hover: 'rgba(255, 255, 255, 0.08)',
+        selected: 'rgba(255, 255, 255, 0.16)'
+      }
+    }),
+    typography: {
+      fontFamily: 'Poppins, sans-serif'
+    },
+    components: {
+      MuiPaper: {
+        styleOverrides: {
+          root: _objectSpread({
+            backgroundImage: 'none'
+          }, mode === 'dark' && {
+            backgroundColor: '#1e1e1e',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)'
+          })
+        }
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            '& .MuiOutlinedInput-root': _objectSpread({}, mode === 'dark' && {
+              '& fieldset': {
+                borderColor: 'rgba(255, 255, 255, 0.23)'
+              },
+              '&:hover fieldset': {
+                borderColor: 'rgba(255, 255, 255, 0.4)'
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#2196f3'
+              }
+            })
+          }
+        }
+      },
+      MuiChip: {
+        styleOverrides: {
+          root: _objectSpread({}, mode === 'dark' && {
+            borderColor: 'rgba(255, 255, 255, 0.23)'
+          })
+        }
+      },
+      MuiDivider: {
+        styleOverrides: {
+          root: _objectSpread({}, mode === 'dark' && {
+            borderColor: 'rgba(255, 255, 255, 0.12)'
+          })
+        }
+      }
+    }
+  });
+  return /*#__PURE__*/_react["default"].createElement(ThemeContext.Provider, {
+    value: {
+      mode: mode,
+      toggleTheme: toggleTheme
+    }
+  }, /*#__PURE__*/_react["default"].createElement(_styles.ThemeProvider, {
+    theme: theme
+  }, /*#__PURE__*/_react["default"].createElement(_CssBaseline["default"]), children));
+};
+
+// ============================================================================
+// NotificationProvider
+// ============================================================================
+var NotificationContext = /*#__PURE__*/(0, _react.createContext)();
+var globalConnection = null;
+var globalUserId = null;
+var globalIsInitialized = false;
+function useNotifications() {
+  var context = (0, _react.useContext)(NotificationContext);
+  if (!context) {
+    return {
+      notifications: [],
+      unreadCount: 0,
+      isConnected: false,
+      markAsRead: function markAsRead() {},
+      markAllAsRead: function markAllAsRead() {},
+      deleteNotification: function deleteNotification() {},
+      clearAll: function clearAll() {},
+      refresh: function refresh() {}
+    };
+  }
+  return context;
+}
+function NotificationProvider(_ref2) {
+  var children = _ref2.children,
+    currentUser = _ref2.currentUser,
+    apiService = _ref2.apiService;
+  var _useState3 = (0, _react.useState)([]),
+    _useState4 = _slicedToArray(_useState3, 2),
+    notifications = _useState4[0],
+    setNotifications = _useState4[1];
+  var _useState5 = (0, _react.useState)(0),
+    _useState6 = _slicedToArray(_useState5, 2),
+    unreadCount = _useState6[0],
+    setUnreadCount = _useState6[1];
+  var _useState7 = (0, _react.useState)(false),
+    _useState8 = _slicedToArray(_useState7, 2),
+    isConnected = _useState8[0],
+    setIsConnected = _useState8[1];
+  var markAsRead = (0, _react.useCallback)(/*#__PURE__*/function () {
+    var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(notificationId) {
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            _context.prev = 0;
+            _context.next = 3;
+            return apiService().post('/Notification/MarkAsRead', {
+              notificationId: notificationId
+            });
+          case 3:
+            setNotifications(function (prev) {
+              return prev.map(function (n) {
+                return n.id === notificationId ? _objectSpread(_objectSpread({}, n), {}, {
+                  isRead: true,
+                  readAt: new Date()
+                }) : n;
+              });
+            });
+            setUnreadCount(function (prev) {
+              return Math.max(0, prev - 1);
+            });
+            _context.next = 10;
+            break;
+          case 7:
+            _context.prev = 7;
+            _context.t0 = _context["catch"](0);
+            console.error('Failed to mark as read:', _context.t0);
+          case 10:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee, null, [[0, 7]]);
+    }));
+    return function (_x2) {
+      return _ref3.apply(this, arguments);
+    };
+  }(), [apiService]);
+  var markAllAsRead = (0, _react.useCallback)(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
+        case 0:
+          _context2.prev = 0;
+          _context2.next = 3;
+          return apiService().post('/Notification/MarkAllAsRead');
+        case 3:
+          setNotifications(function (prev) {
+            return prev.map(function (n) {
+              return _objectSpread(_objectSpread({}, n), {}, {
+                isRead: true,
+                readAt: new Date()
+              });
+            });
+          });
+          setUnreadCount(0);
+          _context2.next = 10;
+          break;
+        case 7:
+          _context2.prev = 7;
+          _context2.t0 = _context2["catch"](0);
+          console.error('Failed to mark all as read:', _context2.t0);
+        case 10:
+        case "end":
+          return _context2.stop();
+      }
+    }, _callee2, null, [[0, 7]]);
+  })), [apiService]);
+  var deleteNotification = (0, _react.useCallback)(/*#__PURE__*/function () {
+    var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(notificationId) {
+      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
+          case 0:
+            _context3.prev = 0;
+            _context3.next = 3;
+            return apiService()["delete"]("/Notification/DeleteNotification?id=".concat(notificationId));
+          case 3:
+            setNotifications(function (prev) {
+              var notification = prev.find(function (n) {
+                return n.id === notificationId;
+              });
+              if (notification && !notification.isRead) {
+                setUnreadCount(function (count) {
+                  return Math.max(0, count - 1);
+                });
+              }
+              return prev.filter(function (n) {
+                return n.id !== notificationId;
+              });
+            });
+            _context3.next = 9;
+            break;
+          case 6:
+            _context3.prev = 6;
+            _context3.t0 = _context3["catch"](0);
+            console.error('Failed to delete notification:', _context3.t0);
+          case 9:
+          case "end":
+            return _context3.stop();
+        }
+      }, _callee3, null, [[0, 6]]);
+    }));
+    return function (_x3) {
+      return _ref5.apply(this, arguments);
+    };
+  }(), [apiService]);
+  var clearAll = (0, _react.useCallback)(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+      while (1) switch (_context4.prev = _context4.next) {
+        case 0:
+          _context4.prev = 0;
+          _context4.next = 3;
+          return apiService()["delete"]('/Notification/ClearAllNotifications');
+        case 3:
+          setNotifications([]);
+          setUnreadCount(0);
+          _context4.next = 10;
+          break;
+        case 7:
+          _context4.prev = 7;
+          _context4.t0 = _context4["catch"](0);
+          console.error('Failed to clear notifications:', _context4.t0);
+        case 10:
+        case "end":
+          return _context4.stop();
+      }
+    }, _callee4, null, [[0, 7]]);
+  })), [apiService]);
+  var fetchNotifications = (0, _react.useCallback)(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+    var _yield$Promise$all, _yield$Promise$all2, notifResponse, countResponse;
+    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+      while (1) switch (_context5.prev = _context5.next) {
+        case 0:
+          _context5.prev = 0;
+          _context5.next = 3;
+          return Promise.all([apiService().get('/Notification/GetNotifications?unreadOnly=false&take=50'), apiService().get('/Notification/GetUnreadCount')]);
+        case 3:
+          _yield$Promise$all = _context5.sent;
+          _yield$Promise$all2 = _slicedToArray(_yield$Promise$all, 2);
+          notifResponse = _yield$Promise$all2[0];
+          countResponse = _yield$Promise$all2[1];
+          if (notifResponse.status === 200) {
+            setNotifications(notifResponse.data);
+          }
+          if (countResponse.status === 200) {
+            setUnreadCount(countResponse.data.count);
+          }
+          _context5.next = 14;
+          break;
+        case 11:
+          _context5.prev = 11;
+          _context5.t0 = _context5["catch"](0);
+          console.error('Failed to fetch notifications:', _context5.t0);
+        case 14:
+        case "end":
+          return _context5.stop();
+      }
+    }, _callee5, null, [[0, 11]]);
+  })), [apiService]);
+  (0, _react.useEffect)(function () {
+    var userId = currentUser === null || currentUser === void 0 ? void 0 : currentUser.id;
+    if (!userId) return;
+    var fetchData = /*#__PURE__*/function () {
+      var _ref8 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+        var _yield$Promise$all3, _yield$Promise$all4, notifResponse, countResponse;
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) switch (_context6.prev = _context6.next) {
+            case 0:
+              _context6.prev = 0;
+              _context6.next = 3;
+              return Promise.all([apiService().get('/Notification/GetNotifications?unreadOnly=false&take=50'), apiService().get('/Notification/GetUnreadCount')]);
+            case 3:
+              _yield$Promise$all3 = _context6.sent;
+              _yield$Promise$all4 = _slicedToArray(_yield$Promise$all3, 2);
+              notifResponse = _yield$Promise$all4[0];
+              countResponse = _yield$Promise$all4[1];
+              if (notifResponse.status === 200) {
+                setNotifications(notifResponse.data);
+              }
+              if (countResponse.status === 200) {
+                setUnreadCount(countResponse.data.count);
+              }
+              _context6.next = 14;
+              break;
+            case 11:
+              _context6.prev = 11;
+              _context6.t0 = _context6["catch"](0);
+              console.error('Failed to fetch notifications:', _context6.t0);
+            case 14:
+            case "end":
+              return _context6.stop();
+          }
+        }, _callee6, null, [[0, 11]]);
+      }));
+      return function fetchData() {
+        return _ref8.apply(this, arguments);
+      };
+    }();
+    if (globalIsInitialized && globalUserId === userId && globalConnection) {
+      setIsConnected(globalConnection.state === 'Connected');
+      fetchData();
+      return;
+    }
+    if (globalConnection && globalUserId !== userId) {
+      globalConnection.stop();
+      globalConnection = null;
+      globalIsInitialized = false;
+    }
+    globalUserId = userId;
+    globalIsInitialized = true;
+    var apiBaseUrl = process.env.apiUri || 'http://localhost:54218';
+    var hubUrl = "".concat(apiBaseUrl, "/notifications");
+
+    // Get access token for SignalR authentication
+    var accessToken = _jsCookie["default"].get('access_token') || '';
+    var connection = new _signalr.HubConnectionBuilder().withUrl(hubUrl, {
+      accessTokenFactory: function accessTokenFactory() {
+        return accessToken;
+      },
+      transport: _signalr.HttpTransportType.WebSockets | _signalr.HttpTransportType.LongPolling
+    }).withAutomaticReconnect([0, 2000, 5000, 10000, 30000]).configureLogging(_signalr.LogLevel.Warning).build();
+    globalConnection = connection;
+    connection.on('OnNotificationReceived', function (notification) {
+      setNotifications(function (prev) {
+        return [notification].concat(_toConsumableArray(prev));
+      });
+      setUnreadCount(function (prev) {
+        return prev + 1;
+      });
+      var description = notification.message || notification.categoryName || '';
+      _reactToastify.toast.info(/*#__PURE__*/_react["default"].createElement('div', null, /*#__PURE__*/_react["default"].createElement('strong', null, notification.title), description && /*#__PURE__*/_react["default"].createElement('div', {
+        style: {
+          fontSize: '0.9em',
+          marginTop: '4px'
+        }
+      }, description)), {
+        onClick: function onClick() {
+          if (notification.linkUrl) {
+            window.location.href = notification.linkUrl;
+          }
+        }
+      });
+    });
+    connection.onreconnecting(function () {
+      return setIsConnected(false);
+    });
+    connection.onreconnected(function () {
+      setIsConnected(true);
+      fetchData();
+    });
+    connection.onclose(function () {
+      return setIsConnected(false);
+    });
+    var startConnection = /*#__PURE__*/function () {
+      var _ref9 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
+        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+          while (1) switch (_context7.prev = _context7.next) {
+            case 0:
+              _context7.prev = 0;
+              _context7.next = 3;
+              return connection.start();
+            case 3:
+              setIsConnected(true);
+              _context7.next = 6;
+              return connection.invoke('JoinUserNotifications', userId);
+            case 6:
+              if (!(currentUser !== null && currentUser !== void 0 && currentUser.companyId)) {
+                _context7.next = 9;
+                break;
+              }
+              _context7.next = 9;
+              return connection.invoke('JoinCompanyNotifications', currentUser.companyId);
+            case 9:
+              if (!(currentUser !== null && currentUser !== void 0 && currentUser.locationId)) {
+                _context7.next = 12;
+                break;
+              }
+              _context7.next = 12;
+              return connection.invoke('JoinLocationNotifications', currentUser.locationId);
+            case 12:
+              _context7.next = 14;
+              return fetchData();
+            case 14:
+              _context7.next = 21;
+              break;
+            case 16:
+              _context7.prev = 16;
+              _context7.t0 = _context7["catch"](0);
+              console.error('Failed to connect to NotificationHub:', _context7.t0.message);
+              _context7.next = 21;
+              return fetchData();
+            case 21:
+            case "end":
+              return _context7.stop();
+          }
+        }, _callee7, null, [[0, 16]]);
+      }));
+      return function startConnection() {
+        return _ref9.apply(this, arguments);
+      };
+    }();
+    startConnection();
+  }, [currentUser === null || currentUser === void 0 ? void 0 : currentUser.id, currentUser === null || currentUser === void 0 ? void 0 : currentUser.companyId, currentUser === null || currentUser === void 0 ? void 0 : currentUser.locationId, apiService]);
+  var value = {
+    notifications: notifications,
+    unreadCount: unreadCount,
+    isConnected: isConnected,
+    markAsRead: markAsRead,
+    markAllAsRead: markAllAsRead,
+    deleteNotification: deleteNotification,
+    clearAll: clearAll,
+    refresh: fetchNotifications
+  };
+  return /*#__PURE__*/_react["default"].createElement(NotificationContext.Provider, {
+    value: value
+  }, children);
+}
+
+// ============================================================================
+// User Helpers
+// ============================================================================
 function ensureUserHelpers(u) {
   if (!u || _typeof(u) !== "object") return u;
-
-  // Avoid redefining on every call
   if (typeof u.hasRole === "function" && typeof u.hasRoleId === "function" && typeof u.hasPermission === "function") {
     return u;
   }
   var rolesArr = Array.isArray(u.roles) ? u.roles : [];
   var permsArr = Array.isArray(u.permissions) ? u.permissions : [];
-
-  // defineProperty keeps them non-enumerable
   Object.defineProperty(u, "hasRole", {
     value: function hasRole(name) {
       if (!name) return false;
@@ -72,74 +710,84 @@ function ensureUserHelpers(u) {
   });
   return u;
 }
-function AuthScapeApp(_ref) {
-  var Component = _ref.Component,
-    layout = _ref.layout,
-    loadingLayout = _ref.loadingLayout,
-    signInLoadingComponent = _ref.signInLoadingComponent,
-    pageProps = _ref.pageProps,
-    _ref$muiTheme = _ref.muiTheme,
-    muiTheme = _ref$muiTheme === void 0 ? {} : _ref$muiTheme,
-    _ref$store = _ref.store,
-    store = _ref$store === void 0 ? {} : _ref$store,
-    _ref$enforceLoggedIn = _ref.enforceLoggedIn,
-    enforceLoggedIn = _ref$enforceLoggedIn === void 0 ? false : _ref$enforceLoggedIn,
-    _ref$enableAuth = _ref.enableAuth,
-    enableAuth = _ref$enableAuth === void 0 ? true : _ref$enableAuth;
-  var _useState = (0, _react.useState)(false),
-    _useState2 = _slicedToArray(_useState, 2),
-    frontEndLoadedState = _useState2[0],
-    setFrontEndLoadedState = _useState2[1];
-  var _useState3 = (0, _react.useState)(false),
-    _useState4 = _slicedToArray(_useState3, 2),
-    isLoadingShow = _useState4[0],
-    setIsLoadingShow = _useState4[1];
-  var _useState5 = (0, _react.useState)(null),
-    _useState6 = _slicedToArray(_useState5, 2),
-    signedInUserState = _useState6[0],
-    setSignedInUserState = _useState6[1];
-  var _useState7 = (0, _react.useState)(false),
-    _useState8 = _slicedToArray(_useState7, 2),
-    isSigningIn = _useState8[0],
-    setIsSigningIn = _useState8[1];
+
+// ============================================================================
+// AuthScapeApp Component
+// ============================================================================
+function AuthScapeApp(_ref10) {
+  var Component = _ref10.Component,
+    layout = _ref10.layout,
+    loadingLayout = _ref10.loadingLayout,
+    signInLoadingComponent = _ref10.signInLoadingComponent,
+    pageProps = _ref10.pageProps,
+    _ref10$muiTheme = _ref10.muiTheme,
+    muiTheme = _ref10$muiTheme === void 0 ? null : _ref10$muiTheme,
+    _ref10$store = _ref10.store,
+    store = _ref10$store === void 0 ? {} : _ref10$store,
+    _ref10$enforceLoggedI = _ref10.enforceLoggedIn,
+    enforceLoggedIn = _ref10$enforceLoggedI === void 0 ? false : _ref10$enforceLoggedI,
+    _ref10$enableAuth = _ref10.enableAuth,
+    enableAuth = _ref10$enableAuth === void 0 ? true : _ref10$enableAuth,
+    _ref10$enableNotifica = _ref10.enableNotifications,
+    enableNotifications = _ref10$enableNotifica === void 0 ? true : _ref10$enableNotifica,
+    _ref10$enableErrorTra = _ref10.enableErrorTracking,
+    enableErrorTracking = _ref10$enableErrorTra === void 0 ? true : _ref10$enableErrorTra,
+    _ref10$toastConfig = _ref10.toastConfig,
+    toastConfig = _ref10$toastConfig === void 0 ? {} : _ref10$toastConfig,
+    _ref10$onUserLoaded = _ref10.onUserLoaded,
+    onUserLoaded = _ref10$onUserLoaded === void 0 ? null : _ref10$onUserLoaded;
+  var _useState9 = (0, _react.useState)(false),
+    _useState10 = _slicedToArray(_useState9, 2),
+    frontEndLoadedState = _useState10[0],
+    setFrontEndLoadedState = _useState10[1];
+  var _useState11 = (0, _react.useState)(false),
+    _useState12 = _slicedToArray(_useState11, 2),
+    isLoadingShow = _useState12[0],
+    setIsLoadingShow = _useState12[1];
+  var _useState13 = (0, _react.useState)(null),
+    _useState14 = _slicedToArray(_useState13, 2),
+    signedInUserState = _useState14[0],
+    setSignedInUserState = _useState14[1];
+  var _useState15 = (0, _react.useState)(false),
+    _useState16 = _slicedToArray(_useState15, 2),
+    isSigningIn = _useState16[0],
+    setIsSigningIn = _useState16[1];
   var loadingAuth = (0, _react.useRef)(false);
   var signedInUser = (0, _react.useRef)(null);
   var queryCodeUsed = (0, _react.useRef)(null);
   var ga4React = (0, _react.useRef)(null);
+  var errorTrackingInitializedRef = (0, _react.useRef)(false);
   var searchParams = (0, _navigation.useSearchParams)();
   var queryCode = searchParams.get("code");
   var pathname = (0, _navigation.usePathname)();
-
-  // ----- PKCE Sign-in (browser-only) -----
   var signInValidator = /*#__PURE__*/function () {
-    var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(codeFromQuery) {
+    var _ref11 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(codeFromQuery) {
       var codeVerifier, headers, body, response, domainHost, redirectUri;
-      return _regeneratorRuntime().wrap(function _callee$(_context) {
-        while (1) switch (_context.prev = _context.next) {
+      return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+        while (1) switch (_context8.prev = _context8.next) {
           case 0:
             if (!(queryCodeUsed.current === codeFromQuery)) {
-              _context.next = 2;
+              _context8.next = 2;
               break;
             }
-            return _context.abrupt("return");
+            return _context8.abrupt("return");
           case 2:
             queryCodeUsed.current = codeFromQuery;
             if (!(typeof window === "undefined")) {
-              _context.next = 5;
+              _context8.next = 5;
               break;
             }
-            return _context.abrupt("return");
+            return _context8.abrupt("return");
           case 5:
             setIsSigningIn(true);
             codeVerifier = window.localStorage.getItem("verifier");
             if (!(!codeFromQuery || !codeVerifier)) {
-              _context.next = 11;
+              _context8.next = 11;
               break;
             }
-            // No code or verifier - redirect to login
             window.localStorage.clear();
             module.exports.authService().login();
-            return _context.abrupt("return");
+            return _context8.abrupt("return");
           case 11:
             headers = {
               "Content-Type": "application/x-www-form-urlencoded"
@@ -152,18 +800,16 @@ function AuthScapeApp(_ref) {
               client_secret: process.env.client_secret,
               code_verifier: codeVerifier
             });
-            _context.prev = 13;
-            _context.next = 16;
+            _context8.prev = 13;
+            _context8.next = 16;
             return _axios["default"].post(process.env.authorityUri + "/connect/token", body, {
               headers: headers
             });
           case 16:
-            response = _context.sent;
+            response = _context8.sent;
             domainHost = window.location.hostname.split(".").slice(-2).join(".");
             window.localStorage.removeItem("verifier");
-
-            // NOTE: replace setCookie below with your implementation if different
-            _context.next = 21;
+            _context8.next = 21;
             return setCookie("access_token", response.data.access_token, {
               maxAge: 60 * 60 * 24 * 365,
               path: "/",
@@ -171,7 +817,7 @@ function AuthScapeApp(_ref) {
               secure: true
             });
           case 21:
-            _context.next = 23;
+            _context8.next = 23;
             return setCookie("expires_in", response.data.expires_in, {
               maxAge: 60 * 60 * 24 * 365,
               path: "/",
@@ -179,7 +825,7 @@ function AuthScapeApp(_ref) {
               secure: true
             });
           case 23:
-            _context.next = 25;
+            _context8.next = 25;
             return setCookie("refresh_token", response.data.refresh_token, {
               maxAge: 60 * 60 * 24 * 365,
               path: "/",
@@ -189,68 +835,61 @@ function AuthScapeApp(_ref) {
           case 25:
             redirectUri = window.localStorage.getItem("redirectUri") || "/";
             window.localStorage.clear();
-
-            // Navigate to the redirect URI - use window.location for a clean page load
-            // This ensures all state is properly initialized on the target page
             window.location.href = redirectUri;
-            _context.next = 36;
+            _context8.next = 36;
             break;
           case 30:
-            _context.prev = 30;
-            _context.t0 = _context["catch"](13);
-            console.error("PKCE sign-in failed", _context.t0);
-            // Invalid code - clear storage and redirect to login
+            _context8.prev = 30;
+            _context8.t0 = _context8["catch"](13);
+            console.error("PKCE sign-in failed", _context8.t0);
             window.localStorage.clear();
             setIsSigningIn(false);
             module.exports.authService().login();
           case 36:
           case "end":
-            return _context.stop();
+            return _context8.stop();
         }
-      }, _callee, null, [[13, 30]]);
+      }, _callee8, null, [[13, 30]]);
     }));
-    return function signInValidator(_x) {
-      return _ref2.apply(this, arguments);
+    return function signInValidator(_x4) {
+      return _ref11.apply(this, arguments);
     };
   }();
-
-  // ----- GA + Clarity -----
-  function initGA(_x2) {
+  function initGA(_x5) {
     return _initGA.apply(this, arguments);
   }
   function _initGA() {
-    _initGA = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(G) {
-      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-        while (1) switch (_context2.prev = _context2.next) {
+    _initGA = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(G) {
+      return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+        while (1) switch (_context9.prev = _context9.next) {
           case 0:
             if (!(typeof window !== "undefined" && !_ga4React["default"].isInitialized() && G)) {
-              _context2.next = 10;
+              _context9.next = 10;
               break;
             }
             ga4React.current = new _ga4React["default"](G, {
               debug_mode: !process.env.production
             });
-            _context2.prev = 2;
-            _context2.next = 5;
+            _context9.prev = 2;
+            _context9.next = 5;
             return ga4React.current.initialize();
           case 5:
-            _context2.next = 10;
+            _context9.next = 10;
             break;
           case 7:
-            _context2.prev = 7;
-            _context2.t0 = _context2["catch"](2);
-            console.error(_context2.t0);
+            _context9.prev = 7;
+            _context9.t0 = _context9["catch"](2);
+            console.error(_context9.t0);
           case 10:
           case "end":
-            return _context2.stop();
+            return _context9.stop();
         }
-      }, _callee2, null, [[2, 7]]);
+      }, _callee9, null, [[2, 7]]);
     }));
     return _initGA.apply(this, arguments);
   }
   var logEvent = function logEvent(category, action, label) {
     if (ga4React.current) ga4React.current.event(action, label, category);
-    // your DB analytics can go here if desired
   };
   var databaseDrivenPageView = function databaseDrivenPageView(pathName) {
     var _signedInUser$current, _signedInUser$current2, _signedInUser$current3;
@@ -258,8 +897,6 @@ function AuthScapeApp(_ref) {
     if (typeof window === "undefined") return;
     if (pathName === "/signin-oidc") return;
     var host = window.location.protocol + "//" + window.location.host;
-
-    // Use module.exports to access sibling exports in babel bundle
     module.exports.apiService().post("/Analytics/PageView", {
       userId: (_signedInUser$current = signedInUser.current) === null || _signedInUser$current === void 0 ? void 0 : _signedInUser$current.id,
       locationId: (_signedInUser$current2 = signedInUser.current) === null || _signedInUser$current2 === void 0 ? void 0 : _signedInUser$current2.locationId,
@@ -268,8 +905,6 @@ function AuthScapeApp(_ref) {
       host: host
     });
   };
-
-  // ----- Auth init (runs once) -----
   (0, _react.useEffect)(function () {
     if (queryCode) {
       signInValidator(queryCode);
@@ -278,13 +913,20 @@ function AuthScapeApp(_ref) {
     if (!loadingAuth.current) {
       loadingAuth.current = true;
       if (enableAuth) {
-        // Use module.exports to access sibling exports in babel bundle
         module.exports.apiService().GetCurrentUser().then(function (usr) {
           signedInUser.current = ensureUserHelpers(usr);
           setSignedInUserState(signedInUser.current);
           setFrontEndLoadedState(true);
-        })["catch"](function () {
-          // no user / anonymous
+
+          // Initialize error tracking with user info
+          if (enableErrorTracking && usr && !errorTrackingInitializedRef.current) {
+            initializeErrorTracking(usr);
+            errorTrackingInitializedRef.current = true;
+          }
+          if (onUserLoaded && usr) {
+            onUserLoaded(usr);
+          }
+        })["catch"](function (err) {
           signedInUser.current = null;
           setSignedInUserState(null);
           setFrontEndLoadedState(true);
@@ -293,9 +935,7 @@ function AuthScapeApp(_ref) {
         setFrontEndLoadedState(true);
       }
     }
-  }, [queryCode, enableAuth]);
-
-  // ----- Analytics init -----
+  }, [queryCode, enableAuth, enableErrorTracking]);
   (0, _react.useEffect)(function () {
     if (!frontEndLoadedState || typeof window === "undefined") return;
     if (pageProps.googleAnalytics4Code) {
@@ -319,26 +959,17 @@ function AuthScapeApp(_ref) {
       return _router["default"].events.off("routeChangeComplete", handler);
     };
   }, [frontEndLoadedState, pageProps.googleAnalytics4Code, pageProps.microsoftClarityCode]);
-
-  // ----- Enforce login (client) -----
   (0, _react.useEffect)(function () {
     if (enforceLoggedIn && pathname !== "/signin-oidc" && frontEndLoadedState && !signedInUserState) {
-      // Use module.exports to access sibling exports in babel bundle
       module.exports.authService().login();
     }
   }, [signedInUserState, enforceLoggedIn, frontEndLoadedState, pathname]);
-
-  // Stable getter for current user (with helpers)
   var currentUser = (0, _react.useMemo)(function () {
     return ensureUserHelpers(signedInUser.current);
   }, [signedInUserState]);
   var useStore = (0, _zustand.create)(function () {
     return store;
   });
-
-  // ----- Render (SSR-safe; always output page so <title> is visible) -----
-
-  // Default sign-in loading component if none provided
   var defaultSignInLoading = /*#__PURE__*/_react["default"].createElement("div", {
     style: {
       display: 'flex',
@@ -364,16 +995,26 @@ function AuthScapeApp(_ref) {
       color: '#666'
     }
   }, "Signing in..."), /*#__PURE__*/_react["default"].createElement("style", null, "\n        @keyframes spin {\n          0% { transform: rotate(0deg); }\n          100% { transform: rotate(360deg); }\n        }\n      "));
-
-  // Show loading screen when signing in
   if (isSigningIn) {
     return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement(_head["default"], null, /*#__PURE__*/_react["default"].createElement("meta", {
       name: "viewport",
       content: "width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"
-    })), /*#__PURE__*/_react["default"].createElement(_styles.ThemeProvider, {
-      theme: muiTheme
+    })), /*#__PURE__*/_react["default"].createElement(AppThemeProvider, {
+      customTheme: muiTheme
     }, signInLoadingComponent || defaultSignInLoading));
   }
+  var defaultToastConfig = _objectSpread({
+    position: "top-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    newestOnTop: true,
+    closeOnClick: true,
+    rtl: false,
+    pauseOnFocusLoss: true,
+    draggable: true,
+    pauseOnHover: true,
+    theme: "colored"
+  }, toastConfig);
   var pageContent = layout ? layout({
     children: /*#__PURE__*/_react["default"].createElement(Component, _extends({}, pageProps, {
       currentUser: currentUser,
@@ -397,12 +1038,16 @@ function AuthScapeApp(_ref) {
     store: useStore,
     toast: _reactToastify.toast
   }));
+  var wrappedContent = enableNotifications && currentUser ? /*#__PURE__*/_react["default"].createElement(NotificationProvider, {
+    currentUser: currentUser,
+    apiService: module.exports.apiService
+  }, pageContent) : pageContent;
   return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement(_head["default"], null, /*#__PURE__*/_react["default"].createElement("meta", {
     name: "viewport",
     content: "width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"
-  })), /*#__PURE__*/_react["default"].createElement(_styles.ThemeProvider, {
-    theme: muiTheme
-  }, pageContent, /*#__PURE__*/_react["default"].createElement(_reactToastify.ToastContainer, null)), loadingLayout && loadingLayout(isLoadingShow));
+  })), /*#__PURE__*/_react["default"].createElement(AppThemeProvider, {
+    customTheme: muiTheme
+  }, wrappedContent), /*#__PURE__*/_react["default"].createElement(_reactToastify.ToastContainer, defaultToastConfig), loadingLayout && loadingLayout(isLoadingShow));
 }
 "use strict";
 
@@ -8953,6 +9598,19 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+// Cookie utility function
+var setCookie = function setCookie(name, value) {
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  return new Promise(function (resolve) {
+    var cookieString = "".concat(name, "=").concat(value, ";");
+    if (options.maxAge) cookieString += "max-age=".concat(options.maxAge, ";");
+    if (options.path) cookieString += "path=".concat(options.path, ";");
+    if (options.domain) cookieString += "domain=".concat(options.domain, ";");
+    if (options.secure) cookieString += "secure;";
+    document.cookie = cookieString;
+    resolve();
+  });
+};
 var setupDefaultOptions = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
     var ctx,
@@ -9024,7 +9682,6 @@ var RefreshToken = /*#__PURE__*/function () {
           _context2.next = 10;
           return setCookie('access_token', response.data.access_token, {
             maxAge: 60 * 60 * 24 * 365,
-            // 1 year,
             path: '/',
             domain: domainHost,
             secure: true
@@ -9033,7 +9690,6 @@ var RefreshToken = /*#__PURE__*/function () {
           _context2.next = 12;
           return setCookie('expires_in', response.data.expires_in, {
             maxAge: 60 * 60 * 24 * 365,
-            // 1 year,
             path: '/',
             domain: domainHost,
             secure: true
@@ -9042,7 +9698,6 @@ var RefreshToken = /*#__PURE__*/function () {
           _context2.next = 14;
           return setCookie('refresh_token', response.data.refresh_token, {
             maxAge: 60 * 60 * 24 * 365,
-            // 1 year,
             path: '/',
             domain: domainHost,
             secure: true
@@ -9066,8 +9721,7 @@ var apiService = exports.apiService = function apiService() {
   var baseUri = process.env.apiUri + "/api";
   var instance = _axios["default"].create({
     baseURL: baseUri,
-    //timeout: 10000,
-    params: {} // do not remove this, its added to add params later in the config
+    params: {}
   });
   instance.interceptors.response.use(function (response) {
     return response;
@@ -9087,8 +9741,6 @@ var apiService = exports.apiService = function apiService() {
               break;
             }
             originalConfig._retry = true;
-
-            // Do something, call refreshToken() request for example;
             _context3.next = 6;
             return RefreshToken(originalConfig, instance);
           case 6:
@@ -9098,43 +9750,21 @@ var apiService = exports.apiService = function apiService() {
               _context3.next = 10;
               break;
             }
-            // Do something 
-
-            if (error.response.config.url.includes("/connect/token"))
-              // remove the access and refresh if invalid
-              {
-                domainHost = window.location.hostname.split('.').slice(-2).join('.');
-                _jsCookie["default"].remove('access_token', {
-                  path: '/',
-                  domain: domainHost
-                });
-                _jsCookie["default"].remove('refresh_token', {
-                  path: '/',
-                  domain: domainHost
-                });
-                _jsCookie["default"].remove('expires_in', {
-                  path: '/',
-                  domain: domainHost
-                });
-
-                // destroyCookie(null, "access_token", {
-                //     maxAge: 2147483647,
-                //     path: '/',
-                //     domain: domainHost
-                // });
-
-                // destroyCookie(null, "refresh_token", {
-                //     maxAge: 2147483647,
-                //     path: '/',
-                //     domain: domainHost
-                // });
-
-                // destroyCookie(null, "expires_in", {
-                //     maxAge: 2147483647,
-                //     path: '/',
-                //     domain: domainHost
-                // });
-              }
+            if (error.response.config.url.includes("/connect/token")) {
+              domainHost = window.location.hostname.split('.').slice(-2).join('.');
+              _jsCookie["default"].remove('access_token', {
+                path: '/',
+                domain: domainHost
+              });
+              _jsCookie["default"].remove('refresh_token', {
+                path: '/',
+                domain: domainHost
+              });
+              _jsCookie["default"].remove('expires_in', {
+                path: '/',
+                domain: domainHost
+              });
+            }
             return _context3.abrupt("return", Promise.reject(error));
           case 10:
             return _context3.abrupt("return", Promise.reject(error));
@@ -9307,16 +9937,14 @@ var apiService = exports.apiService = function apiService() {
               }
               return _context8.abrupt("return", response.data);
             case 11:
-              _context8.next = 16;
+              _context8.next = 15;
               break;
             case 13:
               _context8.prev = 13;
               _context8.t0 = _context8["catch"](0);
-              //return -1;
-              console.log(_context8.t0.message);
-            case 16:
+            case 15:
               return _context8.abrupt("return", null);
-            case 17:
+            case 16:
             case "end":
               return _context8.stop();
           }
@@ -9345,7 +9973,6 @@ var apiService = exports.apiService = function apiService() {
               mimeType = _args9.length > 5 && _args9[5] !== undefined ? _args9[5] : "application/octet-stream";
               passData = _args9.length > 6 && _args9[6] !== undefined ? _args9[6] : false;
               _context9.prev = 4;
-              //let defaultOptions = await setupDefaultOptions();
               defaultOptions = {};
               options = {
                 responseType: "blob"
