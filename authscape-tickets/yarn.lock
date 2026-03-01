@@ -1073,7 +1073,7 @@
     "@nodelib/fs.stat" "2.0.5"
     run-parallel "^1.1.9"
 
-"@nodelib/fs.stat@^2.0.2", "@nodelib/fs.stat@2.0.5":
+"@nodelib/fs.stat@2.0.5", "@nodelib/fs.stat@^2.0.2":
   version "2.0.5"
   resolved "https://registry.npmjs.org/@nodelib/fs.stat/-/fs.stat-2.0.5.tgz"
   integrity sha512-RkhPPp2zrqDAQA/2jNhnztcPAlv64XdhIp7a7454A5ovI7Bukxgt7MX7udwAu3zg1DcpPU0rz3VV1SeaqvY4+A==
@@ -1151,7 +1151,7 @@
     "@typescript-eslint/types" "8.47.0"
     "@typescript-eslint/visitor-keys" "8.47.0"
 
-"@typescript-eslint/tsconfig-utils@^8.47.0", "@typescript-eslint/tsconfig-utils@8.47.0":
+"@typescript-eslint/tsconfig-utils@8.47.0", "@typescript-eslint/tsconfig-utils@^8.47.0":
   version "8.47.0"
   resolved "https://registry.npmjs.org/@typescript-eslint/tsconfig-utils/-/tsconfig-utils-8.47.0.tgz"
   integrity sha512-ybUAvjy4ZCL11uryalkKxuT3w3sXJAuWhOoGS3T/Wu+iUu1tGJmk5ytSY8gbdACNARmcYEB0COksD2j6hfGK2g==
@@ -1167,7 +1167,7 @@
     debug "^4.3.4"
     ts-api-utils "^2.1.0"
 
-"@typescript-eslint/types@^8.47.0", "@typescript-eslint/types@8.47.0":
+"@typescript-eslint/types@8.47.0", "@typescript-eslint/types@^8.47.0":
   version "8.47.0"
   resolved "https://registry.npmjs.org/@typescript-eslint/types/-/types-8.47.0.tgz"
   integrity sha512-nHAE6bMKsizhA2uuYZbEbmp5z2UpffNrPEqiKIeN7VsV6UY/roxanWfoRrf6x/k9+Obf+GQdkm0nPU+vnMXo9A==
@@ -1384,9 +1384,9 @@ brace-expansion@^1.1.7:
     balanced-match "^1.0.0"
     concat-map "0.0.1"
 
-brace-expansion@^2.0.1:
+brace-expansion@^2.0.2:
   version "2.0.2"
-  resolved "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.0.2.tgz"
+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.0.2.tgz#54fc53237a613d854c7bd37463aad17df87214e7"
   integrity sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ==
   dependencies:
     balanced-match "^1.0.0"
@@ -1877,7 +1877,7 @@ esutils@^2.0.2:
   resolved "https://registry.npmjs.org/esutils/-/esutils-2.0.3.tgz"
   integrity sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==
 
-fast-glob@^3.2.11, fast-glob@3.3.1:
+fast-glob@3.3.1, fast-glob@^3.2.11:
   version "3.3.1"
   resolved "https://registry.npmjs.org/fast-glob/-/fast-glob-3.3.1.tgz"
   integrity sha512-kNFPyjhh5cKjrUltxs+wFx+ZkbRaxxmZ+X0ZU31SOsxCEtP9VPgtq2teZw1DebupL5GmDaNQ6yKMMVcM41iqDg==
@@ -1929,6 +1929,11 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
+
+fsevents@~2.3.2:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.3.tgz#cac6407785d03675a2a5e1a5305c697b347d90d6"
+  integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
 
 function-bind@^1.1.2:
   version "1.1.2"
@@ -2019,15 +2024,15 @@ glob@^7.2.0:
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
-globals@^11.1.0:
-  version "11.12.0"
-  resolved "https://registry.npmjs.org/globals/-/globals-11.12.0.tgz"
-  integrity sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==
-
 globals@16.4.0:
   version "16.4.0"
   resolved "https://registry.npmjs.org/globals/-/globals-16.4.0.tgz"
   integrity sha512-ob/2LcVVaVGCYN+r14cnwnoDPUufjiYgSqRhiFD0Q1iI4Odora5RE8Iv1D24hAz5oMophRGkGz+yuvQmmUMnMw==
+
+globals@^11.1.0:
+  version "11.12.0"
+  resolved "https://registry.npmjs.org/globals/-/globals-11.12.0.tgz"
+  integrity sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==
 
 globalthis@^1.0.4:
   version "1.0.4"
@@ -2474,25 +2479,25 @@ micromatch@^4.0.4, micromatch@^4.0.8:
     picomatch "^2.3.1"
 
 minimatch@^3.1.1, minimatch@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz"
-  integrity sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.1.5.tgz#580c88f8d5445f2bd6aa8f3cadefa0de79fbd69e"
+  integrity sha512-VgjWUsnnT6n+NUk6eZq77zeFdpW2LWDzP6zFGrCbHXiYNul5Dzqk2HHQ5uFH2DNW5Xbp8+jVzaeNt94ssEEl4w==
   dependencies:
     brace-expansion "^1.1.7"
 
 minimatch@^9.0.4:
-  version "9.0.5"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.5.tgz"
-  integrity sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==
+  version "9.0.9"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-9.0.9.tgz#9b0cb9fcb78087f6fd7eababe2511c4d3d60574e"
+  integrity sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg==
   dependencies:
-    brace-expansion "^2.0.1"
+    brace-expansion "^2.0.2"
 
 minimist@^1.2.0, minimist@^1.2.6:
   version "1.2.8"
   resolved "https://registry.npmjs.org/minimist/-/minimist-1.2.8.tgz"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
 
-ms@^2.1.1, ms@2.1.2:
+ms@2.1.2, ms@^2.1.1:
   version "2.1.2"
   resolved "https://registry.npmjs.org/ms/-/ms-2.1.2.tgz"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==

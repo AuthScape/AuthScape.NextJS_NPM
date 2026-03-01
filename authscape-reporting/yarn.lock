@@ -39,7 +39,7 @@
   resolved "https://registry.npmjs.org/@babel/compat-data/-/compat-data-7.22.3.tgz"
   integrity sha512-aNtko9OPOwVESUFp3MZfD8Uzxl7JzSeJpd7npIoxCasU37PFbAQRpKglkaKwlHOyeJdrREpo8TW8ldrkYWwvIQ==
 
-"@babel/core@^7.0.0", "@babel/core@^7.0.0-0", "@babel/core@^7.12.0", "@babel/core@^7.13.0", "@babel/core@^7.22.1", "@babel/core@^7.4.0-0":
+"@babel/core@^7.22.1":
   version "7.22.1"
   resolved "https://registry.npmjs.org/@babel/core/-/core-7.22.1.tgz"
   integrity sha512-Hkqu7J4ynysSXxmAahpN1jjRwVJ+NdpraFLIWflgjpVob3KNyK3/tIUc7Q7szed8WMp0JNa7Qtd1E9Oo22F9gA==
@@ -1045,15 +1045,15 @@
   resolved "https://registry.npmjs.org/@jridgewell/set-array/-/set-array-1.1.2.tgz"
   integrity sha512-xnkseuNADM0gt2bs+BvhO0p78Mk762YnZdsuzFV018NoG1Sj1SCQvpSqa7XUaTam5vAGasABV9qXASMKnFMwMw==
 
-"@jridgewell/sourcemap-codec@^1.4.10":
-  version "1.4.15"
-  resolved "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.15.tgz"
-  integrity sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==
-
 "@jridgewell/sourcemap-codec@1.4.14":
   version "1.4.14"
   resolved "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.14.tgz"
   integrity sha512-XPSJHWmi394fuUuzDnGz1wiKqWfo1yXecHQMRf2l6hztTO+nPru658AyDngaBe7isIxEkRsPR3FZh+s7iVa4Uw==
+
+"@jridgewell/sourcemap-codec@^1.4.10":
+  version "1.4.15"
+  resolved "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.15.tgz"
+  integrity sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==
 
 "@jridgewell/trace-mapping@^0.3.17", "@jridgewell/trace-mapping@^0.3.9":
   version "0.3.18"
@@ -1132,7 +1132,7 @@ braces@~3.0.2:
   dependencies:
     fill-range "^7.1.1"
 
-browserslist@^4.21.3, browserslist@^4.21.5, "browserslist@>= 4.21.0":
+browserslist@^4.21.3, browserslist@^4.21.5:
   version "4.21.5"
   resolved "https://registry.npmjs.org/browserslist/-/browserslist-4.21.5.tgz"
   integrity sha512-tUkiguQGW7S3IhB7N+c2MV/HZPSCPAAiYBZXLsBhFB/PCy6ZKKsZrmBayHV9fdGV/ARIfJ14NkxKzRDjvp7L6w==
@@ -1260,6 +1260,11 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
+
+fsevents@~2.3.2:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.3.tgz#cac6407785d03675a2a5e1a5305c697b347d90d6"
+  integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
 
 function-bind@^1.1.2:
   version "1.1.2"
@@ -1399,9 +1404,9 @@ make-dir@^2.1.0:
     semver "^5.6.0"
 
 minimatch@^3.1.1:
-  version "3.1.2"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz"
-  integrity sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.1.5.tgz#580c88f8d5445f2bd6aa8f3cadefa0de79fbd69e"
+  integrity sha512-VgjWUsnnT6n+NUk6eZq77zeFdpW2LWDzP6zFGrCbHXiYNul5Dzqk2HHQ5uFH2DNW5Xbp8+jVzaeNt94ssEEl4w==
   dependencies:
     brace-expansion "^1.1.7"
 
