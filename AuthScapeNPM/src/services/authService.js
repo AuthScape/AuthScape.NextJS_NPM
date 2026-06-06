@@ -5,7 +5,7 @@ export const authService = () => {
     return {
 
         dec2hex: (dec) => {
-            return ('0' + dec.toString(16)).substr(-2)
+            return ('0' + dec.toString(16)).slice(-2)
         },
         generateRandomString: () => {
             var array = new Uint32Array(56/2);
@@ -64,9 +64,27 @@ export const authService = () => {
 
             return response;
         },
-        login: async (redirectUserUri = null, dnsRecord = null, deviceId = null) => {
+        // Resolves the provider's OIDC endpoints from its discovery document so the SPA works against
+        // any standards-compliant issuer (AuthScape's OpenIddict IDP *or* Keycloak) instead of
+        // hardcoding OpenIddict's /connect/* paths. Cached on window for the session.
+        resolveOidcConfig: async () => {
+            if (typeof window !== "undefined" && window.__authscape_oidc) {
+                return window.__authscape_oidc;
+            }
+            const res = await fetch(process.env.authorityUri.replace(/\/$/, "") + "/.well-known/openid-configuration");
+            if (!res.ok) {
+                throw new Error("OIDC discovery failed (" + res.status + ") at " + process.env.authorityUri);
+            }
+            const cfg = await res.json();
+            if (typeof window !== "undefined") {
+                window.__authscape_oidc = cfg;
+            }
+            return cfg;
+        },
+        login: async (redirectUserUri = null, deviceId = null) => {
 
-            let state = "1234";
+            let state = authService().generateRandomString();
+
             if (redirectUserUri != null)
             {
                 localStorage.setItem("redirectUri", redirectUserUri);
@@ -78,78 +96,94 @@ export const authService = () => {
             window.localStorage.setItem("verifier", verifier);
 
             let redirectUri = window.location.origin + "/signin-oidc";
-            let loginUri = process.env.authorityUri + "/connect/authorize?response_type=code&state=" + state + "&client_id=" + process.env.client_id + "&scope=email%20openid%20offline_access%20profile%20api1&redirect_uri=" + redirectUri + "&code_challenge=" + challenge + "&code_challenge_method=S256";
-            
+
+            const oidc = await authService().resolveOidcConfig();
+            // Scope is configurable so each provider gets the scopes its clients expose
+            // (OpenIddict adds "api1"; Keycloak typically just the standard set).
+            const scope = process.env.oauthScope || "openid profile email offline_access";
+
+            let loginUri = oidc.authorization_endpoint
+                + "?response_type=code"
+                + "&state=" + state
+                + "&client_id=" + encodeURIComponent(process.env.client_id)
+                + "&scope=" + encodeURIComponent(scope)
+                + "&redirect_uri=" + encodeURIComponent(redirectUri)
+                + "&code_challenge=" + challenge
+                + "&code_challenge_method=S256";
+
             if (deviceId)
             {
                 loginUri += "&deviceId=" + deviceId; // will be for chrome extention and mobile apps later
             }
-            
+
             window.location.href = loginUri;
         },
-        signUp: (redirectUrl = null) => {
+        signUp: async (redirectUrl = null) => {
 
-            let AuthUri = process.env.authorityUri;
+            const returnUrl = redirectUrl == null ? window.location.href : redirectUrl;
+            localStorage.setItem("redirectUri", returnUrl);
 
-            let url = "";
-            if (redirectUrl == null)
-            {
-                url = AuthUri + "/Identity/Account/Register?returnUrl=" + window.location.href;
-                localStorage.setItem("redirectUri", window.location.href);
-            }
-            else
-            {
-                url = AuthUri + "/Identity/Account/Register?returnUrl=" + redirectUrl;
-                localStorage.setItem("redirectUri", redirectUrl);
-            }
+            // Keycloak hosts registration at its own endpoint (authorization endpoint with
+            // "/auth" → "/registrations"); the AuthScape OpenIddict IDP uses a Razor page.
+            try {
+                const oidc = await authService().resolveOidcConfig();
+                if (oidc.issuer && oidc.issuer.indexOf("/realms/") !== -1 && oidc.authorization_endpoint) {
+                    const scope = process.env.oauthScope || "openid profile email offline_access";
+                    const redirectUri = window.location.origin + "/signin-oidc";
+                    const regUri = oidc.authorization_endpoint.replace("/protocol/openid-connect/auth", "/protocol/openid-connect/registrations");
+                    window.location.href = regUri
+                        + "?response_type=code"
+                        + "&client_id=" + encodeURIComponent(process.env.client_id)
+                        + "&scope=" + encodeURIComponent(scope)
+                        + "&redirect_uri=" + encodeURIComponent(redirectUri);
+                    return;
+                }
+            } catch (e) { /* fall through to the legacy AuthScape IDP path */ }
 
-            window.location.href = url;
+            window.location.href = process.env.authorityUri + "/Identity/Account/Register?returnUrl=" + returnUrl;
         },
         manageAccount: async () => {
 
-            window.location.href = process.env.authorityUri + "/Identity/Account/Manage";
+            // Keycloak exposes a self-service account console at {issuer}/account; the AuthScape
+            // OpenIddict IDP uses its own Razor management page.
+            try {
+                const oidc = await authService().resolveOidcConfig();
+                if (oidc.issuer && oidc.issuer.indexOf("/realms/") !== -1) {
+                    window.location.href = oidc.issuer.replace(/\/$/, "") + "/account";
+                    return;
+                }
+            } catch (e) { /* fall through to the legacy AuthScape IDP path */ }
 
+            window.location.href = process.env.authorityUri + "/Identity/Account/Manage";
         },
         logout: async (redirectUri = null) => {
 
             let domainHost = window.location.hostname.split('.').slice(-2).join('.');
-            let AuthUri = process.env.authorityUri;
 
+            Cookies.remove('access_token', { path: '/', domain: domainHost, secure: (typeof window !== "undefined" && window.location.protocol === "https:") });
+            Cookies.remove('refresh_token', { path: '/', domain: domainHost, secure: (typeof window !== "undefined" && window.location.protocol === "https:") });
+            Cookies.remove('expires_in', { path: '/', domain: domainHost, secure: (typeof window !== "undefined" && window.location.protocol === "https:") });
 
-            Cookies.remove('access_token', { path: '/', domain: domainHost });
-            Cookies.remove('refresh_token', { path: '/', domain: domainHost });
-            Cookies.remove('expires_in', { path: '/', domain: domainHost });
+            // Drop the cached signed-in user so the next sign-in never reads a stale identity.
+            try { if (typeof window !== "undefined") window.sessionStorage.removeItem("authscape_current_user"); } catch (e) { /* ignore */ }
 
+            const target = redirectUri == null ? window.location.href : redirectUri;
 
-            // destroyCookie({}, "access_token", {
-            //     maxAge: 2147483647,
-            //     path: '/',
-            //     domain: domainHost
-            // });
+            let endSession = process.env.authorityUri + "/connect/logout";
+            try {
+                const oidc = await authService().resolveOidcConfig();
+                if (oidc.end_session_endpoint) endSession = oidc.end_session_endpoint;
+            } catch (e) { /* use legacy default */ }
 
-            // destroyCookie({}, "refresh_token", {
-            //     maxAge: 2147483647,
-            //     path: '/',
-            //     domain: domainHost
-            // });
-
-            // destroyCookie({}, "expires_in", {
-            //     maxAge: 2147483647,
-            //     path: '/',
-            //     domain: domainHost
-            // });
-
-            setTimeout(() => {
-                if (redirectUri == null)
-                {
-                    window.location.href = AuthUri + "/connect/logout?redirect=" + window.location.href;
-                }
-                else
-                {
-                    window.location.href = AuthUri + "/connect/logout?redirect=" + redirectUri;
-                }
-            }, 500);
-
+            // Standards-compliant RP-initiated logout (Keycloak) uses post_logout_redirect_uri +
+            // client_id; the legacy AuthScape OpenIddict IDP uses ?redirect=.
+            if (endSession.indexOf("/connect/logout") === -1) {
+                window.location.href = endSession
+                    + "?post_logout_redirect_uri=" + encodeURIComponent(target)
+                    + "&client_id=" + encodeURIComponent(process.env.client_id);
+            } else {
+                window.location.href = endSession + "?redirect=" + target;
+            }
         },
     }
 }

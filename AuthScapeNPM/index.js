@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.AuthScapeApp = AuthScapeApp;
+exports.AuthScapeProvider = void 0;
 Object.defineProperty(exports, "Bounce", {
   enumerable: true,
   get: function get() {
@@ -76,19 +77,30 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; } // Re-export toast and transitions so pages can import from authscape
 // ============================================================================
-// Cookie utility function
+// Auth Redirect Circuit Breaker
 // ============================================================================
-var setCookie = function setCookie(name, value) {
-  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  return new Promise(function (resolve) {
-    var cookieString = "".concat(name, "=").concat(value, ";");
-    if (options.maxAge) cookieString += "max-age=".concat(options.maxAge, ";");
-    if (options.path) cookieString += "path=".concat(options.path, ";");
-    if (options.domain) cookieString += "domain=".concat(options.domain, ";");
-    if (options.secure) cookieString += "secure;";
-    document.cookie = cookieString;
-    resolve();
-  });
+var AUTH_REDIRECT_KEY = 'authscape_redirect_count';
+var AUTH_REDIRECT_TS_KEY = 'authscape_redirect_ts';
+var AUTH_MAX_REDIRECTS = 3;
+var AUTH_REDIRECT_WINDOW_MS = 30000; // 30 seconds
+
+var checkAndIncrementRedirect = function checkAndIncrementRedirect() {
+  if (typeof window === 'undefined') return false;
+  var now = Date.now();
+  var storedTs = parseInt(sessionStorage.getItem(AUTH_REDIRECT_TS_KEY) || '0', 10);
+  var count = parseInt(sessionStorage.getItem(AUTH_REDIRECT_KEY) || '0', 10);
+  if (now - storedTs > AUTH_REDIRECT_WINDOW_MS) {
+    count = 0;
+    sessionStorage.setItem(AUTH_REDIRECT_TS_KEY, String(now));
+  }
+  count += 1;
+  sessionStorage.setItem(AUTH_REDIRECT_KEY, String(count));
+  return count <= AUTH_MAX_REDIRECTS;
+};
+var resetRedirectCounter = function resetRedirectCounter() {
+  if (typeof window === 'undefined') return;
+  sessionStorage.removeItem(AUTH_REDIRECT_KEY);
+  sessionStorage.removeItem(AUTH_REDIRECT_TS_KEY);
 };
 
 // ============================================================================
@@ -125,10 +137,10 @@ function logError(_x) {
   return _logError.apply(this, arguments);
 }
 function _logError() {
-  _logError = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee10(errorData) {
+  _logError = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee0(errorData) {
     var error, response;
-    return _regeneratorRuntime().wrap(function _callee10$(_context10) {
-      while (1) switch (_context10.prev = _context10.next) {
+    return _regeneratorRuntime().wrap(function _callee0$(_context0) {
+      while (1) switch (_context0.prev = _context0.next) {
         case 0:
           if (!errorTrackingSessionId && typeof window !== 'undefined') {
             errorTrackingSessionId = getOrCreateSessionId();
@@ -145,25 +157,25 @@ function _logError() {
             ipAddress: '',
             metadata: errorData.metadata || null
           };
-          _context10.prev = 2;
-          _context10.next = 5;
+          _context0.prev = 2;
+          _context0.next = 5;
           return module.exports.apiService().post('/ErrorTracking/LogError', error);
         case 5:
-          response = _context10.sent;
+          response = _context0.sent;
           if (response && response.status !== 200) {
             console.error('Error tracking API returned:', response.status);
           }
-          _context10.next = 12;
+          _context0.next = 12;
           break;
         case 9:
-          _context10.prev = 9;
-          _context10.t0 = _context10["catch"](2);
-          console.error('Failed to send error to tracking system:', _context10.t0.message);
+          _context0.prev = 9;
+          _context0.t0 = _context0["catch"](2);
+          console.error('Failed to send error to tracking system:', _context0.t0.message);
         case 12:
         case "end":
-          return _context10.stop();
+          return _context0.stop();
       }
-    }, _callee10, null, [[2, 9]]);
+    }, _callee0, null, [[2, 9]]);
   }));
   return _logError.apply(this, arguments);
 }
@@ -714,55 +726,57 @@ function ensureUserHelpers(u) {
 // ============================================================================
 // AuthScapeApp Component
 // ============================================================================
-function AuthScapeApp(_ref10) {
-  var Component = _ref10.Component,
-    layout = _ref10.layout,
-    loadingLayout = _ref10.loadingLayout,
-    signInLoadingComponent = _ref10.signInLoadingComponent,
-    pageProps = _ref10.pageProps,
-    _ref10$muiTheme = _ref10.muiTheme,
-    muiTheme = _ref10$muiTheme === void 0 ? null : _ref10$muiTheme,
-    _ref10$store = _ref10.store,
-    store = _ref10$store === void 0 ? {} : _ref10$store,
-    _ref10$enforceLoggedI = _ref10.enforceLoggedIn,
-    enforceLoggedIn = _ref10$enforceLoggedI === void 0 ? false : _ref10$enforceLoggedI,
-    _ref10$enableAuth = _ref10.enableAuth,
-    enableAuth = _ref10$enableAuth === void 0 ? true : _ref10$enableAuth,
-    _ref10$enableNotifica = _ref10.enableNotifications,
-    enableNotifications = _ref10$enableNotifica === void 0 ? true : _ref10$enableNotifica,
-    _ref10$enableErrorTra = _ref10.enableErrorTracking,
-    enableErrorTracking = _ref10$enableErrorTra === void 0 ? true : _ref10$enableErrorTra,
-    _ref10$toastConfig = _ref10.toastConfig,
-    toastConfig = _ref10$toastConfig === void 0 ? {} : _ref10$toastConfig,
-    _ref10$onUserLoaded = _ref10.onUserLoaded,
-    onUserLoaded = _ref10$onUserLoaded === void 0 ? null : _ref10$onUserLoaded;
+function AuthScapeApp(_ref0) {
+  var _searchParams$get;
+  var Component = _ref0.Component,
+    layout = _ref0.layout,
+    loadingLayout = _ref0.loadingLayout,
+    signInLoadingComponent = _ref0.signInLoadingComponent,
+    pageProps = _ref0.pageProps,
+    _ref0$muiTheme = _ref0.muiTheme,
+    muiTheme = _ref0$muiTheme === void 0 ? null : _ref0$muiTheme,
+    _ref0$store = _ref0.store,
+    store = _ref0$store === void 0 ? {} : _ref0$store,
+    _ref0$enforceLoggedIn = _ref0.enforceLoggedIn,
+    enforceLoggedIn = _ref0$enforceLoggedIn === void 0 ? false : _ref0$enforceLoggedIn,
+    _ref0$enableAuth = _ref0.enableAuth,
+    enableAuth = _ref0$enableAuth === void 0 ? true : _ref0$enableAuth,
+    _ref0$enableNotificat = _ref0.enableNotifications,
+    enableNotifications = _ref0$enableNotificat === void 0 ? true : _ref0$enableNotificat,
+    _ref0$enableErrorTrac = _ref0.enableErrorTracking,
+    enableErrorTracking = _ref0$enableErrorTrac === void 0 ? true : _ref0$enableErrorTrac,
+    _ref0$toastConfig = _ref0.toastConfig,
+    toastConfig = _ref0$toastConfig === void 0 ? {} : _ref0$toastConfig,
+    _ref0$onUserLoaded = _ref0.onUserLoaded,
+    onUserLoaded = _ref0$onUserLoaded === void 0 ? null : _ref0$onUserLoaded;
   var _useState9 = (0, _react.useState)(false),
-    _useState10 = _slicedToArray(_useState9, 2),
-    frontEndLoadedState = _useState10[0],
-    setFrontEndLoadedState = _useState10[1];
-  var _useState11 = (0, _react.useState)(false),
+    _useState0 = _slicedToArray(_useState9, 2),
+    frontEndLoadedState = _useState0[0],
+    setFrontEndLoadedState = _useState0[1];
+  var _useState1 = (0, _react.useState)(false),
+    _useState10 = _slicedToArray(_useState1, 2),
+    isLoadingShow = _useState10[0],
+    setIsLoadingShow = _useState10[1];
+  var _useState11 = (0, _react.useState)(null),
     _useState12 = _slicedToArray(_useState11, 2),
-    isLoadingShow = _useState12[0],
-    setIsLoadingShow = _useState12[1];
-  var _useState13 = (0, _react.useState)(null),
+    signedInUserState = _useState12[0],
+    setSignedInUserState = _useState12[1];
+  var _useState13 = (0, _react.useState)(false),
     _useState14 = _slicedToArray(_useState13, 2),
-    signedInUserState = _useState14[0],
-    setSignedInUserState = _useState14[1];
-  var _useState15 = (0, _react.useState)(false),
-    _useState16 = _slicedToArray(_useState15, 2),
-    isSigningIn = _useState16[0],
-    setIsSigningIn = _useState16[1];
+    isSigningIn = _useState14[0],
+    setIsSigningIn = _useState14[1];
   var loadingAuth = (0, _react.useRef)(false);
   var signedInUser = (0, _react.useRef)(null);
   var queryCodeUsed = (0, _react.useRef)(null);
   var ga4React = (0, _react.useRef)(null);
   var errorTrackingInitializedRef = (0, _react.useRef)(false);
+  var loginRedirectPending = (0, _react.useRef)(false);
   var searchParams = (0, _navigation.useSearchParams)();
-  var queryCode = searchParams.get("code");
+  var queryCode = (_searchParams$get = searchParams === null || searchParams === void 0 ? void 0 : searchParams.get("code")) !== null && _searchParams$get !== void 0 ? _searchParams$get : null;
   var pathname = (0, _navigation.usePathname)();
   var signInValidator = /*#__PURE__*/function () {
-    var _ref11 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(codeFromQuery) {
-      var codeVerifier, headers, body, response, domainHost, redirectUri;
+    var _ref1 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(codeFromQuery) {
+      var codeVerifier, headers, tokenBody, body, oidc, discoveryRes, response, domainHost, redirectUri, usr, enrichedUser;
       return _regeneratorRuntime().wrap(function _callee8$(_context8) {
         while (1) switch (_context8.prev = _context8.next) {
           case 0:
@@ -782,77 +796,134 @@ function AuthScapeApp(_ref10) {
             setIsSigningIn(true);
             codeVerifier = window.localStorage.getItem("verifier");
             if (!(!codeFromQuery || !codeVerifier)) {
-              _context8.next = 11;
+              _context8.next = 12;
               break;
             }
             window.localStorage.clear();
-            module.exports.authService().login();
+            setIsSigningIn(false);
+            setFrontEndLoadedState(true);
             return _context8.abrupt("return");
-          case 11:
+          case 12:
             headers = {
               "Content-Type": "application/x-www-form-urlencoded"
             };
-            body = _queryString["default"].stringify({
+            tokenBody = {
               code: codeFromQuery,
               grant_type: "authorization_code",
               redirect_uri: window.location.origin + "/signin-oidc",
               client_id: process.env.client_id,
-              client_secret: process.env.client_secret,
               code_verifier: codeVerifier
-            });
-            _context8.prev = 13;
-            _context8.next = 16;
-            return _axios["default"].post(process.env.authorityUri + "/connect/token", body, {
+            }; // Only confidential clients send a secret; public SPA clients (e.g. Keycloak) must not.
+            if (process.env.client_secret) {
+              tokenBody.client_secret = process.env.client_secret;
+            }
+            body = _queryString["default"].stringify(tokenBody);
+            _context8.prev = 16;
+            // Resolve the token endpoint from OIDC discovery so the code exchange works against either
+            // provider (OpenIddict's /connect/token or Keycloak's /protocol/openid-connect/token).
+            oidc = typeof window !== "undefined" && window.__authscape_oidc || null;
+            if (oidc) {
+              _context8.next = 26;
+              break;
+            }
+            _context8.next = 21;
+            return fetch(process.env.authorityUri.replace(/\/$/, "") + "/.well-known/openid-configuration");
+          case 21:
+            discoveryRes = _context8.sent;
+            _context8.next = 24;
+            return discoveryRes.json();
+          case 24:
+            oidc = _context8.sent;
+            if (typeof window !== "undefined") window.__authscape_oidc = oidc;
+          case 26:
+            _context8.next = 28;
+            return _axios["default"].post(oidc.token_endpoint, body, {
               headers: headers
             });
-          case 16:
+          case 28:
             response = _context8.sent;
             domainHost = window.location.hostname.split(".").slice(-2).join(".");
             window.localStorage.removeItem("verifier");
-            _context8.next = 21;
-            return setCookie("access_token", response.data.access_token, {
-              maxAge: 60 * 60 * 24 * 365,
+            _jsCookie["default"].set("access_token", response.data.access_token, {
+              expires: 365,
               path: "/",
               domain: domainHost,
-              secure: true
+              secure: typeof window !== "undefined" && window.location.protocol === "https:"
             });
-          case 21:
-            _context8.next = 23;
-            return setCookie("expires_in", response.data.expires_in, {
-              maxAge: 60 * 60 * 24 * 365,
+            _jsCookie["default"].set("expires_in", String(response.data.expires_in), {
+              expires: 365,
               path: "/",
               domain: domainHost,
-              secure: true
+              secure: typeof window !== "undefined" && window.location.protocol === "https:"
             });
-          case 23:
-            _context8.next = 25;
-            return setCookie("refresh_token", response.data.refresh_token, {
-              maxAge: 60 * 60 * 24 * 365,
+            _jsCookie["default"].set("refresh_token", response.data.refresh_token, {
+              expires: 365,
               path: "/",
               domain: domainHost,
-              secure: true
+              secure: typeof window !== "undefined" && window.location.protocol === "https:"
             });
-          case 25:
+            resetRedirectCounter();
             redirectUri = window.localStorage.getItem("redirectUri") || "/";
             window.localStorage.clear();
-            window.location.href = redirectUri;
-            _context8.next = 36;
+
+            // Pre-load user while spinner is still showing — eliminates the
+            // second GetCurrentUser call (and resulting re-renders) on the destination page.
+            usr = null;
+            _context8.prev = 38;
+            _context8.next = 41;
+            return module.exports.apiService().GetCurrentUser();
+          case 41:
+            usr = _context8.sent;
+            _context8.next = 47;
             break;
-          case 30:
-            _context8.prev = 30;
-            _context8.t0 = _context8["catch"](13);
-            console.error("PKCE sign-in failed", _context8.t0);
+          case 44:
+            _context8.prev = 44;
+            _context8.t0 = _context8["catch"](38);
+            console.warn("[AuthScape] GetCurrentUser failed after token exchange:", _context8.t0);
+          case 47:
+            enrichedUser = ensureUserHelpers(usr);
+            signedInUser.current = enrichedUser;
+            setSignedInUserState(enrichedUser);
+            setFrontEndLoadedState(true);
+
+            // Prevent the useEffect from calling GetCurrentUser again when queryCode → null.
+            loadingAuth.current = true;
+            if (enableErrorTracking && enrichedUser && !errorTrackingInitializedRef.current) {
+              initializeErrorTracking(enrichedUser);
+              errorTrackingInitializedRef.current = true;
+            }
+            if (onUserLoaded && enrichedUser) {
+              onUserLoaded(enrichedUser);
+            }
+
+            // Dismiss spinner before navigating so destination renders logged-in UI on first paint.
+            setIsSigningIn(false);
+
+            // Client-side navigation preserves the React component tree and all ref values,
+            // eliminating the hard-reload → remount → re-render chain.
+            // Fall back to hard navigation for absolute external URLs.
+            if (redirectUri.startsWith("http://") || redirectUri.startsWith("https://")) {
+              window.location.href = redirectUri;
+            } else {
+              _router["default"].push(redirectUri);
+            }
+            _context8.next = 64;
+            break;
+          case 58:
+            _context8.prev = 58;
+            _context8.t1 = _context8["catch"](16);
+            console.error("PKCE sign-in failed", _context8.t1);
             window.localStorage.clear();
             setIsSigningIn(false);
-            module.exports.authService().login();
-          case 36:
+            setFrontEndLoadedState(true);
+          case 64:
           case "end":
             return _context8.stop();
         }
-      }, _callee8, null, [[13, 30]]);
+      }, _callee8, null, [[16, 58], [38, 44]]);
     }));
     return function signInValidator(_x4) {
-      return _ref11.apply(this, arguments);
+      return _ref1.apply(this, arguments);
     };
   }();
   function initGA(_x5) {
@@ -960,7 +1031,12 @@ function AuthScapeApp(_ref10) {
     };
   }, [frontEndLoadedState, pageProps.googleAnalytics4Code, pageProps.microsoftClarityCode]);
   (0, _react.useEffect)(function () {
-    if (enforceLoggedIn && pathname !== "/signin-oidc" && frontEndLoadedState && !signedInUserState) {
+    if (enforceLoggedIn && pathname !== "/signin-oidc" && frontEndLoadedState && !signedInUserState && !loginRedirectPending.current) {
+      if (!checkAndIncrementRedirect()) {
+        console.warn('[AuthScape] Auth redirect loop detected — halting redirects.');
+        return;
+      }
+      loginRedirectPending.current = true;
       module.exports.authService().login();
     }
   }, [signedInUserState, enforceLoggedIn, frontEndLoadedState, pathname]);
@@ -1049,6 +1125,11 @@ function AuthScapeApp(_ref10) {
     customTheme: muiTheme
   }, wrappedContent), /*#__PURE__*/_react["default"].createElement(_reactToastify.ToastContainer, defaultToastConfig), loadingLayout && loadingLayout(isLoadingShow));
 }
+
+// AuthScapeProvider is the umbrella component that bundles the three always-on AuthScape
+// features (auth, error tracking, analytics) plus optional in-app notifications. Wrap your
+// NextJS _app.js return value with it. Existing call sites can continue using AuthScapeApp.
+var AuthScapeProvider = exports.AuthScapeProvider = AuthScapeApp;
 "use strict";
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
@@ -1532,25 +1613,25 @@ var DocumentManager = exports.DocumentManager = function DocumentManager(_ref) {
     masterFolder = _useState8[0],
     setMasterFolder = _useState8[1];
   var _useState9 = (0, _react.useState)([]),
-    _useState10 = _slicedToArray(_useState9, 2),
-    breadCrumb = _useState10[0],
-    setBreadCrumb = _useState10[1];
+    _useState0 = _slicedToArray(_useState9, 2),
+    breadCrumb = _useState0[0],
+    setBreadCrumb = _useState0[1];
+  var _useState1 = (0, _react.useState)(null),
+    _useState10 = _slicedToArray(_useState1, 2),
+    uploadParentId = _useState10[0],
+    setUploadParentId = _useState10[1];
   var _useState11 = (0, _react.useState)(null),
     _useState12 = _slicedToArray(_useState11, 2),
-    uploadParentId = _useState12[0],
-    setUploadParentId = _useState12[1];
+    contextMenu = _useState12[0],
+    setContextMenu = _useState12[1];
   var _useState13 = (0, _react.useState)(null),
     _useState14 = _slicedToArray(_useState13, 2),
-    contextMenu = _useState14[0],
-    setContextMenu = _useState14[1];
-  var _useState15 = (0, _react.useState)(null),
+    contextFile = _useState14[0],
+    setContextFile = _useState14[1];
+  var _useState15 = (0, _react.useState)(false),
     _useState16 = _slicedToArray(_useState15, 2),
-    contextFile = _useState16[0],
-    setContextFile = _useState16[1];
-  var _useState17 = (0, _react.useState)(false),
-    _useState18 = _slicedToArray(_useState17, 2),
-    dialogDelete = _useState18[0],
-    setDialogDelete = _useState18[1];
+    dialogDelete = _useState16[0],
+    setDialogDelete = _useState16[1];
   var handleContextMenu = function handleContextMenu(event, file) {
     event.preventDefault();
     setContextFile(file);
@@ -1643,10 +1724,10 @@ var DocumentManager = exports.DocumentManager = function DocumentManager(_ref) {
       fetchDocuments();
     }
   }, [loadedUser, folderParent, update]);
-  var _useState19 = (0, _react.useState)(null),
-    _useState20 = _slicedToArray(_useState19, 2),
-    anchorEl = _useState20[0],
-    setAnchorEl = _useState20[1];
+  var _useState17 = (0, _react.useState)(null),
+    _useState18 = _slicedToArray(_useState17, 2),
+    anchorEl = _useState18[0],
+    setAnchorEl = _useState18[1];
   var open = Boolean(anchorEl);
   var handleClick = function handleClick(event) {
     setAnchorEl(event.currentTarget);
@@ -2522,21 +2603,21 @@ var FileUploader = exports.FileUploader = function FileUploader(_ref) {
     viewDeleteDialog = _useState8[0],
     setViewDeleteDialog = _useState8[1];
   var _useState9 = (0, _react.useState)([]),
-    _useState10 = _slicedToArray(_useState9, 2),
-    filesUploaded = _useState10[0],
-    setFilesUploaded = _useState10[1];
+    _useState0 = _slicedToArray(_useState9, 2),
+    filesUploaded = _useState0[0],
+    setFilesUploaded = _useState0[1];
+  var _useState1 = (0, _react.useState)(null),
+    _useState10 = _slicedToArray(_useState1, 2),
+    orderFileId = _useState10[0],
+    setOrderFileId = _useState10[1];
   var _useState11 = (0, _react.useState)(null),
     _useState12 = _slicedToArray(_useState11, 2),
-    orderFileId = _useState12[0],
-    setOrderFileId = _useState12[1];
-  var _useState13 = (0, _react.useState)(null),
+    filesDownloadable = _useState12[0],
+    setFilesDownloadable = _useState12[1];
+  var _useState13 = (0, _react.useState)([]),
     _useState14 = _slicedToArray(_useState13, 2),
-    filesDownloadable = _useState14[0],
-    setFilesDownloadable = _useState14[1];
-  var _useState15 = (0, _react.useState)([]),
-    _useState16 = _slicedToArray(_useState15, 2),
-    parameters = _useState16[0],
-    setParameters = _useState16[1];
+    parameters = _useState14[0],
+    setParameters = _useState14[1];
   var fileUploader = (0, _react.useRef)();
   var handleUpload = /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(event) {
@@ -3268,13 +3349,13 @@ var GoogleMapsAutoComplete = exports.GoogleMapsAutoComplete = function GoogleMap
     zip = _useState8[0],
     setPostalcode = _useState8[1];
   var _useState9 = (0, _react.useState)(null),
-    _useState10 = _slicedToArray(_useState9, 2),
-    lat = _useState10[0],
-    setLat = _useState10[1];
-  var _useState11 = (0, _react.useState)(null),
-    _useState12 = _slicedToArray(_useState11, 2),
-    lng = _useState12[0],
-    setLng = _useState12[1];
+    _useState0 = _slicedToArray(_useState9, 2),
+    lat = _useState0[0],
+    setLat = _useState0[1];
+  var _useState1 = (0, _react.useState)(null),
+    _useState10 = _slicedToArray(_useState1, 2),
+    lng = _useState10[0],
+    setLng = _useState10[1];
   return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement(_Box["default"], null, /*#__PURE__*/_react["default"].createElement(AutoCompleteDialog, {
     placeholder: "Address",
     defaultValue: address,
@@ -3398,25 +3479,25 @@ function AssignMapping(_ref) {
     documentType = _useState8[0],
     setDocumentType = _useState8[1];
   var _useState9 = (0, _react.useState)(null),
-    _useState10 = _slicedToArray(_useState9, 2),
-    documentName = _useState10[0],
-    setDocumentName = _useState10[1];
-  var _useState11 = (0, _react.useState)(1),
+    _useState0 = _slicedToArray(_useState9, 2),
+    documentName = _useState0[0],
+    setDocumentName = _useState0[1];
+  var _useState1 = (0, _react.useState)(1),
+    _useState10 = _slicedToArray(_useState1, 2),
+    urlTick = _useState10[0],
+    setURLTick = _useState10[1];
+  var _useState11 = (0, _react.useState)(null),
     _useState12 = _slicedToArray(_useState11, 2),
-    urlTick = _useState12[0],
-    setURLTick = _useState12[1];
-  var _useState13 = (0, _react.useState)(null),
+    spreadSheetAddress = _useState12[0],
+    setSpreadSheetAddress = _useState12[1];
+  var _useState13 = (0, _react.useState)(false),
     _useState14 = _slicedToArray(_useState13, 2),
-    spreadSheetAddress = _useState14[0],
-    setSpreadSheetAddress = _useState14[1];
-  var _useState15 = (0, _react.useState)(false),
+    showPreviewDialog = _useState14[0],
+    setShowPreviewDialog = _useState14[1];
+  var _useState15 = (0, _react.useState)(null),
     _useState16 = _slicedToArray(_useState15, 2),
-    showPreviewDialog = _useState16[0],
-    setShowPreviewDialog = _useState16[1];
-  var _useState17 = (0, _react.useState)(null),
-    _useState18 = _slicedToArray(_useState17, 2),
-    advanceQuery = _useState18[0],
-    setAdvanceQuery = _useState18[1];
+    advanceQuery = _useState16[0],
+    setAdvanceQuery = _useState16[1];
   var spreadSheetRef = (0, _react.useRef)(null);
   var fetchMappingTo = /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
@@ -3922,9 +4003,9 @@ function Datasources(_ref) {
     databaseTables = _useState8[0],
     setDatabaseTables = _useState8[1];
   var _useState9 = (0, _react.useState)("database"),
-    _useState10 = _slicedToArray(_useState9, 2),
-    mappingType = _useState10[0],
-    setMappingType = _useState10[1];
+    _useState0 = _slicedToArray(_useState9, 2),
+    mappingType = _useState0[0],
+    setMappingType = _useState0[1];
   var refTypeName = (0, _react.useRef)(null);
   var refAssemblyFullName = (0, _react.useRef)(null);
   (0, _react.useEffect)(function () {
@@ -4269,49 +4350,49 @@ function ManageMappingDocuments(_ref) {
     showTrainingDocument = _useState8[0],
     setShowTrainingDocument = _useState8[1];
   var _useState9 = (0, _react.useState)(''),
-    _useState10 = _slicedToArray(_useState9, 2),
-    columnName = _useState10[0],
-    setColumnName = _useState10[1];
+    _useState0 = _slicedToArray(_useState9, 2),
+    columnName = _useState0[0],
+    setColumnName = _useState0[1];
+  var _useState1 = (0, _react.useState)(null),
+    _useState10 = _slicedToArray(_useState1, 2),
+    selectedAddedColumn = _useState10[0],
+    setSelectedAddedColumn = _useState10[1];
   var _useState11 = (0, _react.useState)(null),
     _useState12 = _slicedToArray(_useState11, 2),
-    selectedAddedColumn = _useState12[0],
-    setSelectedAddedColumn = _useState12[1];
+    documentMappingColumns = _useState12[0],
+    setDocumentMappingColumns = _useState12[1];
   var _useState13 = (0, _react.useState)(null),
     _useState14 = _slicedToArray(_useState13, 2),
-    documentMappingColumns = _useState14[0],
-    setDocumentMappingColumns = _useState14[1];
+    toColumnOptions = _useState14[0],
+    setToColumnOptions = _useState14[1];
   var _useState15 = (0, _react.useState)(null),
     _useState16 = _slicedToArray(_useState15, 2),
-    toColumnOptions = _useState16[0],
-    setToColumnOptions = _useState16[1];
+    removeDocument = _useState16[0],
+    setRemoveDocument = _useState16[1];
   var _useState17 = (0, _react.useState)(null),
     _useState18 = _slicedToArray(_useState17, 2),
-    removeDocument = _useState18[0],
-    setRemoveDocument = _useState18[1];
-  var _useState19 = (0, _react.useState)(null),
+    selectedDocumentComponentId = _useState18[0],
+    setSelectedDocumentComponentId = _useState18[1];
+  var _useState19 = (0, _react.useState)(0),
     _useState20 = _slicedToArray(_useState19, 2),
-    selectedDocumentComponentId = _useState20[0],
-    setSelectedDocumentComponentId = _useState20[1];
+    dataGridRefreshKey = _useState20[0],
+    setDataGridRefreshKey = _useState20[1];
   var _useState21 = (0, _react.useState)(0),
     _useState22 = _slicedToArray(_useState21, 2),
-    dataGridRefreshKey = _useState22[0],
-    setDataGridRefreshKey = _useState22[1];
-  var _useState23 = (0, _react.useState)(0),
+    dataGridMappingRefreshKey = _useState22[0],
+    setDataGridMappingRefreshKey = _useState22[1];
+  var _useState23 = (0, _react.useState)(null),
     _useState24 = _slicedToArray(_useState23, 2),
-    dataGridMappingRefreshKey = _useState24[0],
-    setDataGridMappingRefreshKey = _useState24[1];
-  var _useState25 = (0, _react.useState)(null),
+    selectedDocument = _useState24[0],
+    setSelectedDocument = _useState24[1];
+  var _useState25 = (0, _react.useState)(0),
     _useState26 = _slicedToArray(_useState25, 2),
-    selectedDocument = _useState26[0],
-    setSelectedDocument = _useState26[1];
-  var _useState27 = (0, _react.useState)(0),
+    status = _useState26[0],
+    setStatus = _useState26[1];
+  var _useState27 = (0, _react.useState)([]),
     _useState28 = _slicedToArray(_useState27, 2),
-    status = _useState28[0],
-    setStatus = _useState28[1];
-  var _useState29 = (0, _react.useState)([]),
-    _useState30 = _slicedToArray(_useState29, 2),
-    componentTypes = _useState30[0],
-    setComponentTypes = _useState30[1];
+    componentTypes = _useState28[0],
+    setComponentTypes = _useState28[1];
   var refHeaderRowInput = (0, _react.useRef)(null);
   var fileUploaderRef = (0, _react.useRef)(null);
   var refNewDocumentName = (0, _react.useRef)(null);
@@ -6036,9 +6117,9 @@ function AddDomain(_ref) {
     fullDomain = _useState8[0],
     setFullDomain = _useState8[1];
   var _useState9 = (0, _react.useState)(null),
-    _useState10 = _slicedToArray(_useState9, 2),
-    errorMessage = _useState10[0],
-    setErrorMessage = _useState10[1];
+    _useState0 = _slicedToArray(_useState9, 2),
+    errorMessage = _useState0[0],
+    setErrorMessage = _useState0[1];
   var refDomain = (0, _react.useRef)(null);
   var refCNameTarget = (0, _react.useRef)(null);
   var reftxtTarget = (0, _react.useRef)(null);
@@ -6576,29 +6657,29 @@ function PrivateLabelEditor(_ref) {
     oEMDomainList = _useState8[0],
     setOEMDomainList = _useState8[1];
   var _useState9 = (0, _react.useState)([]),
-    _useState10 = _slicedToArray(_useState9, 2),
-    dnsFields = _useState10[0],
-    setDnsFields = _useState10[1];
+    _useState0 = _slicedToArray(_useState9, 2),
+    dnsFields = _useState0[0],
+    setDnsFields = _useState0[1];
+  var _useState1 = (0, _react.useState)(null),
+    _useState10 = _slicedToArray(_useState1, 2),
+    selectedFont = _useState10[0],
+    setSelectedFont = _useState10[1];
   var _useState11 = (0, _react.useState)(null),
     _useState12 = _slicedToArray(_useState11, 2),
-    selectedFont = _useState12[0],
-    setSelectedFont = _useState12[1];
+    fontUri = _useState12[0],
+    setFontUri = _useState12[1];
   var _useState13 = (0, _react.useState)(null),
     _useState14 = _slicedToArray(_useState13, 2),
-    fontUri = _useState14[0],
-    setFontUri = _useState14[1];
-  var _useState15 = (0, _react.useState)(null),
+    oEMDomain = _useState14[0],
+    setOEMDomain = _useState14[1];
+  var _useState15 = (0, _react.useState)(''),
     _useState16 = _slicedToArray(_useState15, 2),
-    oEMDomain = _useState16[0],
-    setOEMDomain = _useState16[1];
-  var _useState17 = (0, _react.useState)(''),
+    stateBaseUri = _useState16[0],
+    setBaseUri = _useState16[1];
+  var _useState17 = (0, _react.useState)(false),
     _useState18 = _slicedToArray(_useState17, 2),
-    stateBaseUri = _useState18[0],
-    setBaseUri = _useState18[1];
-  var _useState19 = (0, _react.useState)(false),
-    _useState20 = _slicedToArray(_useState19, 2),
-    isNewAccount = _useState20[0],
-    setIsNewAccount = _useState20[1];
+    isNewAccount = _useState18[0],
+    setIsNewAccount = _useState18[1];
   var handleChange = function handleChange(event, newValue) {
     setValue(newValue);
   };
@@ -7298,17 +7379,17 @@ function Toolbar(_ref3) {
     isUnderline = _useState8[0],
     setIsUnderline = _useState8[1];
   var _useState9 = (0, _react.useState)(false),
-    _useState10 = _slicedToArray(_useState9, 2),
-    isStrikethrough = _useState10[0],
-    setIsStrikethrough = _useState10[1];
-  var _useState11 = (0, _react.useState)(false),
+    _useState0 = _slicedToArray(_useState9, 2),
+    isStrikethrough = _useState0[0],
+    setIsStrikethrough = _useState0[1];
+  var _useState1 = (0, _react.useState)(false),
+    _useState10 = _slicedToArray(_useState1, 2),
+    isCode = _useState10[0],
+    setIsCode = _useState10[1];
+  var _useState11 = (0, _react.useState)('paragraph'),
     _useState12 = _slicedToArray(_useState11, 2),
-    isCode = _useState12[0],
-    setIsCode = _useState12[1];
-  var _useState13 = (0, _react.useState)('paragraph'),
-    _useState14 = _slicedToArray(_useState13, 2),
-    blockType = _useState14[0],
-    setBlockType = _useState14[1];
+    blockType = _useState12[0],
+    setBlockType = _useState12[1];
   var updateToolbar = (0, _react.useCallback)(function () {
     var selection = (0, _lexical.$getSelection)();
     if ((0, _lexical.$isRangeSelection)(selection)) {
@@ -7537,14 +7618,14 @@ var RichTextEditor = exports.RichTextEditor = function RichTextEditor(_ref5) {
     height = _ref5$height === void 0 ? 400 : _ref5$height,
     _ref5$isDisabled = _ref5.isDisabled,
     isDisabled = _ref5$isDisabled === void 0 ? false : _ref5$isDisabled;
-  var _useState15 = (0, _react.useState)(html || ''),
+  var _useState13 = (0, _react.useState)(html || ''),
+    _useState14 = _slicedToArray(_useState13, 2),
+    editorHtml = _useState14[0],
+    setEditorHtml = _useState14[1];
+  var _useState15 = (0, _react.useState)(false),
     _useState16 = _slicedToArray(_useState15, 2),
-    editorHtml = _useState16[0],
-    setEditorHtml = _useState16[1];
-  var _useState17 = (0, _react.useState)(false),
-    _useState18 = _slicedToArray(_useState17, 2),
-    isMounted = _useState18[0],
-    setIsMounted = _useState18[1];
+    isMounted = _useState16[0],
+    setIsMounted = _useState16[1];
   (0, _react.useEffect)(function () {
     setIsMounted(true);
   }, []);
@@ -7718,52 +7799,52 @@ var SpreadsheetViewer = exports.SpreadsheetViewer = /*#__PURE__*/(0, _react.forw
   var _useState9 = (0, _react.useState)(function () {
       return [];
     }),
-    _useState10 = _slicedToArray(_useState9, 2),
-    cellChanges = _useState10[0],
-    setCellChanges = _useState10[1];
+    _useState0 = _slicedToArray(_useState9, 2),
+    cellChanges = _useState0[0],
+    setCellChanges = _useState0[1];
   var highlightsRef = (0, _react.useRef)([]);
   var userIdRef = (0, _react.useRef)(0);
   var returnedRef = (0, _react.useRef)([]);
-  var _useState11 = (0, _react.useState)(false),
-    _useState12 = _slicedToArray(_useState11, 2),
-    showStickyDialog = _useState12[0],
-    setShowStickyDialog = _useState12[1];
+  var _useState1 = (0, _react.useState)(false),
+    _useState10 = _slicedToArray(_useState1, 2),
+    showStickyDialog = _useState10[0],
+    setShowStickyDialog = _useState10[1];
   var leftColumnRef = (0, _react.useRef)(null);
   var rightColumnRef = (0, _react.useRef)(null);
   var topRowRef = (0, _react.useRef)(null);
   var bottomRowRef = (0, _react.useRef)(null);
+  var _useState11 = (0, _react.useState)(null),
+    _useState12 = _slicedToArray(_useState11, 2),
+    leftColumnSticky = _useState12[0],
+    setLeftColumnSticky = _useState12[1];
   var _useState13 = (0, _react.useState)(null),
     _useState14 = _slicedToArray(_useState13, 2),
-    leftColumnSticky = _useState14[0],
-    setLeftColumnSticky = _useState14[1];
+    rightColumnSticky = _useState14[0],
+    setRightColumnSticky = _useState14[1];
   var _useState15 = (0, _react.useState)(null),
     _useState16 = _slicedToArray(_useState15, 2),
-    rightColumnSticky = _useState16[0],
-    setRightColumnSticky = _useState16[1];
+    topRowSticky = _useState16[0],
+    setTopRowSticky = _useState16[1];
   var _useState17 = (0, _react.useState)(null),
     _useState18 = _slicedToArray(_useState17, 2),
-    topRowSticky = _useState18[0],
-    setTopRowSticky = _useState18[1];
-  var _useState19 = (0, _react.useState)(null),
+    bottomRowSticky = _useState18[0],
+    setBottomRowSticky = _useState18[1];
+  var _useState19 = (0, _react.useState)([]),
     _useState20 = _slicedToArray(_useState19, 2),
-    bottomRowSticky = _useState20[0],
-    setBottomRowSticky = _useState20[1];
+    highlights = _useState20[0],
+    setHighlights = _useState20[1];
   var _useState21 = (0, _react.useState)([]),
     _useState22 = _slicedToArray(_useState21, 2),
-    highlights = _useState22[0],
-    setHighlights = _useState22[1];
+    sessions = _useState22[0],
+    setSessions = _useState22[1];
   var _useState23 = (0, _react.useState)([]),
     _useState24 = _slicedToArray(_useState23, 2),
-    sessions = _useState24[0],
-    setSessions = _useState24[1];
-  var _useState25 = (0, _react.useState)([]),
+    requestedChanges = _useState24[0],
+    setRequestedChanges = _useState24[1];
+  var _useState25 = (0, _react.useState)(null),
     _useState26 = _slicedToArray(_useState25, 2),
-    requestedChanges = _useState26[0],
-    setRequestedChanges = _useState26[1];
-  var _useState27 = (0, _react.useState)(null),
-    _useState28 = _slicedToArray(_useState27, 2),
-    hubConnection = _useState28[0],
-    setHubConnection = _useState28[1];
+    hubConnection = _useState26[0],
+    setHubConnection = _useState26[1];
   var getRows = function getRows() {
     return returnedRef.current;
   };
@@ -8823,17 +8904,17 @@ function StripePayment(_ref3) {
     walletId = _useState8[0],
     setWalletId = _useState8[1];
   var _useState9 = (0, _react.useState)(0),
-    _useState10 = _slicedToArray(_useState9, 2),
-    value = _useState10[0],
-    setValue = _useState10[1];
-  var _useState11 = (0, _react.useState)([]),
+    _useState0 = _slicedToArray(_useState9, 2),
+    value = _useState0[0],
+    setValue = _useState0[1];
+  var _useState1 = (0, _react.useState)([]),
+    _useState10 = _slicedToArray(_useState1, 2),
+    paymentMethods = _useState10[0],
+    setPaymentMethods = _useState10[1];
+  var _useState11 = (0, _react.useState)(null),
     _useState12 = _slicedToArray(_useState11, 2),
-    paymentMethods = _useState12[0],
-    setPaymentMethods = _useState12[1];
-  var _useState13 = (0, _react.useState)(null),
-    _useState14 = _slicedToArray(_useState13, 2),
-    paymentMethod = _useState14[0],
-    setPaymentMethod = _useState14[1];
+    paymentMethod = _useState12[0],
+    setPaymentMethod = _useState12[1];
   var paymentMethodOpened = /*#__PURE__*/function () {
     var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
       var response, responsePayments;
@@ -9584,7 +9665,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.apiService = void 0;
+exports.invalidateCurrentUser = exports.apiService = void 0;
 var _axios = _interopRequireDefault(require("axios"));
 var _queryString = _interopRequireDefault(require("query-string"));
 var _jsFileDownload = _interopRequireDefault(require("js-file-download"));
@@ -9598,18 +9679,49 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
-// Cookie utility function
-var setCookie = function setCookie(name, value) {
-  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  return new Promise(function (resolve) {
-    var cookieString = "".concat(name, "=").concat(value, ";");
-    if (options.maxAge) cookieString += "max-age=".concat(options.maxAge, ";");
-    if (options.path) cookieString += "path=".concat(options.path, ";");
-    if (options.domain) cookieString += "domain=".concat(options.domain, ";");
-    if (options.secure) cookieString += "secure;";
-    document.cookie = cookieString;
-    resolve();
-  });
+// ---------------------------------------------------------------------------
+// Signed-in user cache (client-side only)
+// ---------------------------------------------------------------------------
+// Caches the result of GetCurrentUser in sessionStorage to avoid re-calling
+// /UserManagement on every hard page reload. The entry is KEYED BY THE ACCESS
+// TOKEN: company/location/impersonation context lives in the token claims, so
+// switching context issues a new token -> new key -> the stale entry is never
+// read. Cleared on logout, and bounded by a short TTL as a backstop. This is
+// purely per-browser; it has no effect on the server handling many users.
+var CURRENT_USER_CACHE_KEY = 'authscape_current_user';
+var CURRENT_USER_TTL_MS = 60 * 1000; // 60s backstop
+
+var readCurrentUserCache = function readCurrentUserCache(token) {
+  if (typeof window === 'undefined' || !token) return null;
+  try {
+    var raw = window.sessionStorage.getItem(CURRENT_USER_CACHE_KEY);
+    if (!raw) return null;
+    var entry = JSON.parse(raw);
+    if (entry.t !== token) return null; // different token => different context
+    if (!entry.exp || entry.exp < Date.now()) return null; // TTL backstop
+    return entry.u;
+  } catch (e) {
+    return null;
+  }
+};
+var writeCurrentUserCache = function writeCurrentUserCache(token, user) {
+  if (typeof window === 'undefined' || !token) return;
+  try {
+    window.sessionStorage.setItem(CURRENT_USER_CACHE_KEY, JSON.stringify({
+      t: token,
+      u: user,
+      exp: Date.now() + CURRENT_USER_TTL_MS
+    }));
+  } catch (e) {/* sessionStorage unavailable (private mode / quota) — skip caching */}
+};
+
+// Clear the cached signed-in user. Call after impersonation / company / location
+// switches, and it is also called automatically on logout and when no token exists.
+var invalidateCurrentUser = exports.invalidateCurrentUser = function invalidateCurrentUser() {
+  if (typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.removeItem(CURRENT_USER_CACHE_KEY);
+  } catch (e) {/* ignore */}
 };
 var setupDefaultOptions = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
@@ -9653,60 +9765,89 @@ var setupDefaultOptions = /*#__PURE__*/function () {
 }();
 var RefreshToken = /*#__PURE__*/function () {
   var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(originalRequest, instance) {
-    var accessToken, refreshToken, response, domainHost;
+    var accessToken, refreshToken, oidc, discoveryRes, refreshBody, response, domainHost;
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
+          _context2.prev = 0;
           accessToken = _jsCookie["default"].get('access_token') || '';
           refreshToken = _jsCookie["default"].get('refresh_token') || '';
-          _context2.next = 4;
-          return instance.post(process.env.authorityUri + "/connect/token", _queryString["default"].stringify({
+          if (refreshToken) {
+            _context2.next = 5;
+            break;
+          }
+          return _context2.abrupt("return", false);
+        case 5:
+          // Resolve the token endpoint from OIDC discovery so refresh works against either provider
+          // (OpenIddict's /connect/token or Keycloak's /protocol/openid-connect/token). Cached on window.
+          oidc = typeof window !== "undefined" && window.__authscape_oidc || null;
+          if (oidc) {
+            _context2.next = 14;
+            break;
+          }
+          _context2.next = 9;
+          return fetch(process.env.authorityUri.replace(/\/$/, "") + "/.well-known/openid-configuration");
+        case 9:
+          discoveryRes = _context2.sent;
+          _context2.next = 12;
+          return discoveryRes.json();
+        case 12:
+          oidc = _context2.sent;
+          if (typeof window !== "undefined") window.__authscape_oidc = oidc;
+        case 14:
+          refreshBody = {
             grant_type: 'refresh_token',
             client_id: process.env.client_id,
-            client_secret: process.env.client_secret,
             refresh_token: refreshToken
-          }), {
+          }; // Only send a client secret for confidential clients; public SPA clients (e.g. Keycloak) must not.
+          if (process.env.client_secret) {
+            refreshBody.client_secret = process.env.client_secret;
+          }
+          _context2.next = 18;
+          return instance.post(oidc.token_endpoint, _queryString["default"].stringify(refreshBody), {
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
               "Authorization": "Bearer " + accessToken
             }
           });
-        case 4:
+        case 18:
           response = _context2.sent;
           if (!(response != null && response.status == 200)) {
-            _context2.next = 14;
+            _context2.next = 26;
             break;
           }
           domainHost = window.location.hostname.split('.').slice(-2).join('.');
           originalRequest.headers['Authorization'] = 'Bearer ' + response.data.access_token;
-          _context2.next = 10;
-          return setCookie('access_token', response.data.access_token, {
-            maxAge: 60 * 60 * 24 * 365,
+          _jsCookie["default"].set('access_token', response.data.access_token, {
+            expires: 365,
             path: '/',
             domain: domainHost,
-            secure: true
+            secure: typeof window !== "undefined" && window.location.protocol === "https:"
           });
-        case 10:
-          _context2.next = 12;
-          return setCookie('expires_in', response.data.expires_in, {
-            maxAge: 60 * 60 * 24 * 365,
+          _jsCookie["default"].set('expires_in', String(response.data.expires_in), {
+            expires: 365,
             path: '/',
             domain: domainHost,
-            secure: true
+            secure: typeof window !== "undefined" && window.location.protocol === "https:"
           });
-        case 12:
-          _context2.next = 14;
-          return setCookie('refresh_token', response.data.refresh_token, {
-            maxAge: 60 * 60 * 24 * 365,
+          _jsCookie["default"].set('refresh_token', response.data.refresh_token, {
+            expires: 365,
             path: '/',
             domain: domainHost,
-            secure: true
+            secure: typeof window !== "undefined" && window.location.protocol === "https:"
           });
-        case 14:
+          return _context2.abrupt("return", true);
+        case 26:
+          return _context2.abrupt("return", false);
+        case 29:
+          _context2.prev = 29;
+          _context2.t0 = _context2["catch"](0);
+          return _context2.abrupt("return", false);
+        case 32:
         case "end":
           return _context2.stop();
       }
-    }, _callee2);
+    }, _callee2, null, [[0, 29]]);
   }));
   return function RefreshToken(_x, _x2) {
     return _ref2.apply(this, arguments);
@@ -9727,48 +9868,60 @@ var apiService = exports.apiService = function apiService() {
     return response;
   }, /*#__PURE__*/function () {
     var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(error) {
-      var originalConfig, domainHost;
+      var originalConfig, refreshed, reqUrl, isTokenEndpoint, domainHost;
       return _regeneratorRuntime().wrap(function _callee3$(_context3) {
         while (1) switch (_context3.prev = _context3.next) {
           case 0:
             originalConfig = error.config;
             if (!error.response) {
-              _context3.next = 10;
+              _context3.next = 15;
               break;
             }
             if (!(error.response.status === 401 && !originalConfig._retry)) {
-              _context3.next = 7;
+              _context3.next = 10;
               break;
             }
             originalConfig._retry = true;
             _context3.next = 6;
             return RefreshToken(originalConfig, instance);
           case 6:
-            return _context3.abrupt("return", instance.request(originalConfig));
-          case 7:
-            if (!(error.response.status === 400)) {
-              _context3.next = 10;
+            refreshed = _context3.sent;
+            if (!refreshed) {
+              _context3.next = 9;
               break;
             }
-            if (error.response.config.url.includes("/connect/token")) {
+            return _context3.abrupt("return", instance.request(originalConfig));
+          case 9:
+            return _context3.abrupt("return", Promise.reject(error));
+          case 10:
+            if (!(error.response.status === 400)) {
+              _context3.next = 15;
+              break;
+            }
+            reqUrl = error.response.config.url || "";
+            isTokenEndpoint = reqUrl.includes("/connect/token") || reqUrl.includes("/protocol/openid-connect/token");
+            if (isTokenEndpoint) {
               domainHost = window.location.hostname.split('.').slice(-2).join('.');
               _jsCookie["default"].remove('access_token', {
                 path: '/',
-                domain: domainHost
+                domain: domainHost,
+                secure: typeof window !== "undefined" && window.location.protocol === "https:"
               });
               _jsCookie["default"].remove('refresh_token', {
                 path: '/',
-                domain: domainHost
+                domain: domainHost,
+                secure: typeof window !== "undefined" && window.location.protocol === "https:"
               });
               _jsCookie["default"].remove('expires_in', {
                 path: '/',
-                domain: domainHost
+                domain: domainHost,
+                secure: typeof window !== "undefined" && window.location.protocol === "https:"
               });
             }
             return _context3.abrupt("return", Promise.reject(error));
-          case 10:
+          case 15:
             return _context3.abrupt("return", Promise.reject(error));
-          case 11:
+          case 16:
           case "end":
             return _context3.stop();
         }
@@ -9913,42 +10066,63 @@ var apiService = exports.apiService = function apiService() {
     }(),
     GetCurrentUser: function () {
       var _GetCurrentUser = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
-        var accessToken, defaultOptions, response;
+        var forceRefresh,
+          accessToken,
+          cached,
+          defaultOptions,
+          response,
+          _args8 = arguments;
         return _regeneratorRuntime().wrap(function _callee8$(_context8) {
           while (1) switch (_context8.prev = _context8.next) {
             case 0:
-              _context8.prev = 0;
+              forceRefresh = _args8.length > 0 && _args8[0] !== undefined ? _args8[0] : false;
+              _context8.prev = 1;
               accessToken = _jsCookie["default"].get('access_token') || null;
-              if (!accessToken) {
-                _context8.next = 11;
+              if (accessToken) {
+                _context8.next = 6;
                 break;
               }
-              _context8.next = 5;
+              invalidateCurrentUser();
+              return _context8.abrupt("return", null);
+            case 6:
+              if (forceRefresh) {
+                _context8.next = 10;
+                break;
+              }
+              cached = readCurrentUserCache(accessToken);
+              if (!cached) {
+                _context8.next = 10;
+                break;
+              }
+              return _context8.abrupt("return", cached);
+            case 10:
+              _context8.next = 12;
               return setupDefaultOptions(null);
-            case 5:
+            case 12:
               defaultOptions = _context8.sent;
-              _context8.next = 8;
+              _context8.next = 15;
               return instance.get('/UserManagement', defaultOptions);
-            case 8:
+            case 15:
               response = _context8.sent;
               if (!(response != null && response.status == 200)) {
-                _context8.next = 11;
+                _context8.next = 19;
                 break;
               }
+              writeCurrentUserCache(accessToken, response.data);
               return _context8.abrupt("return", response.data);
-            case 11:
-              _context8.next = 15;
+            case 19:
+              _context8.next = 23;
               break;
-            case 13:
-              _context8.prev = 13;
-              _context8.t0 = _context8["catch"](0);
-            case 15:
+            case 21:
+              _context8.prev = 21;
+              _context8.t0 = _context8["catch"](1);
+            case 23:
               return _context8.abrupt("return", null);
-            case 16:
+            case 24:
             case "end":
               return _context8.stop();
           }
-        }, _callee8, null, [[0, 13]]);
+        }, _callee8, null, [[1, 21]]);
       }));
       function GetCurrentUser() {
         return _GetCurrentUser.apply(this, arguments);
@@ -10023,7 +10197,7 @@ var apiService = exports.apiService = function apiService() {
           }
         }, _callee9, null, [[4, 21]]);
       }));
-      function DownloadFile(_x10, _x11, _x12) {
+      function DownloadFile(_x0, _x1, _x10) {
         return _DownloadFile.apply(this, arguments);
       }
       return DownloadFile;
@@ -10121,7 +10295,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 var _authService = exports.authService = function authService() {
   return {
     dec2hex: function dec2hex(dec) {
-      return ('0' + dec.toString(16)).substr(-2);
+      return ('0' + dec.toString(16)).slice(-2);
     },
     generateRandomString: function generateRandomString() {
       var array = new Uint32Array(56 / 2);
@@ -10219,74 +10393,182 @@ var _authService = exports.authService = function authService() {
       }
       return inviteUser;
     }(),
+    // Resolves the provider's OIDC endpoints from its discovery document so the SPA works against
+    // any standards-compliant issuer (AuthScape's OpenIddict IDP *or* Keycloak) instead of
+    // hardcoding OpenIddict's /connect/* paths. Cached on window for the session.
+    resolveOidcConfig: function () {
+      var _resolveOidcConfig = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+        var res, cfg;
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
+            case 0:
+              if (!(typeof window !== "undefined" && window.__authscape_oidc)) {
+                _context4.next = 2;
+                break;
+              }
+              return _context4.abrupt("return", window.__authscape_oidc);
+            case 2:
+              _context4.next = 4;
+              return fetch(process.env.authorityUri.replace(/\/$/, "") + "/.well-known/openid-configuration");
+            case 4:
+              res = _context4.sent;
+              if (res.ok) {
+                _context4.next = 7;
+                break;
+              }
+              throw new Error("OIDC discovery failed (" + res.status + ") at " + process.env.authorityUri);
+            case 7:
+              _context4.next = 9;
+              return res.json();
+            case 9:
+              cfg = _context4.sent;
+              if (typeof window !== "undefined") {
+                window.__authscape_oidc = cfg;
+              }
+              return _context4.abrupt("return", cfg);
+            case 12:
+            case "end":
+              return _context4.stop();
+          }
+        }, _callee4);
+      }));
+      function resolveOidcConfig() {
+        return _resolveOidcConfig.apply(this, arguments);
+      }
+      return resolveOidcConfig;
+    }(),
     login: function () {
-      var _login = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+      var _login = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
         var redirectUserUri,
-          dnsRecord,
           deviceId,
           state,
           verifier,
           challenge,
           redirectUri,
+          oidc,
+          scope,
           loginUri,
-          _args4 = arguments;
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-          while (1) switch (_context4.prev = _context4.next) {
+          _args5 = arguments;
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) switch (_context5.prev = _context5.next) {
             case 0:
-              redirectUserUri = _args4.length > 0 && _args4[0] !== undefined ? _args4[0] : null;
-              dnsRecord = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : null;
-              deviceId = _args4.length > 2 && _args4[2] !== undefined ? _args4[2] : null;
-              state = "1234";
+              redirectUserUri = _args5.length > 0 && _args5[0] !== undefined ? _args5[0] : null;
+              deviceId = _args5.length > 1 && _args5[1] !== undefined ? _args5[1] : null;
+              state = _authService().generateRandomString();
               if (redirectUserUri != null) {
                 localStorage.setItem("redirectUri", redirectUserUri);
               }
               verifier = _authService().generateRandomString();
-              _context4.next = 8;
+              _context5.next = 7;
               return _authService().challenge_from_verifier(verifier);
-            case 8:
-              challenge = _context4.sent;
+            case 7:
+              challenge = _context5.sent;
               window.localStorage.setItem("verifier", verifier);
               redirectUri = window.location.origin + "/signin-oidc";
-              loginUri = process.env.authorityUri + "/connect/authorize?response_type=code&state=" + state + "&client_id=" + process.env.client_id + "&scope=email%20openid%20offline_access%20profile%20api1&redirect_uri=" + redirectUri + "&code_challenge=" + challenge + "&code_challenge_method=S256";
+              _context5.next = 12;
+              return _authService().resolveOidcConfig();
+            case 12:
+              oidc = _context5.sent;
+              // Scope is configurable so each provider gets the scopes its clients expose
+              // (OpenIddict adds "api1"; Keycloak typically just the standard set).
+              scope = process.env.oauthScope || "openid profile email offline_access";
+              loginUri = oidc.authorization_endpoint + "?response_type=code" + "&state=" + state + "&client_id=" + encodeURIComponent(process.env.client_id) + "&scope=" + encodeURIComponent(scope) + "&redirect_uri=" + encodeURIComponent(redirectUri) + "&code_challenge=" + challenge + "&code_challenge_method=S256";
               if (deviceId) {
                 loginUri += "&deviceId=" + deviceId; // will be for chrome extention and mobile apps later
               }
               window.location.href = loginUri;
-            case 14:
+            case 17:
             case "end":
-              return _context4.stop();
+              return _context5.stop();
           }
-        }, _callee4);
+        }, _callee5);
       }));
       function login() {
         return _login.apply(this, arguments);
       }
       return login;
     }(),
-    signUp: function signUp() {
-      var redirectUrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-      var AuthUri = process.env.authorityUri;
-      var url = "";
-      if (redirectUrl == null) {
-        url = AuthUri + "/Identity/Account/Register?returnUrl=" + window.location.href;
-        localStorage.setItem("redirectUri", window.location.href);
-      } else {
-        url = AuthUri + "/Identity/Account/Register?returnUrl=" + redirectUrl;
-        localStorage.setItem("redirectUri", redirectUrl);
-      }
-      window.location.href = url;
-    },
-    manageAccount: function () {
-      var _manageAccount = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-          while (1) switch (_context5.prev = _context5.next) {
+    signUp: function () {
+      var _signUp = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+        var redirectUrl,
+          returnUrl,
+          oidc,
+          scope,
+          redirectUri,
+          regUri,
+          _args6 = arguments;
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) switch (_context6.prev = _context6.next) {
             case 0:
-              window.location.href = process.env.authorityUri + "/Identity/Account/Manage";
-            case 1:
+              redirectUrl = _args6.length > 0 && _args6[0] !== undefined ? _args6[0] : null;
+              returnUrl = redirectUrl == null ? window.location.href : redirectUrl;
+              localStorage.setItem("redirectUri", returnUrl);
+
+              // Keycloak hosts registration at its own endpoint (authorization endpoint with
+              // "/auth" → "/registrations"); the AuthScape OpenIddict IDP uses a Razor page.
+              _context6.prev = 3;
+              _context6.next = 6;
+              return _authService().resolveOidcConfig();
+            case 6:
+              oidc = _context6.sent;
+              if (!(oidc.issuer && oidc.issuer.indexOf("/realms/") !== -1 && oidc.authorization_endpoint)) {
+                _context6.next = 13;
+                break;
+              }
+              scope = process.env.oauthScope || "openid profile email offline_access";
+              redirectUri = window.location.origin + "/signin-oidc";
+              regUri = oidc.authorization_endpoint.replace("/protocol/openid-connect/auth", "/protocol/openid-connect/registrations");
+              window.location.href = regUri + "?response_type=code" + "&client_id=" + encodeURIComponent(process.env.client_id) + "&scope=" + encodeURIComponent(scope) + "&redirect_uri=" + encodeURIComponent(redirectUri);
+              return _context6.abrupt("return");
+            case 13:
+              _context6.next = 17;
+              break;
+            case 15:
+              _context6.prev = 15;
+              _context6.t0 = _context6["catch"](3);
+            case 17:
+              window.location.href = process.env.authorityUri + "/Identity/Account/Register?returnUrl=" + returnUrl;
+            case 18:
             case "end":
-              return _context5.stop();
+              return _context6.stop();
           }
-        }, _callee5);
+        }, _callee6, null, [[3, 15]]);
+      }));
+      function signUp() {
+        return _signUp.apply(this, arguments);
+      }
+      return signUp;
+    }(),
+    manageAccount: function () {
+      var _manageAccount = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
+        var oidc;
+        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+          while (1) switch (_context7.prev = _context7.next) {
+            case 0:
+              _context7.prev = 0;
+              _context7.next = 3;
+              return _authService().resolveOidcConfig();
+            case 3:
+              oidc = _context7.sent;
+              if (!(oidc.issuer && oidc.issuer.indexOf("/realms/") !== -1)) {
+                _context7.next = 7;
+                break;
+              }
+              window.location.href = oidc.issuer.replace(/\/$/, "") + "/account";
+              return _context7.abrupt("return");
+            case 7:
+              _context7.next = 11;
+              break;
+            case 9:
+              _context7.prev = 9;
+              _context7.t0 = _context7["catch"](0);
+            case 11:
+              window.location.href = process.env.authorityUri + "/Identity/Account/Manage";
+            case 12:
+            case "end":
+              return _context7.stop();
+          }
+        }, _callee7, null, [[0, 9]]);
       }));
       function manageAccount() {
         return _manageAccount.apply(this, arguments);
@@ -10294,60 +10576,64 @@ var _authService = exports.authService = function authService() {
       return manageAccount;
     }(),
     logout: function () {
-      var _logout = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+      var _logout = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
         var redirectUri,
           domainHost,
-          AuthUri,
-          _args6 = arguments;
-        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-          while (1) switch (_context6.prev = _context6.next) {
+          target,
+          endSession,
+          oidc,
+          _args8 = arguments;
+        return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+          while (1) switch (_context8.prev = _context8.next) {
             case 0:
-              redirectUri = _args6.length > 0 && _args6[0] !== undefined ? _args6[0] : null;
+              redirectUri = _args8.length > 0 && _args8[0] !== undefined ? _args8[0] : null;
               domainHost = window.location.hostname.split('.').slice(-2).join('.');
-              AuthUri = process.env.authorityUri;
               _jsCookie["default"].remove('access_token', {
                 path: '/',
-                domain: domainHost
+                domain: domainHost,
+                secure: typeof window !== "undefined" && window.location.protocol === "https:"
               });
               _jsCookie["default"].remove('refresh_token', {
                 path: '/',
-                domain: domainHost
+                domain: domainHost,
+                secure: typeof window !== "undefined" && window.location.protocol === "https:"
               });
               _jsCookie["default"].remove('expires_in', {
                 path: '/',
-                domain: domainHost
+                domain: domainHost,
+                secure: typeof window !== "undefined" && window.location.protocol === "https:"
               });
 
-              // destroyCookie({}, "access_token", {
-              //     maxAge: 2147483647,
-              //     path: '/',
-              //     domain: domainHost
-              // });
-
-              // destroyCookie({}, "refresh_token", {
-              //     maxAge: 2147483647,
-              //     path: '/',
-              //     domain: domainHost
-              // });
-
-              // destroyCookie({}, "expires_in", {
-              //     maxAge: 2147483647,
-              //     path: '/',
-              //     domain: domainHost
-              // });
-
-              setTimeout(function () {
-                if (redirectUri == null) {
-                  window.location.href = AuthUri + "/connect/logout?redirect=" + window.location.href;
-                } else {
-                  window.location.href = AuthUri + "/connect/logout?redirect=" + redirectUri;
-                }
-              }, 500);
-            case 7:
+              // Drop the cached signed-in user so the next sign-in never reads a stale identity.
+              try {
+                if (typeof window !== "undefined") window.sessionStorage.removeItem("authscape_current_user");
+              } catch (e) {/* ignore */}
+              target = redirectUri == null ? window.location.href : redirectUri;
+              endSession = process.env.authorityUri + "/connect/logout";
+              _context8.prev = 8;
+              _context8.next = 11;
+              return _authService().resolveOidcConfig();
+            case 11:
+              oidc = _context8.sent;
+              if (oidc.end_session_endpoint) endSession = oidc.end_session_endpoint;
+              _context8.next = 17;
+              break;
+            case 15:
+              _context8.prev = 15;
+              _context8.t0 = _context8["catch"](8);
+            case 17:
+              // Standards-compliant RP-initiated logout (Keycloak) uses post_logout_redirect_uri +
+              // client_id; the legacy AuthScape OpenIddict IDP uses ?redirect=.
+              if (endSession.indexOf("/connect/logout") === -1) {
+                window.location.href = endSession + "?post_logout_redirect_uri=" + encodeURIComponent(target) + "&client_id=" + encodeURIComponent(process.env.client_id);
+              } else {
+                window.location.href = endSession + "?redirect=" + target;
+              }
+            case 18:
             case "end":
-              return _context6.stop();
+              return _context8.stop();
           }
-        }, _callee6);
+        }, _callee8, null, [[8, 15]]);
       }));
       function logout() {
         return _logout.apply(this, arguments);
@@ -10444,119 +10730,6 @@ function HeaderRecords(_ref) {
     rel: "stylesheet"
   })));
 }
-"use strict";
-
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.signInValidator = void 0;
-var _react = _interopRequireWildcard(require("react"));
-var _axios = _interopRequireDefault(require("axios"));
-var _queryString = _interopRequireDefault(require("query-string"));
-function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != _typeof(e) && "function" != typeof e) return { "default": e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n["default"] = e, t && t.set(e, n), n; }
-function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
-function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
-function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
-// import Cookies from 'js-cookie';
-
-var signInValidator = exports.signInValidator = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(queryCode) {
-    var codeVerifier, headers, queryString, response, domainHost, redirectUri;
-    return _regeneratorRuntime().wrap(function _callee$(_context) {
-      while (1) switch (_context.prev = _context.next) {
-        case 0:
-          codeVerifier = window.localStorage.getItem("verifier");
-          if (!(queryCode != null && codeVerifier != null)) {
-            _context.next = 18;
-            break;
-          }
-          headers = {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          };
-          queryString = _queryString["default"].stringify({
-            code: queryCode,
-            grant_type: "authorization_code",
-            redirect_uri: window.location.origin + "/signin-oidc",
-            client_id: process.env.client_id,
-            client_secret: process.env.client_secret,
-            code_verifier: codeVerifier
-          });
-          _context.next = 6;
-          return _axios["default"].post(process.env.authorityUri + '/connect/token', queryString, {
-            headers: headers
-          });
-        case 6:
-          response = _context.sent;
-          domainHost = window.location.hostname.split('.').slice(-2).join('.');
-          window.localStorage.removeItem("verifier");
-          _context.next = 11;
-          return setCookie('access_token', response.data.access_token, {
-            maxAge: 60 * 60 * 24 * 365,
-            // 1 year,
-            path: '/',
-            domain: domainHost,
-            secure: true
-          });
-        case 11:
-          _context.next = 13;
-          return setCookie('expires_in', response.data.expires_in, {
-            maxAge: 60 * 60 * 24 * 365,
-            // 1 year,
-            path: '/',
-            domain: domainHost,
-            secure: true
-          });
-        case 13:
-          _context.next = 15;
-          return setCookie('refresh_token', response.data.refresh_token, {
-            maxAge: 60 * 60 * 24 * 365,
-            // 1 year,
-            path: '/',
-            domain: domainHost,
-            secure: true
-          });
-        case 15:
-          // await setCookie(null, "access_token", response.data.access_token,
-          // {
-          //     maxAge: 2147483647,
-          //     path: '/',
-          //     domain: domainHost,
-          //     secure: true
-          // });
-          // await setCookie(null, "expires_in", response.data.expires_in,
-          // {
-          //     maxAge: 2147483647,
-          //     path: '/',
-          //     domain: domainHost,
-          //     secure: true
-          // });
-          // await setCookie(null, "refresh_token", response.data.refresh_token,
-          // {
-          //     maxAge: 2147483647,
-          //     path: '/',
-          //     domain: domainHost,
-          //     secure: true
-          // });
-          redirectUri = localStorage.getItem("redirectUri");
-          localStorage.clear();
-          if (redirectUri != null) {
-            window.location.href = redirectUri;
-          } else {
-            window.location.href = "/";
-          }
-        case 18:
-        case "end":
-          return _context.stop();
-      }
-    }, _callee);
-  }));
-  return function signInValidator(_x) {
-    return _ref.apply(this, arguments);
-  };
-}();
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

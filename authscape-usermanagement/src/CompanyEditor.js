@@ -3,12 +3,11 @@ import { Box } from '@mui/system';
 import { Autocomplete, Avatar, Button, Chip, Drawer, useTheme } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { Tab, Tabs, Stack } from '@mui/material';
-import { apiService } from 'authscape';
+import { apiService, DropZone } from 'authscape';
 import TextField from '@mui/material/TextField';
 import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid2';
-import { DropZone } from 'authscape';
 
 // remove when publishing
 // import {renderCustomField, renderSystemField } from './EditorFields';

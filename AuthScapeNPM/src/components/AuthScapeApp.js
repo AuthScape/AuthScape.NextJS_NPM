@@ -17,18 +17,33 @@ import { HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/si
 import Cookies from 'js-cookie';
 
 // ============================================================================
-// Cookie utility function
+// Auth Redirect Circuit Breaker
 // ============================================================================
-const setCookie = (name, value, options = {}) => {
-  return new Promise((resolve) => {
-    let cookieString = `${name}=${value};`;
-    if (options.maxAge) cookieString += `max-age=${options.maxAge};`;
-    if (options.path) cookieString += `path=${options.path};`;
-    if (options.domain) cookieString += `domain=${options.domain};`;
-    if (options.secure) cookieString += `secure;`;
-    document.cookie = cookieString;
-    resolve();
-  });
+const AUTH_REDIRECT_KEY = 'authscape_redirect_count';
+const AUTH_REDIRECT_TS_KEY = 'authscape_redirect_ts';
+const AUTH_MAX_REDIRECTS = 3;
+const AUTH_REDIRECT_WINDOW_MS = 30000; // 30 seconds
+
+const checkAndIncrementRedirect = () => {
+  if (typeof window === 'undefined') return false;
+  const now = Date.now();
+  const storedTs = parseInt(sessionStorage.getItem(AUTH_REDIRECT_TS_KEY) || '0', 10);
+  let count = parseInt(sessionStorage.getItem(AUTH_REDIRECT_KEY) || '0', 10);
+
+  if (now - storedTs > AUTH_REDIRECT_WINDOW_MS) {
+    count = 0;
+    sessionStorage.setItem(AUTH_REDIRECT_TS_KEY, String(now));
+  }
+
+  count += 1;
+  sessionStorage.setItem(AUTH_REDIRECT_KEY, String(count));
+  return count <= AUTH_MAX_REDIRECTS;
+};
+
+const resetRedirectCounter = () => {
+  if (typeof window === 'undefined') return;
+  sessionStorage.removeItem(AUTH_REDIRECT_KEY);
+  sessionStorage.removeItem(AUTH_REDIRECT_TS_KEY);
 };
 
 // ============================================================================
@@ -484,9 +499,10 @@ export function AuthScapeApp({
   const queryCodeUsed = useRef(null);
   const ga4React = useRef(null);
   const errorTrackingInitializedRef = useRef(false);
+  const loginRedirectPending = useRef(false);
 
   const searchParams = useSearchParams();
-  const queryCode = searchParams.get("code");
+  const queryCode = searchParams?.get("code") ?? null;
   const pathname = usePathname();
 
   const signInValidator = async (codeFromQuery) => {
@@ -500,24 +516,38 @@ export function AuthScapeApp({
     const codeVerifier = window.localStorage.getItem("verifier");
     if (!codeFromQuery || !codeVerifier) {
       window.localStorage.clear();
-      module.exports.authService().login();
+      setIsSigningIn(false);
+      setFrontEndLoadedState(true);
       return;
     }
 
     const headers = { "Content-Type": "application/x-www-form-urlencoded" };
 
-    const body = querystring.stringify({
+    const tokenBody = {
       code: codeFromQuery,
       grant_type: "authorization_code",
       redirect_uri: window.location.origin + "/signin-oidc",
       client_id: process.env.client_id,
-      client_secret: process.env.client_secret,
       code_verifier: codeVerifier,
-    });
+    };
+    // Only confidential clients send a secret; public SPA clients (e.g. Keycloak) must not.
+    if (process.env.client_secret) {
+      tokenBody.client_secret = process.env.client_secret;
+    }
+    const body = querystring.stringify(tokenBody);
 
     try {
+      // Resolve the token endpoint from OIDC discovery so the code exchange works against either
+      // provider (OpenIddict's /connect/token or Keycloak's /protocol/openid-connect/token).
+      let oidc = (typeof window !== "undefined" && window.__authscape_oidc) || null;
+      if (!oidc) {
+        const discoveryRes = await fetch(process.env.authorityUri.replace(/\/$/, "") + "/.well-known/openid-configuration");
+        oidc = await discoveryRes.json();
+        if (typeof window !== "undefined") window.__authscape_oidc = oidc;
+      }
+
       const response = await axios.post(
-        process.env.authorityUri + "/connect/token",
+        oidc.token_endpoint,
         body,
         { headers }
       );
@@ -526,34 +556,72 @@ export function AuthScapeApp({
 
       window.localStorage.removeItem("verifier");
 
-      await setCookie("access_token", response.data.access_token, {
-        maxAge: 60 * 60 * 24 * 365,
+      Cookies.set("access_token", response.data.access_token, {
+        expires: 365,
         path: "/",
         domain: domainHost,
-        secure: true,
+        secure: (typeof window !== "undefined" && window.location.protocol === "https:"),
       });
-      await setCookie("expires_in", response.data.expires_in, {
-        maxAge: 60 * 60 * 24 * 365,
+      Cookies.set("expires_in", String(response.data.expires_in), {
+        expires: 365,
         path: "/",
         domain: domainHost,
-        secure: true,
+        secure: (typeof window !== "undefined" && window.location.protocol === "https:"),
       });
-      await setCookie("refresh_token", response.data.refresh_token, {
-        maxAge: 60 * 60 * 24 * 365,
+      Cookies.set("refresh_token", response.data.refresh_token, {
+        expires: 365,
         path: "/",
         domain: domainHost,
-        secure: true,
+        secure: (typeof window !== "undefined" && window.location.protocol === "https:"),
       });
+
+      resetRedirectCounter();
 
       const redirectUri = window.localStorage.getItem("redirectUri") || "/";
       window.localStorage.clear();
 
-      window.location.href = redirectUri;
+      // Pre-load user while spinner is still showing — eliminates the
+      // second GetCurrentUser call (and resulting re-renders) on the destination page.
+      let usr = null;
+      try {
+        usr = await module.exports.apiService().GetCurrentUser();
+      } catch (fetchErr) {
+        console.warn("[AuthScape] GetCurrentUser failed after token exchange:", fetchErr);
+      }
+      const enrichedUser = ensureUserHelpers(usr);
+
+      signedInUser.current = enrichedUser;
+      setSignedInUserState(enrichedUser);
+      setFrontEndLoadedState(true);
+
+      // Prevent the useEffect from calling GetCurrentUser again when queryCode → null.
+      loadingAuth.current = true;
+
+      if (enableErrorTracking && enrichedUser && !errorTrackingInitializedRef.current) {
+        initializeErrorTracking(enrichedUser);
+        errorTrackingInitializedRef.current = true;
+      }
+
+      if (onUserLoaded && enrichedUser) {
+        onUserLoaded(enrichedUser);
+      }
+
+      // Dismiss spinner before navigating so destination renders logged-in UI on first paint.
+      setIsSigningIn(false);
+
+      // Client-side navigation preserves the React component tree and all ref values,
+      // eliminating the hard-reload → remount → re-render chain.
+      // Fall back to hard navigation for absolute external URLs.
+      if (redirectUri.startsWith("http://") || redirectUri.startsWith("https://")) {
+        window.location.href = redirectUri;
+      } else {
+        Router.push(redirectUri);
+      }
     } catch (exp) {
       console.error("PKCE sign-in failed", exp);
       window.localStorage.clear();
       setIsSigningIn(false);
-      module.exports.authService().login();
+      setFrontEndLoadedState(true);
     }
   };
 
@@ -653,8 +721,14 @@ export function AuthScapeApp({
       enforceLoggedIn &&
       pathname !== "/signin-oidc" &&
       frontEndLoadedState &&
-      !signedInUserState
+      !signedInUserState &&
+      !loginRedirectPending.current
     ) {
+      if (!checkAndIncrementRedirect()) {
+        console.warn('[AuthScape] Auth redirect loop detected — halting redirects.');
+        return;
+      }
+      loginRedirectPending.current = true;
       module.exports.authService().login();
     }
   }, [signedInUserState, enforceLoggedIn, frontEndLoadedState, pathname]);
@@ -780,3 +854,8 @@ export function AuthScapeApp({
     </>
   );
 }
+
+// AuthScapeProvider is the umbrella component that bundles the three always-on AuthScape
+// features (auth, error tracking, analytics) plus optional in-app notifications. Wrap your
+// NextJS _app.js return value with it. Existing call sites can continue using AuthScapeApp.
+export const AuthScapeProvider = AuthScapeApp;
