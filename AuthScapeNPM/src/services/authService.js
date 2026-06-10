@@ -158,7 +158,7 @@ export const authService = () => {
         },
         logout: async (redirectUri = null) => {
 
-            let domainHost = window.location.hostname.split('.').slice(-2).join('.');
+            let domainHost = (h => (h === "localhost" || /^\d+\.\d+\.\d+\.\d+$/.test(h) || !h.includes(".")) ? undefined : h.split(".").slice(-2).join("."))(window.location.hostname);
 
             Cookies.remove('access_token', { path: '/', domain: domainHost, secure: (typeof window !== "undefined" && window.location.protocol === "https:") });
             Cookies.remove('refresh_token', { path: '/', domain: domainHost, secure: (typeof window !== "undefined" && window.location.protocol === "https:") });

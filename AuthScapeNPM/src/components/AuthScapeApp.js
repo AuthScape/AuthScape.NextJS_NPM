@@ -102,7 +102,7 @@ export async function logError(errorData) {
   };
 
   try {
-    const response = await module.exports.apiService().post('/ErrorTracking/LogError', error);
+    const response = await apiService().post('/ErrorTracking/LogError', error);
     if (response && response.status !== 200) {
       console.error('Error tracking API returned:', response.status);
     }
@@ -552,7 +552,9 @@ export function AuthScapeApp({
         { headers }
       );
 
-      const domainHost = window.location.hostname.split(".").slice(-2).join(".");
+      // Omit Domain on localhost/IP — browsers reject Domain=localhost, so the auth cookies would
+      // never persist and sign-in would loop forever. Real hosts still get the registrable domain.
+      const domainHost = (h => (h === "localhost" || /^\d+\.\d+\.\d+\.\d+$/.test(h) || !h.includes(".")) ? undefined : h.split(".").slice(-2).join("."))(window.location.hostname);
 
       window.localStorage.removeItem("verifier");
 
@@ -584,7 +586,7 @@ export function AuthScapeApp({
       // second GetCurrentUser call (and resulting re-renders) on the destination page.
       let usr = null;
       try {
-        usr = await module.exports.apiService().GetCurrentUser();
+        usr = await apiService().GetCurrentUser();
       } catch (fetchErr) {
         console.warn("[AuthScape] GetCurrentUser failed after token exchange:", fetchErr);
       }
@@ -647,7 +649,7 @@ export function AuthScapeApp({
 
     const host = window.location.protocol + "//" + window.location.host;
 
-    module.exports.apiService().post("/Analytics/PageView", {
+    apiService().post("/Analytics/PageView", {
       userId: signedInUser.current?.id,
       locationId: signedInUser.current?.locationId,
       companyId: signedInUser.current?.companyId,
@@ -666,7 +668,7 @@ export function AuthScapeApp({
       loadingAuth.current = true;
 
       if (enableAuth) {
-        module.exports.apiService().GetCurrentUser().then((usr) => {
+        apiService().GetCurrentUser().then((usr) => {
           signedInUser.current = ensureUserHelpers(usr);
           setSignedInUserState(signedInUser.current);
           setFrontEndLoadedState(true);
@@ -729,7 +731,7 @@ export function AuthScapeApp({
         return;
       }
       loginRedirectPending.current = true;
-      module.exports.authService().login();
+      authService().login();
     }
   }, [signedInUserState, enforceLoggedIn, frontEndLoadedState, pathname]);
 
@@ -830,7 +832,7 @@ export function AuthScapeApp({
   const wrappedContent = enableNotifications && currentUser ? (
     <NotificationProvider
       currentUser={currentUser}
-      apiService={module.exports.apiService}
+      apiService={apiService}
     >
       {pageContent}
     </NotificationProvider>

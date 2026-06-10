@@ -108,7 +108,7 @@ const RefreshToken = async (originalRequest, instance) => {
         });
 
         if (response != null && response.status == 200) {
-            let domainHost = window.location.hostname.split('.').slice(-2).join('.');
+            let domainHost = (h => (h === "localhost" || /^\d+\.\d+\.\d+\.\d+$/.test(h) || !h.includes(".")) ? undefined : h.split(".").slice(-2).join("."))(window.location.hostname);
             originalRequest.headers['Authorization'] = 'Bearer ' + response.data.access_token;
 
             Cookies.set('access_token', response.data.access_token, {
@@ -174,7 +174,7 @@ export const apiService = (ctx = null) => {
                     const reqUrl = error.response.config.url || "";
                     const isTokenEndpoint = reqUrl.includes("/connect/token") || reqUrl.includes("/protocol/openid-connect/token");
                     if (isTokenEndpoint) {
-                        let domainHost = window.location.hostname.split('.').slice(-2).join('.');
+                        let domainHost = (h => (h === "localhost" || /^\d+\.\d+\.\d+\.\d+$/.test(h) || !h.includes(".")) ? undefined : h.split(".").slice(-2).join("."))(window.location.hostname);
                         Cookies.remove('access_token', { path: '/', domain: domainHost, secure: (typeof window !== "undefined" && window.location.protocol === "https:") });
                         Cookies.remove('refresh_token', { path: '/', domain: domainHost, secure: (typeof window !== "undefined" && window.location.protocol === "https:") });
                         Cookies.remove('expires_in', { path: '/', domain: domainHost, secure: (typeof window !== "undefined" && window.location.protocol === "https:") });
