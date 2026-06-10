@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import { Box } from '@mui/system';
-import { AppBar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControl, InputLabel, Menu, MenuItem, Select, TextField, Toolbar, Tooltip, Typography, useTheme } from '@mui/material';
+import { AppBar, Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControl, InputLabel, Menu, MenuItem, Select, TextField, Toolbar, Tooltip, Typography, useTheme } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import UploadRoundedIcon from '@mui/icons-material/UploadRounded';
 import { EditableDatagrid, FileUploader, AutoSaveTextField, apiService } from 'authscape';
@@ -12,6 +12,9 @@ import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import PasswordRoundedIcon from '@mui/icons-material/PasswordRounded';
 import Autocomplete from '@mui/material/Autocomplete';
 import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
+import SyncRoundedIcon from '@mui/icons-material/SyncRounded';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 
 // comment this out when done
 // import UserEditor from './UserEditor'; // remove when done
@@ -19,14 +22,24 @@ import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
 // import { CSVUsersUpload } from './CSVUsersUpload'; // remove when done
 // import { CustomFields } from './CustomFields'; // remove when done
 // import LocationEditor from './LocationsEditor';
+// import { CrmConnections } from './CrmConnections';
+// import { CrmEntityMappings } from './CrmEntityMappings';
+// import { CrmFieldMappings } from './CrmFieldMappings';
+// import { CrmRelationshipMappings } from './CrmRelationshipMappings';
 
 
 export const UserManagement = ({height = "50vh", platformType = 1, defaultIdentifier = null, companyId = null, onUploadCompleted = null, onAccountCreated = null, onSaved = null, onCustomTabs = null}) => {
 
     const theme = useTheme();
     const [showUserDetails, setShowUserDetails] = useState(null);
-    
+
     const [showCustomSettings, setShowCustomSettings] = useState(false);
+    const [settingsTab, setSettingsTab] = useState(0);
+
+    // CRM Integration state
+    const [selectedCrmConnection, setSelectedCrmConnection] = useState(null);
+    const [selectedCrmEntityMapping, setSelectedCrmEntityMapping] = useState(null);
+    const [crmViewMode, setCrmViewMode] = useState('fields'); // 'fields' or 'relationships'
 
     const [showArchiveUserDialog, setShowArchiveUserDialog] = useState(null);
     const [showContactDialog, setShowContactDialog] = useState(false);
@@ -42,6 +55,7 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
     const [confirmPassword, setConfirmPassword] = useState(null);
 
     const [dataGridRefreshKey, setDataGridRefreshKey] = useState(0);
+    const [isSaving, setIsSaving] = useState(false);
     const [uploadUsersShowDialog, setUploadUsersShowDialog] = useState(false);
 
     const [searchByName, setSearchByName] = useState('');
@@ -59,6 +73,7 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
 
     const [companies, setCompanies] = useState([]);
     const [company, setCompany] = useState(null);
+    const [showAddCompanyDialog, setShowAddCompanyDialog] = useState(false);
 
 
     const newCompanyName = useRef();
@@ -519,10 +534,13 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                     <>
                         <Box sx={{paddingRight:2}}>
                             <KeyboardBackspaceRoundedIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, cursor:"pointer" }} onClick={async () => {
-                                
+
                                 await getAllCustomFields();
                                 setDataGridRefreshKey(dataGridRefreshKey + 1);
                                 setShowCustomSettings(false);
+                                setSettingsTab(0);
+                                setSelectedCrmConnection(null);
+                                setSelectedCrmEntityMapping(null);
                             }} />
                         </Box>
                         <Divider orientation="vertical" flexItem />
@@ -550,6 +568,7 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                             <Box sx={{paddingRight:2, paddingLeft:2}}>
                                 <Button variant="text" startIcon={<SaveRoundedIcon />} onClick={async () => {
 
+                                    setIsSaving(true);
                                     userEditorRef.current.saveChanges(true);
                                     setShowUserDetails(null);
 
@@ -605,7 +624,7 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                     </Box>
                     <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Custom Fields">
+                        <Tooltip title="Settings">
                         <IconButton sx={{ p: 0 }} onClick={() => {
                             setShowCustomSettings(true);
                         }}>
@@ -854,8 +873,8 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
 
                     {!showCustomSettings &&
                     <Box>
-                        {(showUserDetails == null && defaultIdentifier == null) &&
-                     
+                        {(showUserDetails == null && defaultIdentifier == null && !isSaving) &&
+
                         <EditableDatagrid 
                             key={dataGridRefreshKey}
                             height={height}
@@ -890,7 +909,8 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                                             userId={defaultIdentifier != null ? defaultIdentifier : showUserDetails}
                                             onSaved={(shouldClose, platformType, userId, fields) => {
 
-                                                setDataGridRefreshKey(dataGridRefreshKey + 1);
+                                                setIsSaving(false);
+                                                setDataGridRefreshKey(prev => prev + 1);
 
                                                 if (onSaved != null)
                                                 {
@@ -901,23 +921,19 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
 
                                                     onSaved(shouldClose, platformType, userId, fields);
                                                 }
-                                                
-                                                if (shouldClose)
-                                                {
-                                                    setShowUserDetails(null);
-                                                }
                                             }}
                                         />
                                     }
                                     {platformType == 2 &&
-                                        <CompanyEditor 
+                                        <CompanyEditor
                                             companyId={defaultIdentifier != null ? defaultIdentifier : showUserDetails}
                                             onCustomTabs={onCustomTabs}
                                             platformType={platformType}
                                             ref={userEditorRef}
                                             onSaved={(shouldClose, platformType, userId, fields) => {
 
-                                                setDataGridRefreshKey(dataGridRefreshKey + 1);
+                                                setIsSaving(false);
+                                                setDataGridRefreshKey(prev => prev + 1);
 
                                                 // need to add a way to close the company editor
                                                 if (onSaved != null)
@@ -940,7 +956,8 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                                             ref={userEditorRef}
                                             onSaved={(shouldClose, platformType, userId, fields) => {
 
-                                                setDataGridRefreshKey(dataGridRefreshKey + 1);
+                                                setIsSaving(false);
+                                                setDataGridRefreshKey(prev => prev + 1);
 
                                                 if (onSaved != null)
                                                 {
@@ -961,6 +978,16 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                         </Box>
                     </Box>
                     }
+
+                    <Backdrop
+                        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                        open={isSaving}
+                    >
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                            <CircularProgress color="inherit" />
+                            <Typography variant="body1" color="inherit">Saving...</Typography>
+                        </Box>
+                    </Backdrop>
 
                     <Dialog
                         open={showChangePasswordDialog}
@@ -1181,7 +1208,7 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                                         onChange={(event, newValue) => {
                                             if (newValue?.isAddOption) {
 
-                                            setEditAddLocationId(-1);
+                                            setShowAddCompanyDialog(true);
 
                                             } else {
 
@@ -1293,31 +1320,76 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
                             }
                             else if (platformType == 2) // company
                             {
-                                newId = await onAccountCreated({
-                                    companyName: newCompanyName.current.value
-                                });
+                                const companyName = newCompanyName.current.value;
 
-                                setShowContactDialog(false);
+                                if (!companyName || companyName.trim().length === 0) {
+                                    alert("Please enter a company name.");
+                                    return;
+                                }
 
-                                if (newId != null) {
-                                    setShowUserDetails(newId);
+                                try {
+                                    await apiService().post('/UserManagement/UpdateCompany', {
+                                        id: -1,
+                                        title: companyName.trim(),
+                                        isDeactivated: false,
+                                        locations: [],
+                                        customFields: [],
+                                        domains: []
+                                    });
+
+                                    setShowContactDialog(false);
+                                    setDataGridRefreshKey(dataGridRefreshKey + 1);
+
+                                    if (onAccountCreated) {
+                                        onAccountCreated({
+                                            companyName: companyName.trim()
+                                        });
+                                    }
+                                } catch (error) {
+                                    console.error('Error creating company:', error);
+                                    alert('Error creating company: ' + (error.message || 'Unknown error'));
+                                    return;
                                 }
                             }
                             else if (platformType == 3) // location
                             {
-                                newId = await onAccountCreated({
-                                    Name: newLocationName.current.value,
-                                    address: newLocationAddress.current.value,
-                                    city: newLocationCity.current.value,
-                                    state: newLocationState.current.value,
-                                    postalCode: newLocationPostalCode.current.value,
-                                    companyId: company.id
-                                });
+                                const locationName = newLocationName.current.value;
 
-                                setShowContactDialog(false);
+                                if (!locationName || locationName.trim().length === 0) {
+                                    alert("Please enter a location name.");
+                                    return;
+                                }
 
-                                if (newId != null) {
-                                    setShowUserDetails(newId);
+                                try {
+                                    await apiService().post('/UserManagement/UpdateLocation', {
+                                        id: -1,
+                                        title: locationName.trim(),
+                                        address: newLocationAddress.current.value || null,
+                                        city: newLocationCity.current.value || null,
+                                        state: newLocationState.current.value || null,
+                                        postalCode: newLocationPostalCode.current.value || null,
+                                        companyId: company?.id || null,
+                                        isDeactivated: false,
+                                        customFields: []
+                                    });
+
+                                    setShowContactDialog(false);
+                                    setDataGridRefreshKey(dataGridRefreshKey + 1);
+
+                                    if (onAccountCreated) {
+                                        onAccountCreated({
+                                            name: locationName.trim(),
+                                            address: newLocationAddress.current.value,
+                                            city: newLocationCity.current.value,
+                                            state: newLocationState.current.value,
+                                            postalCode: newLocationPostalCode.current.value,
+                                            companyId: company?.id
+                                        });
+                                    }
+                                } catch (error) {
+                                    console.error('Error creating location:', error);
+                                    alert('Error creating location: ' + (error.message || 'Unknown error'));
+                                    return;
                                 }
                             }
 
@@ -1329,14 +1401,157 @@ export const UserManagement = ({height = "50vh", platformType = 1, defaultIdenti
 
 
                     {showCustomSettings &&
-                        <CustomFields platformType={platformType} />
+                        <Box>
+                            <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+                                <Tabs value={settingsTab} onChange={(e, newValue) => {
+                                    setSettingsTab(newValue);
+                                    // Reset CRM navigation when switching tabs
+                                    if (newValue !== 1) {
+                                        setSelectedCrmConnection(null);
+                                        setSelectedCrmEntityMapping(null);
+                                        setCrmViewMode('fields');
+                                    }
+                                }}>
+                                    <Tab label="Custom Fields" />
+                                    <Tab icon={<SyncRoundedIcon />} iconPosition="start" label="CRM Integration" />
+                                </Tabs>
+                            </Box>
+
+                            {settingsTab === 0 && (
+                                <CustomFields platformType={platformType} />
+                            )}
+
+                            {settingsTab === 1 && (
+                                <Box>
+                                    {!selectedCrmConnection && (
+                                        <CrmConnections onSelectConnection={(connection) => {
+                                            setSelectedCrmConnection(connection);
+                                            setSelectedCrmEntityMapping(null);
+                                        }} />
+                                    )}
+
+                                    {selectedCrmConnection && !selectedCrmEntityMapping && (
+                                        <CrmEntityMappings
+                                            connection={selectedCrmConnection}
+                                            onBack={() => {
+                                                setSelectedCrmConnection(null);
+                                                setSelectedCrmEntityMapping(null);
+                                                setCrmViewMode('fields');
+                                            }}
+                                            onSelectEntityMapping={(mapping) => {
+                                                setSelectedCrmEntityMapping(mapping);
+                                                setCrmViewMode('fields');
+                                            }}
+                                        />
+                                    )}
+
+                                    {selectedCrmConnection && selectedCrmEntityMapping && crmViewMode === 'fields' && (
+                                        <CrmFieldMappings
+                                            connection={selectedCrmConnection}
+                                            entityMapping={selectedCrmEntityMapping}
+                                            onBack={() => {
+                                                setSelectedCrmEntityMapping(null);
+                                                setCrmViewMode('fields');
+                                            }}
+                                            onOpenRelationships={() => {
+                                                setCrmViewMode('relationships');
+                                            }}
+                                        />
+                                    )}
+
+                                    {selectedCrmConnection && selectedCrmEntityMapping && crmViewMode === 'relationships' && (
+                                        <CrmRelationshipMappings
+                                            connection={selectedCrmConnection}
+                                            entityMapping={selectedCrmEntityMapping}
+                                            onBack={() => {
+                                                setCrmViewMode('fields');
+                                            }}
+                                        />
+                                    )}
+                                </Box>
+                            )}
+                        </Box>
                     }
 
                     <CSVUsersUpload showDialog={uploadUsersShowDialog} platformType={platformType} onClose={() => {
-                        
+
                         setDataGridRefreshKey(dataGridRefreshKey + 1);
                         setUploadUsersShowDialog(false);
                     }} />
+
+                    <Dialog
+                        open={showAddCompanyDialog}
+                        onClose={() => {
+                            setShowAddCompanyDialog(false);
+                        }}
+                        aria-labelledby="add-company-dialog-title"
+                        aria-describedby="add-company-dialog-description">
+                        <DialogTitle id="add-company-dialog-title">
+                            Add New Company
+                        </DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="add-company-dialog-description">
+                                Please provide the company name to create a new company.
+                            </DialogContentText>
+
+                            <Grid container spacing={2} sx={{paddingTop:2}}>
+                                <Grid size={12}>
+                                    <TextField inputRef={newCompanyName} label="Company Name" variant="outlined" fullWidth={true} />
+                                </Grid>
+                            </Grid>
+
+                        </DialogContent>
+                        <DialogActions>
+                        <Button onClick={() => {
+                            setShowAddCompanyDialog(false);
+                        }}>Cancel</Button>
+                        <Button onClick={async () => {
+
+                            const companyName = newCompanyName.current.value;
+
+                            if (companyName.trim().length == 0) {
+                                alert("Please enter a company name.");
+                                return;
+                            }
+
+                            try {
+                                let newId = null;
+                                if (onAccountCreated) {
+                                    newId = await onAccountCreated({
+                                        companyName: companyName
+                                    });
+                                }
+
+                                setShowAddCompanyDialog(false);
+
+                                // Refresh the companies list
+                                const response = await apiService().get("/UserManagement/GetCompaniesForLocation?searchBName=" + companyName);
+                                if (response != null && response.status == 200)
+                                {
+                                    setCompanies(response.data);
+
+                                    // Set the newly created company as selected
+                                    const newCompany = response.data.find(c => c.title === companyName);
+                                    if (newCompany) {
+                                        setCompany(newCompany);
+                                    }
+                                }
+
+                                // Clear the input
+                                if (newCompanyName.current) {
+                                    newCompanyName.current.value = '';
+                                }
+
+                            } catch (error) {
+                                console.error('Error creating company:', error);
+                                alert('Error creating company: ' + (error.message || 'Unknown error'));
+                            }
+
+                        }}>
+                            Create Company
+                        </Button>
+                        </DialogActions>
+                    </Dialog>
                 </Box>
             </Box>
         </Box>
